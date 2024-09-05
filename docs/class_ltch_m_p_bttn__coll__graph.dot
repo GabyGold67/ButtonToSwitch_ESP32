@@ -1,0 +1,12 @@
+digraph "LtchMPBttn"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [id="Node000001",label="LtchMPBttn",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Abstract class, base to model Latched Debounced Delayed MPBs (LDD-MPB)."];
+  Node2 -> Node1 [id="edge1_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="DbncdDlydMPBttn",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$class_dbncd_dlyd_m_p_bttn.html",tooltip="Models a Debounced Delayed MPB (DD-MPB)."];
+  Node3 -> Node2 [id="edge2_Node000002_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="DbncdMPBttn",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$class_dbncd_m_p_bttn.html",tooltip="Base class, models a Debounced Momentary Push Button (D-MPB)."];
+}
