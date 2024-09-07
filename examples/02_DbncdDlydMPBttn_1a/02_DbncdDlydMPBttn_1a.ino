@@ -43,7 +43,6 @@ const uint8_t dmpbSwitchPin{GPIO_NUM_25};
 
 DbncdDlydMPBttn dmpbBttn (dmpbSwitchPin, true, true, 50, 250);
 
-bool mpbttnCurStts{false};
 bool mpbttnLstStts{false};
 
 void setup() {
@@ -52,14 +51,16 @@ void setup() {
 }
 
 void loop() {
-  mpbttnLstStts = mpbttnCurStts;
-  mpbttnCurStts = dmpbBttn.getIsOn();
-  if(mpbttnLstStts != mpbttnCurStts){
-    if (mpbttnCurStts){
-      digitalWrite(dmpbLoadPin, HIGH);
+  if(dmpbBttn.getOutputsChange()){
+    if(mpbttnLstStts != dmpbBttn.getIsOn()){
+      mpbttnLstStts = dmpbBttn.getIsOn();
+      if (mpbttnLstStts){
+        digitalWrite(dmpbLoadPin, HIGH);
+      }
+      else{
+        digitalWrite(dmpbLoadPin, LOW);
+      }
     }
-    else{
-      digitalWrite(dmpbLoadPin, LOW);
-    }
+    dmpbBttn.setOutputsChange(false);
   }
 }  

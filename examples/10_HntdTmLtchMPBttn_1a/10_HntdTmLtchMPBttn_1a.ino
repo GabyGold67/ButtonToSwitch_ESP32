@@ -1,18 +1,20 @@
 /**
   ******************************************************************************
-  * @file	: 05_TgglLtchMPBttn_1a.ino
-  * @brief  : Example for the ButtonToSwitch_ESP32 library TgglLtchMPBttn class
+  * @file	: 10_HntdTmLtchMPBttn_1a.ino
+  * @brief  : Example for the ButtonToSwitch_ESP32 library HntdTmLtchMPBttn class
   *
   *   Framework: Arduino
   *   Platform: ESP32
   * 
-  * The example instantiates a TgglLtchMPBttn object using:
+  * The example instantiates a HntdTmLtchMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
+  *   - 1 led with it's corresponding resistor between GND and wrnngLoadPin
+  *   - 1 led with it's corresponding resistor between GND and pltLoadPin
   *
   * ### This example doesn't create extra Tasks:
   *
-  * This simple example instantiates the TgglLtchMPBttn object in the setup(),
+  * This simple example instantiates the HntdTmLtchMPBttn object in the setup(),
   * and uses the default "loop ()" (and yes, loop() is part of the loopTask()
   * disguised in the Ardu-ESP), in it and checks it's attribute flags locally
   * through the getters methods.
@@ -38,29 +40,47 @@
 #include <Arduino.h>
 #include <ButtonToSwitch_ESP32.h>
 
-const uint8_t dmpbLoadPin{GPIO_NUM_21};
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
+const uint8_t dmpbLoadPin{GPIO_NUM_21};
+const uint8_t wrnngLoadPin{GPIO_NUM_19};
+const uint8_t pltLoadPin{GPIO_NUM_17};
 
-TgglLtchMPBttn dmpbBttn (dmpbSwitchPin, true, true, 50, 250);
+HntdTmLtchMPBttn dmpbBttn (dmpbSwitchPin, 4000, 25, true, true, 20, 50);
 
 bool mpbttnLstStts{false};
+bool mpbttnLstWrnng{false};
+bool mpbttnLstPlt{false};
+
+bool mpbttnCurStts{false};
+bool mpbttnCurWrnng{false};
+bool mpbttnCurPlt{false};
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
+  pinMode(wrnngLoadPin, OUTPUT);
+  pinMode(pltLoadPin, OUTPUT);
+
+  dmpbBttn.setKeepPilot(true);
   dmpbBttn.begin();
 }
 
 void loop() {
-  if(dmpbBttn.getOutputsChange()){
-    if(mpbttnLstStts != dmpbBttn.getIsOn()){
-      mpbttnLstStts = dmpbBttn.getIsOn();
-      if (mpbttnLstStts){
-        digitalWrite(dmpbLoadPin, HIGH);
-      }
-      else{
-        digitalWrite(dmpbLoadPin, LOW);
-      }
-    }
-    dmpbBttn.setOutputsChange(false);
+  mpbttnCurStts = dmpbBttn.getIsOn();
+  mpbttnCurWrnng = dmpbBttn.getWrnngOn();
+  mpbttnCurPlt = dmpbBttn.getPilotOn();
+
+  if(mpbttnLstStts != mpbttnCurStts){
+    mpbttnLstStts = mpbttnCurStts;
+    digitalWrite(dmpbLoadPin, mpbttnLstStts?HIGH:LOW);
+  }
+
+  if(mpbttnLstWrnng != mpbttnCurWrnng){
+    mpbttnLstWrnng = mpbttnCurWrnng;
+    digitalWrite(wrnngLoadPin, mpbttnLstWrnng?HIGH:LOW);
+  }
+
+  if(mpbttnLstPlt != mpbttnCurPlt){
+    mpbttnLstPlt = mpbttnCurPlt;
+    digitalWrite(pltLoadPin, mpbttnLstPlt?HIGH:LOW);
   }
 }  

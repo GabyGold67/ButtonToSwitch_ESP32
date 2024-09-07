@@ -1,18 +1,19 @@
 /**
   ******************************************************************************
-  * @file	: 05_TgglLtchMPBttn_1a.ino
-  * @brief  : Example for the ButtonToSwitch_ESP32 library TgglLtchMPBttn class
+  * @file	: 09_TmVdblMPBttn_1a.ino
+  * @brief  : Example for the ButtonToSwitch_ESP32 library TmVdblMPBttn class
   *
   *   Framework: Arduino
   *   Platform: ESP32
   * 
-  * The example instantiates a TgglLtchMPBttn object using:
+  * The example instantiates a TmVdblMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
+  *   - 1 led with it's corresponding resistor between GND and tvlmpbLoadPin
   *
   * ### This example doesn't create extra Tasks:
   *
-  * This simple example instantiates the TgglLtchMPBttn object in the setup(),
+  * This simple example instantiates the TmVdblMPBttn object in the setup(),
   * and uses the default "loop ()" (and yes, loop() is part of the loopTask()
   * disguised in the Ardu-ESP), in it and checks it's attribute flags locally
   * through the getters methods.
@@ -40,13 +41,17 @@
 
 const uint8_t dmpbLoadPin{GPIO_NUM_21};
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
+const uint8_t tvLoadPin{GPIO_NUM_19};
 
-TgglLtchMPBttn dmpbBttn (dmpbSwitchPin, true, true, 50, 250);
+TmVdblMPBttn dmpbBttn (dmpbSwitchPin, 3000, true, true, 50, 50, false);
 
 bool mpbttnLstStts{false};
+bool mpbttnLstVdd{false};
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
+  pinMode(tvLoadPin, OUTPUT);
+
   dmpbBttn.begin();
 }
 
@@ -61,6 +66,16 @@ void loop() {
         digitalWrite(dmpbLoadPin, LOW);
       }
     }
+    
+    if(mpbttnLstVdd != dmpbBttn.getIsVoided()){
+      mpbttnLstVdd = dmpbBttn.getIsVoided();
+      if (mpbttnLstVdd){
+        digitalWrite(tvLoadPin, HIGH);
+      }
+      else{
+        digitalWrite(tvLoadPin, LOW);
+      }
+    }
     dmpbBttn.setOutputsChange(false);
-  }
-}  
+  }  
+}
