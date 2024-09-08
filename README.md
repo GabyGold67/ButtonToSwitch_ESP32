@@ -14,22 +14,23 @@ Each class offers a wide range of methods to set, read and modify every signific
 * **Toggle Switch Momentary Push Button** (a.k.a. Alternate Pushbutton, a.k.a. **Latched Switch**)  
 * **Timer Toggled Momentary Push Button** (a.k.a. **Timer Switch**)  
 * **Hinted Timer Toggled** (a.k.a. **Staircase Timer Switch**)
-* **External Unlatch toggle** (a.k.a. **Emergency Latched Switch**)
+* **External Unlatch Toggle** (a.k.a. **Emergency Latched Switch**)
 * **Time Voidable Momentary Push Button**  (a.k.a. **Anti-Tampering Switch**)
 * **Single Service Voidable Momentary Push Button**  (a.k.a. **Trigger Switch**) 
-* **Short press/Long Press Double action On/Off + Slider combo switch**  (a.k.a. off/on/dimmer, a.k.a. **Off/On/Volume radio switch**)
-* **Short press/Long Press Double action On/Off + Secondary output MPB combo switch**
+* **Short Press/Long Press Double action On/Off + Slider combo switch**  (a.k.a. off/on/dimmer, a.k.a. **Off/On/Volume radio switch**)
+* **Short Press/Long Press Double action On/Off + Secondary output MPB combo switch**
 
-The benefits of the use of those simulated switches mechanisms are not just economic, as push buttons come in a wide range of prices and qualities similar to the simulated hardware switches.  
+The benefits of the use of those simulated switches mechanisms are not just economic, as push buttons come in a wide range of prices and qualities as the simulated hardware switches come.  
 
-_**In a domestic lighting project**_, for example, detecting after the implementation, through the daily use, that an installed switch was not the best choice when a physical switch is involved, requires for the correction to a best suited kind of switch a bunch of activities to get the change of the switch unit done:
+_**In any device powering on/off project**_, for example, detecting after the implementation, through the daily use, that an installed switch was not the best choice when a physical switch is involved, requires for the correction to a best suited kind of switch a bunch of activities to get the change of the switch unit done:
 * Searching for the availability of a best suited switch to match our intended functionalities.    
 * Getting that different best suited switch, with the time and resources investment involved.  
 * Uninstalling the first switch.  
 * Maybe modifying the cabling.  
+* Maybe modifying the switch housing.  
 * Installing the new switch...  
 
-While with the simulated switches this situation might be solved by just changing the object class, or modifying the instantiation parameters if needed, and the switch is already changed!!  
+While with the simulated switches this situation might be solved by just changing the object class, modifying the instantiation parameters or calling a method if needed, and the switch is already changed!!  
 * Want to keep the timed **lights-on** longer? Just a parameter.  
 * Want to turn off the pilot light because it bothers? Another parameter.  
 * Want to be sure the door mechanism isn't kept unlocked with an adhesive tape? Change the switch class.  
@@ -39,7 +40,8 @@ _**In an Industrial production machines environment**_ the operator's physical s
 - Release enforcement
 - Time Voidable activation or releases
 - Activation sequence enforcement
-- Production related disabling of any of the switches while conserving the activation logic... and so many others.  
+- Production related disabling of any of the switches while keeping the activation logic.  
+- ... and so many others parameters involved.  
  
 Just to add possibilities, consider that everywhere the **"Momentary Push Button"** is mentioned, any kind of momentary digital activation signal provider might be used instead: touch sensors, PIR sensors, RFID signals, fingerprint reader and so on...  
 
@@ -58,8 +60,12 @@ Those mechanisms include:
 	- **General flags value change getter**: Returns a value indicating if **any** of the significant output flags' values has changed.  
 	- **Lightweight Binary Semaphore**: Implementation of a **xTaskNotify()** FreeRTOS macro to unblock a developer defined task -every time **any** of the output flags' values changes- including a notification value indicating the state of the MPB.  
 	- **Task Resume/Suspend**: A mechanism is provided to run a developer defined task while the object is in **On State**. The designated task will be set to "Suspended State" while the object is in **Off State** and will be set to "Resume" while it is in **On State**, providing means to execute far more complex tasks than just "turning On & turning Off" devices.  
-	- **Functions execution**: A developer defined function might be set to be executed every time the instantiated object enters the **On State**, and a function might be set to be executed every time the instantiated object enters the **Off State**. The functions are to be independently defined, so one, the other or both might be defined, and even the same function might be used for both events.  
-
+	- **Functions execution**: A developer defined function might be set to be executed every time the instantiated object attribute flags change it's value, including:  
+		- Entering the **On State** and entering the **Off State**, each of the functions is to be independently defined, so one, the other or both might be defined, and even the same function might be used for both events.  
+		- Entering and exiting the **Secondary function On** state with the same characteristics above described for the **On/Off State**.  
+		- Entering and exiting the **Warning On** state with the same characteristics above described for the **On/Off State**.  
+		- Entering and exiting the **Pilot On** state with the same characteristics above described for the **On/Off State**.  
+		- Entering and exiting the **Voided** state with the same characteristics above described for the **On/Off State**.  
 Those listed mechanisms are **independent**, so one or more might be simultaneously used according to implementation needs and convenience.    
 
 ---  
@@ -73,380 +79,169 @@ The **Debounced Momentary Button** keeps the ON state since the moment the signa
 |**_DbncdMPBttn_** |None|
 |**_DbncdMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**)))|
 |**begin()**|(unsigned long int **pollDelayMs**)|
-|**clrStatus()**|None|
+|**clrStatus()**|(bool **clrIsOn**)|
+|**disable()**|None|
+|**enable()**|None|
 |**end()**|None|
 |**getCurDbncTime()**|None|
+|**getFnWhnTrnOff()**|None|
+|**getFnWhnTrnOn()**|None|
+|**getIsEnabled()**|None|
 |**getIsOn()**|None|
+|**getIsOnDisabled()**|None|
+|**getOtptsSttsPkgd()**|None|
 |**getOutputsChange()**|None|
+|**getStrtDelay()**|None|
 |**getTaskToNotify()**|None|
+|**getTaskWhileOn()**|None|
 |**init()** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**)))|
 |**pause()**|None|
 |**resetDbncTime()**|None|
+|**resetFda()**|None|
 |**resume()**|None|
 |**setDbncTime()**|unsigned long int **newDbncTime**|
+|**setFnWhnTrnOffPtr()**|void* **fnWhnTrnOff**|
+|**setFnWhnTrnOnPtr()**|void* **fnWhnTrnOn**|
+|**setIsOnDisabled()**|bool **newIsOnDisabled**|
 |**setOutputsChange()**|bool **newOutputChange**|
-|**setTaskToNotify()**|TaskHandle_t **newHandle**|
+|**setTaskToNotify()**|TaskHandle_t **newTaskHandle**|
+|**setTaskWhileOn()**|TaskHandle_t **newTaskHandle**|
 
 ---  
 ## **Methods definition and use description**
 ---  
 
-## **DbncdMPBttn**()
-### Description:  
-Default Class Constructor, creates an instance of the class. This constructor is provided as a tool to create "yet to know parameters" objects, blank objects to use in copies, pointers, etc. The init() method is provided to configure the required attributes to the objects created by this constructor, and there is no other method for setting those basic attributes.  
-### Parameters:  
-**None**
-### Return value:  
-The object created.
+# [DbncdMPBttn class Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_m_p_bttn-members.html)
 
-### Use example:  
-**`DbncdMPBttn myDButton();`**  
-  
----  
-## **DbncdMPBttn**(uint8_t **mpbttnPin**, bool **pulledUp**, bool **typeNO**, unsigned long int **dbncTimeOrigSett**)
-### Description:  
-Class constructor, creates an instance of the class. There's no need to configure the input pin before calling the method, as the constructor takes care of the task.  
-### Parameters:  
-**mpbttnPin:** uint8_t (unsigned char), passes the pin number that is connected to the push button. The pin must be free to be used as a digital input.  
-**pulledUp:** optional boolean, indicates if the input pin must be configured as INPUT_PULLUP (true, default value), or INPUT_PULLDOWN (false), to calculate correctly the expected voltage level in the input pin. The pin is configured by the constructor so no previous programming is needed. The pin must be free to be used as a digital input, and must be a pin with a **internal pull-up circuit**, as not every GPIO pin has the option.  
-**typeNO:** optional boolean, indicates if the mpb is a **Normally Open (NO)** switch (true, default value), or **Normally Closed (NC)** (false), to calculate correctly the expected level of voltage indicating the mpb is pressed.   
-**dbncTimeOrigSett:** optional unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the mpb to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 50 milliseconds as it is an empirical value obtained in various published tests.  
+## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)  
 
-### Return value:  
-The object created.
-
-### Use example:  
-**`DbncdMPBttn myDButton(21, true, true, 100);`**
-  
----  
-## **begin**(unsigned long int **pollDelayMs**)
-### Description:  
-Attaches the instantiated object to a timer that monitors the input pin and updates the object status, if the object was not already attached to a timer before. The frequency of that periodic monitoring is passed as a parameter in milliseconds, and is a value that must be small (frequent) enough to keep the object updated, but not so frequent that no other tasks can be executed. A default value is provided based on empirical values obtained in various published tests.  
-### Parameters:  
-**pollDelayMs:** unsigned long integer (ulong) **optional**, passes the time between polls in milliseconds.  
-### Return value:  
-true: the object could be attached to a timer, or if it was already attached to a timer when the method was invoked.  
-false: the object could not create the needed timer, or the object could not be attached to it.  
-### Use example:  
-**`myDButton.begin(20);`**  //Attaches de object to a monitoring timer set at 20 milliseconds between checkups.  
-  
----  
-## **clrStatus**()
-### Description:  
-Resets some object's attributes to safely resume operations -by using the **resume()** method- after a **pause()** without risking generating false "Valid presses" and "On" situations due to dangling flags or partially ran time counters.  
-### Parameters:  
-**None**  
-### Return value:  
-**None**   
-### Use example:  
-**`myDButton.clrStatus();`**  
-  
----  
-## **end**()
-### Description:  
-Detaches the object from the timer that monitors the input pin/s and updates the object status. The timer daemon entry is deleted for the object.  
-### Parameters:  
-**None**   
-### Return value:  
-true: the object detachment procedure and timer entry removal was successful.  
-false: the object detachment and/or entry removal was rejected by the O.S..  
-### Use example:  
-**`myDButton.end();`**  
-  
----  
-## **getCurDbncTime**()  
-### Description:  
-Returns the current value used for the debouncing process in milliseconds. The original value for the debouncing process used at instantiation time might be changed with the **setDbncTime()** or with the **resetDbncTime()** methods, so this method is provided to get the current value in use.  
-### Parameters:  
-**None**  
-### Return value:  
-unsigned long integer: The current debounce time, in milliseconds, being used in the debounce process of the current object.  
-### Use example:  
-**`myDButton.getCurDbncTime();`**  
-  
----  
-## **getIsOn**()  
-### Description:  
-Returns the current value of the _**isOn**_ flag, either true (On) or false (Off). This flag alone might be considered the "Raison d'etre" of all this classes design: the isOn signal is not just the detection of an expected voltage value at a mcu pin, but the combination of that voltage, filtered and verified, for a determined period of time and until a new event modifies that situation.  
-### Parameters:  
-**None**  
-### Return value:  
-true: the implemented switch is in **On** state.  
-false: the implemented switch is in **Off** state.  
-### Use example:  
-**`bool lightStatus = myDButton.getIsOn();`**  
-  
----  
-## **getOutputsChange**()  
-### Description:  
-Returns the current value of the flag indicating if there have been changes in the output flag/s since last flag resetting. The flag only signals changes have been done, nor which flags nor how many times changes have taken place.  
-### Parameters:  
-**None**  
-### Return value:  
-true: there have been output flag changes in the object.  
-false: there have been no output flag changes in the object.  
-### Use example:  
-**`bool outputStatus = myDButton.getOutputsChange();`**  
-  
----  
-## **getTaskToNotify**()  
-### Description:  
-Returns the current **TaskHandle** for the task to be notified by the object when its output flags changes (indicating there have been changes in the outputs since last FreeRTOS notification). When the object is created, this value is set to **nullptr** and a valid TaskHandle_t value might be set by using the **setTaskToNotify()** method. The task notifying mechanism will not be used while the task handle keeps the **nullptr** value, in which case the solution implementation will have to include a mechanism to test the object status, ideally through **getOutputsChange()** first, and in the case of a true returned from it a **getIsOn()** and the other methods corresponding to the other flags returned by the object.  
-### Parameters:  
-**None**  
-### Return value:  
-TaskHandle_t value pointing to the task implemented to be notified of the change of values of the flags of the objet if it was set to some value not equal to nullptr, or nullptr otherwise.  
-### Use example:  
-**`TaskHandle_t taskNotified = myDButton.getTaskToNotify();`**  
-  
----  
-## **init**(uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**))))  
-### Description:  
-Sets the significant attributes that are needed at instantiation time, and makes the needed operations to get the internal mechanisms active. This method can be applied to objects instantiated with de default constructor only. Having the **mpbttnPin** attribute already set to a valid value blocks the **init()** method of being executed.  
-### Parameters:  
-**mpbttnPin:** Analog to the **DbncdMPBttn** constructor equally named parameter.  
-**pulledUp:** optional boolean, analog to the **DbncdMPBttn** constructor equally named parameter.  
-**typeNO:**  analog to the **DbncdMPBttn** constructor equally named parameter.  
-**dbncTimeOrigSett:**  analog to the **DbncdMPBttn** constructor equally named parameter.  
-### Return value:  
-The object with the corresponding attributes set to their initial values.  
-### Use example:  
-**`myDButton.init(21, true, true, 100);`**  
-  
----  
-## **pause**()  
-### Description:  
-Stops the software timer updating the calculation of the object internal flags. The timer will be kept for future use, but the flags will keep their last values and will not be updated until the timer is restarted with the `.resume()` method.  
-### Parameters:  
-**None**  
-### Return value:  
-true: the object's timer could be stopped by the O.S..  
-false: the object's timer couldn't be stopped by the O.S..  
-### Use example:  
-**`myDButton.pause();`**  
-  
----  
-## **resetDbncTime**()  
-### Description:  
-Resets the debounce time of the object to the value used at instantiation. In case the value was not specified at instantiation the default debounce time value will be used. As the time used at instantiation might be changed with the **setDbncTime()**, this method reverts the value.  
-### Parameters:  
-**None**  
-### Return value:  
-true: the value could be reverted.  
-false: the value couldn't be reverted due to unexpected situations.  
-### Use example:  
-**`myDButton.resetDbncTime();`**  
-  
----  
-## **resume**()  
-### Description:  
-Restarts the software timer updating the calculation of the object internal flags. The timer will stop its function of computing the flags values after calling the `.pause()` method and will not be updated until the timer is restarted with this method.  
-### Parameters:  
-**None**  
-### Return value:  
-true: the object's timer could be restarted by the O.S..  
-false: the object's timer couldn't be restarted by the O.S..  
-### Use example:  
-**`myDButton.resume();`**  
-  
----  
-### **setDbncTime**(unsigned long int **newDbncTime**)
-### Description:  
-Sets a new time for the debouncing period. The value must be equal or greater than the minimum empirical value set as a property for all the classes, 20 milliseconds. A long debounce time will produce a delay in the press event generation, making it less "responsive".  
-### Parameters:  
-**newDbncTime:** unsigned long integer, the new debounce value for the object.  
-### Return value:  
-true: the new value is in the accepted range and the change was made.  
-false: the value was already in use, or was out of the accepted range, no change was made.  
-### Use example:  
-**`myDButton.setDbncTime(200);`** //Sets the new debounce time and returns true.  
-**`myDButton.setDbncTime(15);`** //Returns false and the debounce time is kept unchanged.  
-  
----  
-### **setOutputsChange**(bool **newOutputChange**)
-### Description:  
-Sets the value of the flag indicating if a change took place in any of the output flags (IsOn included). The usual path for the _outputsChange flag is to be set to true by any method changing an output flag, the callback function signaled to take care of the hardware actions because of this changes clears back _outputsChange after taking care of them. In the unusual case the developer wants to "intercept" this sequence, this method is provided to set (true) or clear (false) _outputsChange value.  
-### Parameters:  
-**newOutputChange:** boolean, the new value to set the _outputsChange flag to.  
-### Return value:  
-true: The value change was successful.  
-false: The value held by _outputsChange and the newOutputChange parameter are the same, no change was then produced.  
-### Use example:  
-**`myDButton.setOutputsChange(false);`** //Returns true if the newOutputChange if different to the _outputsChange value, and the change is made.  
-  
----  
-### **setTaskToNotify**(TaskHandle_t **newHandle**)
-### Description:  
-Sets the pointer to the task to be notified by the object when its output flags changes (indicating there have been changes in the outputs since last FreeRTOS notification). When the object is created, this value is set to **nullptr** and a valid TaskHandle_t value might be set by using this method. The task notifying mechanism will not be used while the task handle keeps the **nullptr** value. After the TaskHandle value is set it might be changed to point to other task 
-### Parameters:  
-**newHandle:** TaskHandle_t, a valid handle of an actual existent task/thread running. There's no provided exception mechanism for dangling pointer errors caused by a pointed task being deleted and/or stopped.  
-### Return value:  
-true: A TaskHandle_t type was passed to the object to be it's new pointer to the task to be messaged when a change in the output flags occur. There's no checking for the validity of the pointer, if it refers to an active task/thread whatsoever.  
-false: The value passed to the method was **nullptr**, and that's the value will be stored, so the whole RTOS messaging mechanism won't be used.  
-### Use example:  
-**`TaskHandle_t myHwUpdtTask;`**  
-**`[...]`**  
-**`myDButton.setTasToNotify(myHwUpdtTask);`**  
-  
 ---  
 ---  
 # **DbncdDlydMPBttn class**  
-The **Debounced Delayed Momentary Button**, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released. The reasons to add the delay are design related and are usually used to avoid unintentional presses, or to give some equipment (load) that needs time between repeated activations the benefit of the pause. If the push button is released before the delay configured, no press is registered at all. The delay time in this class as in the other that implement it, might be zero (0), defined by the developer and/or modified in runtime.  
+The **Debounced Delayed Momentary Button**, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released. The reasons to add the delay are design related and are usually used to avoid registering unintentional presses, or to give some equipment (load) that needs time between repeated activations the benefit of the pause. If the push button is released before the delay configured, no press is registered at all. The delay time in this class as in the other classes that implement it, might be zero (0), defined by the developer and/or modified in runtime.  
 
-# **Added Methods for DbncdDlydMPBttn class**  
+# **Added or modifyed Methods for DbncdDlydMPBttn class**  
   
 |Method | Parameters|
 |---|---|
 |**_DbncdDlydMPBttn_** |None|
 |**_DbncdDlydMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
-|**getStrtDelay()**|None|
 |**init** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 |**setStrtDelay()**|(unsigned long int **newStrtDelay**)|
   
 ---  
-### **DbncdDlydMPBttn**(uint8_t **mpbttnPin**, bool **pulledUp**, bool **typeNO**, unsigned long int **dbncTimeOrigSett**, unsigned long int **strtDelay**)
-### Description:  
-Class constructor, creates an instance of the class for each **Debounced Delayed Momentary Push Button**. There's no need to configure the input pin before calling the method, as the constructor takes care of the task.  
-### Parameters:  
-**mpbttnPin:** uint8_t (unsigned char), passes the pin number that is connected to the push button. The pin must be free to be used as a digital input.  
-**pulledUp:** optional boolean, indicates if the input pin must be configured as INPUT_PULLUP (true, default value), or INPUT_PULLDOWN(false), to calculate correctly the expected voltage level in the input pin. The pin is configured by the constructor so no previous programming is needed. The pin must be free to be used as a digital input.  
-**typeNO:** optional boolean, indicates if the mpb is a **Normally Open** switch (true, default value), or **Normally Closed** (false), to calculate correctly the expected level of voltage indicating the mpb is pressed.   
-**dbncTimeOrigSett:** optional unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the mpb to be pressed. If no value is passed the constructor will assign the minimum value provided in the class, that is 50 milliseconds as it is a empirical value obtained in various published tests.  
-**strtDelay:** optional unsigned long integer (uLong), indicates the time (in milliseconds) to wait after the debouncing is completed and before rising the ON flag. If no value is passed the constructor will assign 0 milliseconds, and the resulting behavior will be the same as implementing a DbncdMPBttn. If the mpb is released before completing the strtDelay time, no ON signal will be produced.  
-### Return value:  
-The object created.  
-### Use example:  
-**`DbncdMPBttn myDDButton(21, true, true, 100, 500);`**  
-  
+## **Methods definition and use description**
 ---  
-## **getStrtDelay**()  
-### Description:  
-Returns the current value of time used by the object to rise the isOn flag, after the debouncing process ends, in milliseconds. If the MPB is released before completing the debounce **and** the delay time, no press will be detected by the object, and the isOn flag will not be rised. The original value for the delay process used at instantiation time might be changed with the **setStrtDelay()** method, so this method is provided to get the current value in use.  
-### Parameters:  
-**None**  
-### Return value:  
-unsigned long integer: The current delay time, in milliseconds, being used before rising the isOn flag, after the debounce process of the current object.  
-### Use example:  
-**`unsigned long curDelay {myDButton.getStrtDelay()};`**  //Stores the current Start delay value in the curDelay variable  
-  
----  
-### **setStrtDelay**(unsigned long int **newStrtDelay**)  
-### Description:  
-Sets a new time for the Start Delay period. The value must be equal or greater than 0 milliseconds, in the case of equal to 0 the instantiated object will act as a DbncdMPBttn class object. A long Start Delay time will produce a long delay in the press event generation, making it less "responsive".  
-### Parameters:  
-**newStrtDelay:** unsigned long integer, the new start delay value for the object.  
-### Return value:  
-true: the new value is different than the previously set value, so the change was made.  
-false: the value passed is equal to the one already in use, no change was made.  
-### Use example:  
-**`myDButton.setStrtDelay(0);`** //Sets the new debounce time to 0, there will no time added to the debounce process, the MPB will act as a DbncdMPBttn.  
-**`myDButton.setStrtDelay(myDButton.getStrtDelay() + 15);`** //Changes the current start delay time by adding 15 milliseconds, and returns true.  
-  
+
+# [DbncdDlydMPBttn class Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_dlyd_m_p_bttn-members.html)
+
+## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+
 ---  
 ---  
 # **LtchMPBttn class**  
-The **Toggle switch**  keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. So this simulates a simple On-Off switch like the ones used to turn on/off a room light. One of the best things about the software simulated switch is that any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource.  
-## **Added Methods for LtchMPBttn class**  
+This is an **Abstract Class** meaning that no object can be instantiated from it. The members defined are meant to be available for the LtchMPBttn **subclasses** instantiated objects, and define common behavior for all the "Latched Button Subclasses".
+ * **Latched DD-MPBs** are MPBs whose distinctive characteristic is that models switches that keep the ON state since the moment the input signal is stable (debouncing + Delay process), and keeps the ON state after the MPB is released and until an event un-latches them, setting them free to move to the **Off State**.
+ * The un-latching mechanisms include but are not limited to: same MPB presses, timers, other MPB presses, other GPIO external un-latch signals or the use of the public method unlatch().  
+ The different un-latching events defines the sub-classes of the LDD-MPB class.  
+ 
+ Attention: The range of signals accepted by the instantiated objects to execute the unlatch process is diverse, and their nature and characteristics might affect the expected switch behavior. While some of the signals might be instantaneous, meaning that the **start of the unlatch signal** is coincidental with the **end of the unlatch signal**, some others might extend the time between both ends. To accommodate the logic required by each subclass, and the requirements of each design, the **_unlatch_** process is then split into two stages:
+ 1. Validated Unlatch signal (or Validated Unlatch signal start).  
+ 2. Validated Unlatch Release signal (or Validated Unlatch signal end).  
+   
+ The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool), or to **set** both flags to generate an unlatch (see LtchMPBttn::unlatch().
+
+
+## **Added or Modifyed Methods for LtchMPBttn class**  
 |Method | Parameters|
 |---|---|
-|**_LtchMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**getIslatched()**|None|
+|**getTrnOffASAP()**|None|
 |**getUnlatchPend()**|None|
-|**setUnlatchPend()**|None|
+|**getUnlatchRlsPend()**|None|
+|**setTrnOffASAP()**|bool **newVal**|
+|**setUnlatchPend()**|bool **newVal**|
+|**setUnlatchRlsPend()**|bool **newVal**|
+|**unlatch()**|None|
   
 ---  
-### **LtchdMPBttn**(uint8_t **mpbttnPin**, bool **pulledUp**, bool **typeNO**, unsigned long int **dbncTimeOrigSett**, unsigned long int **strtDelay**)
-### Description:  
-Class constructor, creates an instance of the class for each **Latched Momentary Push Button**. There's no need to configure the input pin before calling the method, as the constructor takes care of the task.  
-### Parameters:  
-Same as **DbncdDlydMPBttn()** class objects constructor.  
+## **Methods definition and use description**
+---  
 
----  
-## **getUnlatchPend**()  
-### Description:  
-Returns the current value of unlatch pending flag, whose boolean value indicates if the conditions were given to unlatch a LtchMPBttn object. The periodical timer event that takes care of keeping the internal and external objects' flags updated takes care of the actions required to set the flag and eventually acting on this flag value. This method makes it possible to know the flag value to give the developer a tool to generate other events his development might require, but not by modifying the class.  
-### Parameters:  
-**None**  
-### Return value:  
-true: The current object's unlatchPending flag is set.  
-false: The current object's unlatchPending flag is reset.  
-### Use example:  
-**`if(myDButton.getUnlatchPend()){...}`**  //Executes some code if the unlatchPending flag is set.  
-  
----  
-### **setUnlatchPend**()
-### Description:  
-Sets to **true** the value of the internal flag **unlatchPending**. It is the equivalent to physically executing the action that releases the latch that keeps the isOn signal lactched, in this case it will be the equivalent to pressing the MPB while the isOn signal is true. This method gives an alternative to generate the appropiate signal to unlatch the LtchMPBttn.  
-### Parameters:  
-**None**  
-### Return value:  
-true: the unlatchPending value was set.  
-false: Abnormal situation, the unlatchPending flag could not be set.  
-### Use example:  
-**`myDButton.setUnlatchPend();`**  
+# [LtchdMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_ltch_m_p_bttn-members.html)
+
+## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 ---  
+# **TgglLtchMPBttn class**  
+The **Toggle switch**  keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. So this simulates a simple On-Off switch like the ones used to turn on/off a room light. One of the best things about the software simulated switch is that any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource.  
 
+## **Added or Modifyed Methods for LtchMPBttn class**  
+|Method | Parameters|
+|---|---|
+|**_TgglLtchMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+
+---  
+## **Methods definition and use description**
+---  
+
+# [TgglLtchdMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tggl_ltch_m_p_bttn-members.html)
+
+## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+
+---  
+---  
 # **TmLtchMPBttn class**  
-The **Timer toggled** or **Timer Switch**, keeps the ON state **since the moment the signal is debounced and delayed**, and keeps the ON state during a set time. The switch time is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before reaches the time limit if the push button is pressed again.  
+The **Time latched** or **Timer Switch** keeps the ON state **since the moment the signal is debounced and delayed**, and keeps the ON state during a set time. The switch time is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before reaches the time limit if the push button is pressed again.  
   
-## **Added Methods for TmLtchMPBttn class**  
+## **Added or Modifyed Methods for TmLtchMPBttn class**  
 |Method | Parameters|
 |---|---|
 |**_TmLtchMPBttn_** |uint8_t **mpbttnPin**, unsigned long int **actTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
-|**getSvcTime()**|None|
-|**setSvcTime()**|unsigned long int **newSvcTime**|
-|**setTmerRstbl()**|bool **isRstbl**|
+|**getSrvcTime()**|None|
+|**setSrvcTime()**|unsigned long int **newSvcTime**|
+|**setTmerRstbl()**|bool **newIsRstbl**|
 
 ---  
-### **TmLtchdMPBttn**(uint8_t **mpbttnPin**, unsigned long int **svcTime**, bool **pulledUp**, bool **typeNO**, unsigned long int **dbncTimeOrigSett**, unsigned long int **strtDelay**)
-### Description:  
-Class constructor, creates an instance of the class for each **Time Latched Momentary Push Button**. There's no need to configure the input pin before calling the method, as the constructor takes care of the task.  
-### Parameters:  
-**svcTime:** unsigned long integer (uLong), indicates the time (in milliseconds) the ON flag will be kept set (true) after the debounce & delay process ends. The value must be greater or equal to the **_MinSrvcTime** library constant. The constant is set to give a minimum margin to keep the processes times guaranteed for a manual pushbutton implementation. There is no set upper limit for this parameter besides that imposed by the data type.    
-Rest of the parameters are as described at **LtchdMPBttn()** class objects constructor.  
+## **Methods definition and use description**
+---  
 
----  
-## **getSvcTime**()  
-### Description:  
-Returns the current value of time used by the object to keep the isOn flag rised, after the debouncing & delaying process ends, in milliseconds. The original value for the service time used at instantiation might be changed with the **setSvcTime()** method, so this method is provided to get the current value in use.  
-### Parameters:  
-**None**  
-### Return value:  
-unsigned long integer: The current service time, in milliseconds, being used to keep rised the isOn flag, after the debounce & delay process of the current object.  
-### Use example:  
-**`unsigned long curOnTime {myDButton.getSvcTime()};`**  //Stores the current Start delay value in the curDelay variable  
-  
----  
-### **setSvcTime**(unsigned long int **newSvcTime**)  
-### Description:  
-Sets a new time for the Service Time period. The value must be greater or equal to the **_MinSrvcTime** library constant.  
-### Parameters:  
-**newSvcTime:** unsigned long integer, the new service time value for the object.  
-### Return value:  
-true: the new value is valid and different than the previously set value, so the change was made.  
-false: the value passed is equal to the one already in use, or is no greater or equal to the **_MinSrvcTime** value, so no change was made.  
-### Use example:  
-**`myDButton.setSvcTime(0);`** // Fails as it's not a valid value.  
-**`myDButton.setSvcTime(myDButton.getSvcTime() + 15);`** //Changes the current service time by adding 15 milliseconds, and returns true.  
+# [TgglLtchdMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html)
+
+## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 ---  
-
 # **HntdTmLtchMPBttn class**
-The **Hinted Timer toggled**, or **Staircase Timer Switch**, keeps the ON state since the moment the signal is debounced, and keeps the state during a set time, the switch time is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before it gets to the end if the push button is pressed, the option to give a warning when the time is close to the end through a second flag (remaining time is defined as a percentage of the total ON time and it's configurable), and the possibility to set a third signal ON while the switch is off, just like the pilot light (hint) in a staircase timer switch. The warning signal is independent of the off hint.  
+The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state since the moment the signal is debounced, and keeps the state during a set time, the switch time is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before it gets to the end if the push button is pressed, the option to give a warning when the time is close to the end through a second flag (remaining time is defined as a percentage of the total ON time and it's configurable), and the possibility to set a third signal ON while the switch is off, just like the pilot light (hint) in a staircase timer switch. The warning signal is independent of the off hint.  
 
-## **Added Methods for HntdTmLtchMPBttn class**  
+## **Added or Modifyed Methods for HntdTmLtchMPBttn class**  
 
 |Method | Parameters|
 |---|---|
 |**_HntdTmLtchMPBttn_** |uint8_t **mpbttnPin**, unsigned long int **actTime**(, unsigned int **wrnngPrctg**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))))|  
+|**getFnWhnTrnOffPilot()**|None|
+|**getFnWhnTrnOffWrnng()**|None|
+|**getFnWhnTrnOnPilot()**|None|
+|**getFnWhnTrnOnWrnng()**|None|
 |**getPilotOn()**|None|
 |**getWrnngOn()**|None|
+|**setFnWhnTrnOffPilot()**|void* newFnWhnTrnOff|
+|**setFnWhnTrnOffWrnng()**|void* newFnWhnTrnOff|
+|**setFnWhnTrnOnPilot()**|void* newFnWhnTrnOn|
+|**setFnWhnTrnOnWrnng()**|void* newFnWhnTrnOn|
 |**setKeepPilot()**|bool **keepPilot**|
-|**updPilotOn()**|None|
-|**updWrnngOn()**|None|
+|**setWrnngPrctg()**|unsigned int newWrnngPrctg|
   
+---  
+## **Methods definition and use description**
+---  
+
+# [HntdTmLtchMPBttn class Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_hntd_tm_ltch_m_p_bttn-members.html)
+
+## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+
 ---  
 ---  
 
