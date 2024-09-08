@@ -1,11 +1,11 @@
 # **Buttons to Switches Library** (ButtonToSwitch_ESP32)
 
-This library is an evolutionary refactoring of the now discontinued **mpbToSwitch** library.
+This library is an evolutionary refactoring based on my own, now discontinued, **mpbToSwitch** library.
 
 ## An ESP32-RTOS Arduino library that builds switch mechanisms replacements out of simple push buttons.  
 By using just a push button (a.k.a. momentary switches or momentary buttons, _**MPB**_ for short from here on) the classes implemented in this library will manage, calculate and update different parameters to **generate the behavior of standard electromechanical switches**. Those parameters include presses, releases, timings, counters or secondary input readings as needed.
 
-The instantiated switch state is updated independently by a standard FreeRTOS software timer (or ESP-IDF FreeRTOS in this case), that keeps the ON/OFF state of the objects created constantly updated, without constant polling needed. The timer setup is managed by in-class methods, including the possibility to pause, resume or end the timer of each object independently of the others.  
+The instantiated switch state is updated independently by a standard FreeRTOS software timer (or ESP-IDF FreeRTOS in this case), that keeps the state of the objects created constantly refreshed including the ON/OFF condition, without constant polling needed. The timer setup is managed by in-class methods, including the possibility to pause, resume or end the timer of each object independently of the others.  
 Each class offers a wide range of methods to set, read and modify every significant aspect of each switch mechanism simulated, and the signal received from the push button is debounced for a correct behavior of the event processing.  
 
 ## The library implements the following switches mechanisms: ###  
@@ -47,7 +47,7 @@ Just to add possibilities, consider that everywhere the **"Momentary Push Button
 
 # [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
-### The main output flag generated for each and every class is the **isOn** flag, which defines the _**Off State**_ (isOn=false) and the _**On State**_ (isOn=true) of the instantiated objects.  
+### The main output attribute flag kept updated for each and every class is the **isOn** flag, which defines the _**Off State**_ (isOn=false) and the _**On State**_ (isOn=true) of the instantiated objects.  
 
 ## The embedded behavior also includes logical replacements for temporary or extraordinay responses that usually need external hardware modifications in electromechanical switches:
 - Switch disconnection.
@@ -141,7 +141,7 @@ The **Debounced Delayed Momentary Button**, keeps the ON state since the moment 
 ---  
 # **LtchMPBttn class**  
 This is an **Abstract Class** meaning that no object can be instantiated from it. The members defined are meant to be available for the LtchMPBttn **subclasses** instantiated objects, and define common behavior for all the "Latched Button Subclasses".
- * **Latched DD-MPBs** are MPBs whose distinctive characteristic is that models switches that keep the ON state since the moment the input signal is stable (debouncing + Delay process), and keeps the ON state after the MPB is released and until an event un-latches them, setting them free to move to the **Off State**.
+ * **Latched DD-MPBs** are MPBs whose distinctive characteristic is that models switches that keep the ON state since the moment the input signal is stable (debouncing + Delay process), and keeps the ON state after the MPB is released and until an event un-latches them, setting them free to move back to the **Off State**.
  * The un-latching mechanisms include but are not limited to: same MPB presses, timers, other MPB presses, other GPIO external un-latch signals or the use of the public method unlatch().  
  The different un-latching events defines the sub-classes of the LDD-MPB class.  
  
@@ -175,7 +175,7 @@ This is an **Abstract Class** meaning that no object can be instantiated from it
 ---  
 ---  
 # **TgglLtchMPBttn class**  
-The **Toggle switch**  keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. So this simulates a simple On-Off switch like the ones used to turn on/off a room light. One of the best things about the software simulated switch is that any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource.  
+The **Toggle switch**  keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. So this simulates a simple On-Off switch like the ones used to turn on/off a room light, or any electronic device. There's a lot of advantages in software simulated switches: any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource, the switch might be temporarily disabled, either keeping the On State or the Off State, and some more.  
 
 ## **Added or Modifyed Methods for LtchMPBttn class**  
 |Method | Parameters|
@@ -193,7 +193,7 @@ The **Toggle switch**  keeps the ON state since the moment the signal is stable 
 ---  
 ---  
 # **TmLtchMPBttn class**  
-The **Time latched** or **Timer Switch** keeps the ON state **since the moment the signal is debounced and delayed**, and keeps the ON state during a set time. The switch time is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before reaches the time limit if the push button is pressed again.  
+The **Time latched** or **Timer Switch** keeps the ON state **since the moment the signal is debounced and delayed**, and keeps the ON state during a set time. The **Service time** is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before reaches the time limit if the push button is pressed again.  
   
 ## **Added or Modifyed Methods for TmLtchMPBttn class**  
 |Method | Parameters|
@@ -207,7 +207,7 @@ The **Time latched** or **Timer Switch** keeps the ON state **since the moment t
 ## **Methods definition and use description**
 ---  
 
-# [TgglLtchdMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html)
+# [TmLtchdMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html)
 
 ## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
@@ -245,17 +245,52 @@ The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state 
 ---  
 ---  
 
-# **Added Methods for XtrnUnLtchMPBttn class**
-The **External released toggle** (a.k.a. Emergency latched), keeps the On state since the moment the signal is debounced, and until an external signal is received. This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. Smoke, flood, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physical or logical generated it can be implemented to be received from a switch or a remote signal of any usual kind. It's implemented in the  **XtrnUnltchMPBttn** class.  
+# **XtrnUnLtchMPBttn class**
+The **External released toggle** (a.k.a. Emergency latched), keeps the On state since the moment the signal is debounced, and until an external signal is received. This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. Smoke, flood, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physicaly or logicaly generated it can be implemented to be received from a switch or a remote signal of any usual kind.  
   
+
+## **Added or Modifyed Methods for XtrnUnltchMPBttn class**  
+
 |Method | Parameters|
 |---|---|
 |**_XtrnUnLtchMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
-|**_XtrnUnLtchMPBttn_** |uint8_t **mpbttnPin**, DbncDlydMPBttn* **unltchBttn**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
-|**unlatch()**|None|
+|**_XtrnUnLtchMPBttn_** |uint8_t **mpbttnPin**, DbncDlydMPBttn* **unltchBttn**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|  
+
+---  
+## **Methods definition and use description**
+---  
+
+# [XtrnUnltchMPBttn class Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_xtrn_unltch_m_p_bttn-members.html)
+
+## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+
 
 ---  
 ---  
+
+# **DblActnLtchMPBttn class**---  
+---  
+
+---  
+---  
+
+# **DDlydDALtchMPBttn class**---  
+---  
+---  
+
+---  
+
+# **SldrDALtchMPBttn class**---  
+---  
+---  
+
+---  
+
+# **VdblMPBttn class**---  
+---  
+---  
+
+
 # **Added Methods for TmVdblMPBttn class**  
 The **Time Voidable Momentary Button**, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released, or until a preset time in the ON state is reached. Then the switch will return to the Off position until the push button is released and pushed back. This kind of switches are used to activate limited resources related management or physical safety devices, and the possibility of a physical blocking of the switch to extend the ON signal artificially beyond designer's plans is highly undesired. Water valves, door unlocking mechanisms, hands-off security mechanisms, high power heating devices are some of the usual uses for these type of switches. It's implemented in the **TmVdblMPBttn** class.  
 
@@ -273,3 +308,10 @@ The **Time Voidable Momentary Button**, keeps the ON state since the moment the 
 |**setIsVoided()**|bool **voidValue**|
 |**setVoidTime()**|None|
 |**updIsVoided()**|None|
+
+---  
+
+# **SnglSrvcVdblMPBttn class**---  
+---  
+---  
+
