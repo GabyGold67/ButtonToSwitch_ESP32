@@ -47,6 +47,8 @@ Just to add possibilities, consider that everywhere the **"Momentary Push Button
 
 # [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
+![ButtonToSwitch Library Classes Hierarchy](./Extras/MomentaryPushButtonUMLClassesOnly.jpg)
+
 ### The main output attribute flag kept updated for each and every class is the **isOn** flag, which defines the _**Off State**_ (isOn=false) and the _**On State**_ (isOn=true) of the instantiated objects.  
 
 ## The embedded behavior also includes logical replacements for temporary or extraordinay responses that usually need external hardware modifications in electromechanical switches:
