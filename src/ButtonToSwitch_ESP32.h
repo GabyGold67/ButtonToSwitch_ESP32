@@ -1500,7 +1500,7 @@ public:
      */
 	void clrStatus(bool clrIsOn = true);
     /**
- 	 * @brief Returns the function that is set to execute every time the object **enters** the **Voided State**.
+ 	 * @brief Returns the function that is set to execute every time the object **exits** the **Voided State**.
  	 *
  	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffVddPtr()** method.
  	 *
