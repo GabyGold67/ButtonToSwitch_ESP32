@@ -45,54 +45,45 @@ const uint8_t dmpbLoadPin{GPIO_NUM_21};
 const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
 const uint8_t curValLoadPin{GPIO_NUM_17};
 
-SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100);
-dmpbBttn.setScndModActvDly(2000);
+SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100, 1280);
 
 
-
-/*
-
-	dmpbBttn.setSldrDirDn();
-	dmpbBttn.setSwpDirOnPrss(true);
-	dmpbBttn.setOtptValMin(0);
-	dmpbBttn.setOtptValMax(2000);
-	dmpbBttn.setOtptSldrStpSize(1);
-	dmpbBttn.setOtptCurVal(1000);
-
-	dmpbBttn.begin(5);
-
-*/
 bool mpbttnLstStts{false};
-bool mpbttnLstVdd{false};
+bool mpbttnLstOnScndry{false};
+uint16_t mpbttnLstCurVal{0};
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
-  pinMode(tvLoadPin, OUTPUT);
+  pinMode(isOnScndryLoadPin, OUTPUT);
+  pinMode(curValLoadPin, OUTPUT);
 
-  dmpbBttn.begin();
+  dmpbBttn.setOtptValMin(0);
+  dmpbBttn.setOtptValMax(2550);
+  dmpbBttn.setSldrDirDn();
+  dmpbBttn.setSwpDirOnPrss(true);
+  dmpbBttn.setOtptSldrStpSize(1);
+  dmpbBttn.setScndModActvDly(2000);
+  dmpbBttn.begin(5);
 }
 
 void loop() {
   if(dmpbBttn.getOutputsChange()){
     if(mpbttnLstStts != dmpbBttn.getIsOn()){
       mpbttnLstStts = dmpbBttn.getIsOn();
-      if (mpbttnLstStts){
-        digitalWrite(dmpbLoadPin, HIGH);
-      }
-      else{
-        digitalWrite(dmpbLoadPin, LOW);
-      }
+      digitalWrite(dmpbLoadPin, mpbttnLstStts?HIGH:LOW);
+      analogWrite(curValLoadPin, mpbttnLstStts?(mpbttnLstCurVal/10):0);
     }
     
-    if(mpbttnLstVdd != dmpbBttn.getIsVoided()){
-      mpbttnLstVdd = dmpbBttn.getIsVoided();
-      if (mpbttnLstVdd){
-        digitalWrite(tvLoadPin, HIGH);
-      }
-      else{
-        digitalWrite(tvLoadPin, LOW);
-      }
+    if(mpbttnLstOnScndry != dmpbBttn.getIsOnScndry()){
+      mpbttnLstOnScndry = dmpbBttn.getIsOnScndry();
+      digitalWrite(isOnScndryLoadPin, mpbttnLstOnScndry?HIGH:LOW);
     }
+
+    if(mpbttnLstCurVal != dmpbBttn.getOtptCurVal()){
+      mpbttnLstCurVal = dmpbBttn.getOtptCurVal();
+      analogWrite(curValLoadPin, mpbttnLstCurVal/10);
+    }
+
     dmpbBttn.setOutputsChange(false);
   }  
 }
