@@ -125,12 +125,12 @@ swapSldrDir KEYWORD2
 ###########
 getFnWhnTrnOffVdd KEYWORD2
 getFnWhnTrnOnVdd  KEYWORD2
-getFrcOtptLvldWhnVdd KEYWORD2
+getFrcOtptLvlWhnVdd KEYWORD2
 getIsVoided KEYWORD2
 getStOnWhnOtpFrcd KEYWORD2
 getVoidTime KEYWORD2
-setFnWhnTrnOffVddPtr
-setFnWhnTrnOnVddtPtr
+setFnWhnTrnOffVddPtr KEYWORD2
+setFnWhnTrnOnVddtPtr KEYWORD2
 setIsNotVoided KEYWORD2
 setIsVoided KEYWORD2
 setVoidTime KEYWORD2
