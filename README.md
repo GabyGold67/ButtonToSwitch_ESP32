@@ -45,13 +45,13 @@ _**In an Industrial production machines environment**_ the operator's physical s
  
 Just to add possibilities, consider that everywhere the **"Momentary Push Button"** is mentioned, any kind of momentary digital activation signal provider might be used instead: touch sensors, PIR sensors, RFID signals, fingerprint reader and so on...  
 
-# [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+# [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ![ButtonToSwitch Library Classes Hierarchy](./Extras/MomentaryPushButtonUMLClassesOnly.jpg)
 
 ### The main output attribute flag kept updated for each and every class is the **isOn** flag, which defines the _**Off State**_ (isOn=false) and the _**On State**_ (isOn=true) of the instantiated objects.  
 
-## The embedded behavior also includes logical replacements for temporary or extraordinay responses that usually need external hardware modifications in electromechanical switches:
+## The embedded behavior also includes logical replacements for temporary or extraordinary responses that usually need external hardware modifications in electromechanical switches:
 - Switch disconnection.
 - Switch bypassing
 - Minimum pressing time for turning on/off.
@@ -113,15 +113,15 @@ The **Debounced Momentary Button** keeps the ON state since the moment the signa
 ## **Methods definition and use description**
 ---  
 
-# [DbncdMPBttn class Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_m_p_bttn-members.html)
+# [For DbncdMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)  
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)  
 
 ---  
 # **DbncdDlydMPBttn class**  
 The **Debounced Delayed Momentary Button**, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released. The reasons to add the delay are design related and are usually used to avoid registering unintentional presses, or to give some equipment (load) that needs time between repeated activations the benefit of the pause. If the push button is released before the delay configured, no press is registered at all. The delay time in this class as in the other classes that implement it, might be zero (0), defined by the developer and/or modified in runtime.  
 
-# **Added or modifyed Methods for DbncdDlydMPBttn class**  
+# **Added or modified Methods for DbncdDlydMPBttn class**  
   
 |Method | Parameters|
 |---|---|
@@ -134,9 +134,9 @@ The **Debounced Delayed Momentary Button**, keeps the ON state since the moment 
 ## **Methods definition and use description**
 ---  
 
-# [DbncdDlydMPBttn class Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_dlyd_m_p_bttn-members.html)
+# [For DbncdDlydMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_dlyd_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 # **LtchMPBttn class**  
@@ -152,7 +152,7 @@ This is an **Abstract Class** meaning that no object can be instantiated from it
  The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool), or to **set** both flags to generate an unlatch (see LtchMPBttn::unlatch().
 
 
-## **Added or Modifyed Methods for LtchMPBttn class**  
+## **Added or Modified Methods for LtchMPBttn class**  
 |Method | Parameters|
 |---|---|
 |**getIslatched()**|None|
@@ -168,15 +168,15 @@ This is an **Abstract Class** meaning that no object can be instantiated from it
 ## **Methods definition and use description**
 ---  
 
-# [LtchdMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_ltch_m_p_bttn-members.html)
+# [For LtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_ltch_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 # **TgglLtchMPBttn class**  
 The **Toggle switch**  keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. So this simulates a simple On-Off switch like the ones used to turn on/off a room light, or any electronic device. There's a lot of advantages in software simulated switches: any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource, the switch might be temporarily disabled, either keeping the On State or the Off State, and some more.  
 
-## **Added or Modifyed Methods for LtchMPBttn class**  
+## **Added or Modified Methods for LtchMPBttn class**  
 |Method | Parameters|
 |---|---|
 |**_TgglLtchMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
@@ -185,15 +185,15 @@ The **Toggle switch**  keeps the ON state since the moment the signal is stable 
 ## **Methods definition and use description**
 ---  
 
-# [TgglLtchdMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tggl_ltch_m_p_bttn-members.html)
+# [For TgglLtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tggl_ltch_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 # **TmLtchMPBttn class**  
 The **Time latched** or **Timer Switch** keeps the ON state **since the moment the signal is debounced and delayed**, and keeps the ON state during a set time. The **Service time** is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before reaches the time limit if the push button is pressed again.  
   
-## **Added or Modifyed Methods for TmLtchMPBttn class**  
+## **Added or Modified Methods for TmLtchMPBttn class**  
 |Method | Parameters|
 |---|---|
 |**_TmLtchMPBttn_** |uint8_t **mpbttnPin**, unsigned long int **actTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
@@ -205,15 +205,15 @@ The **Time latched** or **Timer Switch** keeps the ON state **since the moment t
 ## **Methods definition and use description**
 ---  
 
-# [TmLtchdMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html)
+# [For TmLtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 # **HntdTmLtchMPBttn class**
 The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state since the moment the signal is debounced, and keeps the state during a set time, the switch time is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before it gets to the end if the push button is pressed, the option to give a warning when the time is close to the end through a second flag (remaining time is defined as a percentage of the total ON time and it's configurable), and the possibility to set a third signal ON while the switch is off, just like the pilot light (hint) in a staircase timer switch. The warning signal is independent of the off hint.  
 
-## **Added or Modifyed Methods for HntdTmLtchMPBttn class**  
+## **Added or Modified Methods for HntdTmLtchMPBttn class**  
 
 |Method | Parameters|
 |---|---|
@@ -235,15 +235,15 @@ The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state 
 ## **Methods definition and use description**
 ---  
 
-# [HntdTmLtchMPBttn class Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_hntd_tm_ltch_m_p_bttn-members.html)
+# [For HntdTmLtchMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_hntd_tm_ltch_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 # **XtrnUnLtchMPBttn class**
-The **External released toggle** (a.k.a. Emergency latched), keeps the On state since the moment the signal is debounced, and until an external signal is received. This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. Smoke, flood, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physicaly or logicaly generated it can be implemented to be received from a switch or a remote signal of any usual kind.  
+The **External released toggle** (a.k.a. Emergency latched), keeps the On state since the moment the signal is debounced, and until an external signal is received. This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. Smoke, flood, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physically or logically generated it can be implemented to be received from a switch or a remote signal of any usual kind.  
   
-## **Added or Modifyed Methods for XtrnUnltchMPBttn class**  
+## **Added or Modified Methods for XtrnUnltchMPBttn class**    
 
 |Method | Parameters|
 |---|---|
@@ -254,9 +254,9 @@ The **External released toggle** (a.k.a. Emergency latched), keeps the On state 
 ## **Methods definition and use description**
 ---  
 
-# [XtrnUnltchMPBttn class Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_xtrn_unltch_m_p_bttn-members.html)
+# [For XtrnUnltchMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_xtrn_unltch_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 
@@ -284,7 +284,7 @@ The **External released toggle** (a.k.a. Emergency latched), keeps the On state 
 
  > [!NOTE] The **long press** is a configurable attribute of the class, the **Secondary Mode Activation Delay** (scndModActvDly) that holds the time after the Debounce + Delay period that the MPB must remain pressed to activate the mentioned mode. The same time will be required to keep pressed the MPB while in **Main Behavior** to enter the **Secondary behavior**.  
 
-## **Added or Modifyed Methods for DblActnLtchMPBttn class**  
+## **Added or Modified Methods for DblActnLtchMPBttn class**  
 |Method | Parameters|
 |---|---|
 |**getFnWhnTrnOffScndry()**|None|
@@ -301,9 +301,9 @@ The **External released toggle** (a.k.a. Emergency latched), keeps the On state 
 ## **Methods definition and use description**
 ---  
 
-# [DblActnLtchMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbl_actn_ltch_m_p_bttn-members.html)
+# [For DblActnLtchMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbl_actn_ltch_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 
@@ -317,7 +317,7 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
  - While in the 2. state (On-Off), a short press will set the switch to the 1. state (Off-Off).  
  - While in the 2. state (On-Off), a long press will set the switch to the 3. state (On-On), until the releasing of the MPB, returning the switch to the **main On state** 2. (On-Off).  
 
- ## **Added or Modifyed Methods for DDlydDALtchMPBttn class**  
+ ## **Added or Modified Methods for DDlydDALtchMPBttn class**    
 |Method | Parameters|
 |---|---|
 |**DDlydDALtchMPBttn()**|uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
@@ -325,9 +325,9 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 ## **Methods definition and use description**
 ---  
 
-# [DDlydDALtchMPBttn Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_d_dlyd_d_a_ltch_m_p_bttn-members.html)
+# [For DDlydDALtchMPBttn Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_d_dlyd_d_a_ltch_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 
@@ -348,7 +348,7 @@ SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. off/
  - Automatically revert direction when reaching the minimum and maximum values setting.
  - Revert direction by methods invocation (see setSldrDirDn(), setSldrDirUp(), swapSldrDir()).
  
- ## **Added or Modifyed Methods for SldrDALtchMPBttn class**  
+ ## **Added or Modified Methods for SldrDALtchMPBttn class**  
 |Method | Parameters|
 |---|---|
 |**SldrDALtchMPBttn()**|uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**(,  uint16_t initVal)))))|
@@ -375,9 +375,9 @@ SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. off/
 ## **Methods definition and use description**
 ---  
 
-# [SldrDALtchMPBttn Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_sldr_d_a_ltch_m_p_bttn-members.html)
+# [For SldrDALtchMPBttn Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_sldr_d_a_ltch_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 # **VdblMPBttn class**
@@ -396,16 +396,16 @@ SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. off/
  
  The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclasses.  
 
-## **Added or Modifyed Methods for VdblMPBttn class**  
+## **Added or Modified Methods for VdblMPBttn class**  
 |Method | Parameters|
 |---|---|
 |**getFnWhnTrnOffVdd()**|None|
 |**getFnWhnTrnOnVdd()**|None|
-|**getFrcOtptLvldWhnVdd()**|None|
+|**getFrcOtptLvlWhnVdd()**|None|
 |**getIsVoided()**|None|
 |**getStOnWhnOtpFrcd()**|None|
 |**setFnWhnTrnOffVddPtr()**|void* **newFnWhnTrnOff**|
-|**setFnWhnTrnOnVddtPtr()**|void* **newFnWhnTrnOn**|
+|**setFnWhnTrnOnVddPtr()**|void* **newFnWhnTrnOn**|
 |**setIsNotVoided()**|None|
 |**setIsVoided()**|None|
 
@@ -413,9 +413,9 @@ SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. off/
 ## **Methods definition and use description**
 ---  
 
-# [VdblMPBttn Subclasses Common Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_vdbl_m_p_bttn-members.html)
+# [For VdblMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_vdbl_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 # **TmVdblMPBttn class**  
@@ -432,9 +432,9 @@ The **Time Voidable Momentary Button**, keeps the ON state since the moment the 
 ---  
 ## **Methods definition and use description**
 ---  
-# [TmVdblMPBttn Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_vdbl_m_p_bttn-members.html)
+# [For TmVdblMPBttn Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_vdbl_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---  
 # **SnglSrvcVdblMPBttn class**
@@ -445,9 +445,9 @@ The **Time Voidable Momentary Button**, keeps the ON state since the moment the 
  After the **configured mechanisms** are triggered and the attribute flag is set to **true** (the only mandatory action is the attribute flag setting, all the others are configurable to execute or not) the MPB will enter the **Voided State**, forcing the MPB into the **Off State** by design. The SnglSrvcVdblMPBttn class objects requires the MPB to be released to exit the **Voided State**, restarting the cycle.  
  This kind of switches are used to handle "Single Shot Trigger" style signals, ensuring **one single signal triggered per push**.  
  
- > [!CAUTION] Depending on checking the **isOn** attribute flag reading trough the **getIsOn(**) method will surely fail due to the high risk of missing the short time the flag will be raised before it is again taken down by the voidance of the MPB. The use of the non-polling facilities ensures no loss of signals and enough time to execute the code depending on the "trigger activation", including the **fnWhnTrnOn** function, and the **taskToNotify** task.  
+ >[!CAUTION] Depending on checking the **isOn** attribute flag reading trough the **getIsOn(**) method will surely fail due to the high risk of missing the short time the flag will be raised before it is again taken down by the voidance of the MPB. The use of the non-polling facilities ensures no loss of signals and enough time to execute the code depending on the "trigger activation", including the **fnWhnTrnOn** function, and the **taskToNotify** task.  
  
- > [!NOTE] Due to the short time the **isOn** flag will be raised, as described above, the  resuming of the **taskWhileOn** activation mechanism is disabled in this class. For that purpose the setTaskWhileOn(const TaskHandle_t) is made **not accessible**.  
+ >[!NOTE] Due to the short time the **isOn** flag will be raised, as described above, the  resuming of the **taskWhileOn** activation mechanism is disabled in this class. For that purpose the setTaskWhileOn(const TaskHandle_t) is made **not accessible**.  
  
  > [!NOTE] Due to the short time the **isOn** flag will be raised, as described above, the short time between the **fnWhnTrnOn** function and the **fnWhnTrnOff** function callings must also need to be carefully evaluated by the user.  
 
@@ -458,7 +458,7 @@ The **Time Voidable Momentary Button**, keeps the ON state since the moment the 
 
 ## **Methods definition and use description**
 ---  
-# [SnglSrvcVdblMPBttn Members Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_sngl_srvc_vdbl_m_p_bttn-members.html)
+# [For SnglSrvcVdblMPBttn Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_sngl_srvc_vdbl_m_p_bttn-members.html)
 
-## [ButtonToSwitch for ESP32 Library Complete Documentation Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 

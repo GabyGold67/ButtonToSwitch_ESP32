@@ -1,20 +1,19 @@
 /**
   ******************************************************************************
-  * @file	: 11_SldrDALtchMPBttn_1a.ino
-  * @brief  : Example for the ButtonToSwitch_ESP32 library SldrDALtchMPBttn class
+  * @file	: 12_DDlydDALtchMPBttn_1a.ino
+  * @brief  : Example for the ButtonToSwitch_ESP32 library DDlydDALtchMPBttn class
   *
   *   Framework: Arduino
   *   Platform: ESP32
   * 
-  * The example instantiates a SldrDALtchMPBttn object using:
+  * The example instantiates a DDlydDALtchMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
   *   - 1 led with it's corresponding resistor between GND and isOnScndryLoadPin
-  *   - 1 led with it's corresponding resistor between GND and curValLoadPin
   *
   * ### This example doesn't create extra Tasks:
   *
-  * This simple example instantiates the SldrDALtchMPBttn object in the setup(),
+  * This simple example instantiates the DDlydDALtchMPBttn object in the setup(),
   * and uses the default "loop ()" (and yes, loop() is part of the loopTask()
   * disguised in the Ardu-ESP), in it and checks it's attribute flags locally
   * through the getters methods.
@@ -42,27 +41,17 @@
 
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
 const uint8_t dmpbLoadPin{GPIO_NUM_21};
-// const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
-// const uint8_t curValLoadPin{GPIO_NUM_17};
+const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
 
 SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100, 1280);
 
-
 bool mpbttnLstStts{false};
-// bool mpbttnLstOnScndry{false};
-uint16_t mpbttnLstCurVal{0};
+bool mpbttnLstOnScndry{false};
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
-  // pinMode(isOnScndryLoadPin, OUTPUT);
-  // pinMode(curValLoadPin, OUTPUT);
+  pinMode(isOnScndryLoadPin, OUTPUT);
 
-  dmpbBttn.setOtptValMin(255);
-  dmpbBttn.setOtptValMax(2550);
-  dmpbBttn.setSldrDirDn();
-  dmpbBttn.setSwpDirOnEnd(false);
-  dmpbBttn.setSwpDirOnPrss(true);
-  dmpbBttn.setOtptSldrStpSize(1);
   dmpbBttn.setScndModActvDly(2000);
   dmpbBttn.begin(5);
 }
@@ -71,18 +60,12 @@ void loop() {
   if(dmpbBttn.getOutputsChange()){
     if(mpbttnLstStts != dmpbBttn.getIsOn()){
       mpbttnLstStts = dmpbBttn.getIsOn();
-      // digitalWrite(dmpbLoadPin, mpbttnLstStts?HIGH:LOW);
-      analogWrite(dmpbLoadPin, mpbttnLstStts?(mpbttnLstCurVal/10):0);
+      digitalWrite(dmpbLoadPin, mpbttnLstStts?HIGH:LOW);
     }
     
-    // if(mpbttnLstOnScndry != dmpbBttn.getIsOnScndry()){
-    //   mpbttnLstOnScndry = dmpbBttn.getIsOnScndry();
-    //   digitalWrite(isOnScndryLoadPin, mpbttnLstOnScndry?HIGH:LOW);
-    // }
-
-    if(mpbttnLstCurVal != dmpbBttn.getOtptCurVal()){
-      mpbttnLstCurVal = dmpbBttn.getOtptCurVal();
-      analogWrite(dmpbLoadPin, mpbttnLstCurVal/10);
+    if(mpbttnLstOnScndry != dmpbBttn.getIsOnScndry()){
+      mpbttnLstOnScndry = dmpbBttn.getIsOnScndry();
+      digitalWrite(isOnScndryLoadPin, mpbttnLstOnScndry?HIGH:LOW);
     }
 
     dmpbBttn.setOutputsChange(false);

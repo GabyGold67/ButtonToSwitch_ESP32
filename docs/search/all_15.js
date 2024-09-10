@@ -1,10 +1,7 @@
 var searchData=
 [
-  ['_7edblactnltchmpbttn_0',['~DblActnLtchMPBttn',['../class_dbl_actn_ltch_m_p_bttn.html#aeac43f6938213f2de9cb4060b1d47c00',1,'DblActnLtchMPBttn']]],
-  ['_7edbncdmpbttn_1',['~DbncdMPBttn',['../class_dbncd_m_p_bttn.html#a3f0f4c1a3b122541031fecaf9bb93101',1,'DbncdMPBttn']]],
-  ['_7eddlyddaltchmpbttn_2',['~DDlydDALtchMPBttn',['../class_d_dlyd_d_a_ltch_m_p_bttn.html#a896fbb36cad2c7c54a86f4e71b7e92bc',1,'DDlydDALtchMPBttn']]],
-  ['_7esldrdaltchmpbttn_3',['~SldrDALtchMPBttn',['../class_sldr_d_a_ltch_m_p_bttn.html#a6d3a32faa67706cd6ec09899c1a7cc37',1,'SldrDALtchMPBttn']]],
-  ['_7esnglsrvcvdblmpbttn_4',['~SnglSrvcVdblMPBttn',['../class_sngl_srvc_vdbl_m_p_bttn.html#a79bfd4e433d210d6b0320149ee8b0dc2',1,'SnglSrvcVdblMPBttn']]],
-  ['_7etmvdblmpbttn_5',['~TmVdblMPBttn',['../class_tm_vdbl_m_p_bttn.html#a2ece84b47468d7804c5d4c0238195aee',1,'TmVdblMPBttn']]],
-  ['_7evdblmpbttn_6',['~VdblMPBttn',['../class_vdbl_m_p_bttn.html#a99c75dd8225c791015dcdbc8b1c9a07e',1,'VdblMPBttn']]]
+  ['xtrnunltchmpbttn_0',['XtrnUnltchMPBttn',['../class_xtrn_unltch_m_p_bttn.html',1,'XtrnUnltchMPBttn'],['../class_xtrn_unltch_m_p_bttn.html#aba0f577e4d6207750ff5964f08c84b19',1,'XtrnUnltchMPBttn::XtrnUnltchMPBttn(const uint8_t &amp;mpbttnPin, DbncdDlydMPBttn *unLtchBttn, const bool &amp;pulledUp, const bool &amp;typeNO, const unsigned long int &amp;dbncTimeOrigSett, const unsigned long int &amp;strtDelay)'],['../class_xtrn_unltch_m_p_bttn.html#aa05bf58859c3aa624835139b805582fd',1,'XtrnUnltchMPBttn::XtrnUnltchMPBttn(const uint8_t &amp;mpbttnPin, const bool &amp;pulledUp, const bool &amp;typeNO, const unsigned long int &amp;dbncTimeOrigSett, const unsigned long int &amp;strtDelay)']]],
+  ['xtrnunltchmpbttn_20class_20members_20documentation_20here_20a_1',['&lt;a href=&quot;https://gabygold67.github.io/ButtonToSwitch_ESP32/class_xtrn_unltch_m_p_bttn-members.html&quot; &gt;XtrnUnltchMPBttn class Members Documentation Here!&lt;/a&gt;',['../index.html#xtrnunltchmpbttn-class-members-documentation-herehttpsgabygold67githubiobuttontoswitch_esp32class_xtrn_unltch_m_p_bttn-membershtml',1,'']]],
+  ['xtrnunltchmpbttn_20class_20strong_2',['&lt;strong&gt;XtrnUnLtchMPBttn class&lt;/strong&gt;',['../index.html#xtrnunltchmpbttn-class',1,'']]],
+  ['xtrnunltchmpbttn_20class_20strong_3',['&lt;strong&gt;Added or Modified Methods for XtrnUnltchMPBttn class&lt;/strong&gt;',['../index.html#added-or-modified-methods-for-xtrnunltchmpbttn-class',1,'']]]
 ];

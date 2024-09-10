@@ -1526,7 +1526,7 @@ public:
     *
      * @note As of this version of the library no VdblMPBttn class or subclasses **make use of the frcOtptLvlWhnVdd attribute**, their inclusion is "New Features Under Development" related to the refactoring of **binary states** to **Non-binary states**.
      */
-    bool getFrcOtptLvldWhnVdd();
+    bool getFrcOtptLvlWhnVdd();
     /**
      * @brief Returns the current value of the isVoided attribute flag
      *
@@ -1562,7 +1562,7 @@ public:
  	 *
  	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object's **isVoided is set**. Passing **nullptr** as parameter deactivates the function execution mechanism.
  	 */
- 	void setFnWhnTrnOnVddtPtr(void(*newFnWhnTrnOn)());
+ 	void setFnWhnTrnOnVddPtr(void(*newFnWhnTrnOn)());
 	 /**
      * @brief Sets the value of the isVoided attribute flag to false
      *

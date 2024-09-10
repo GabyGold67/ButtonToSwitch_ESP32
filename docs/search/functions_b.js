@@ -9,7 +9,7 @@ var searchData=
   ['setfnwhntrnonpilotptr_6',['setFnWhnTrnOnPilotPtr',['../class_hntd_tm_ltch_m_p_bttn.html#a7b430e496b8987a607048d7440191035',1,'HntdTmLtchMPBttn']]],
   ['setfnwhntrnonptr_7',['setFnWhnTrnOnPtr',['../class_dbncd_m_p_bttn.html#ad1e5decc11a29c7ac2417cde9b43fc4e',1,'DbncdMPBttn']]],
   ['setfnwhntrnonscndryptr_8',['setFnWhnTrnOnScndryPtr',['../class_dbl_actn_ltch_m_p_bttn.html#a07a8cb5be3e7cc106debc5a3db5c4585',1,'DblActnLtchMPBttn']]],
-  ['setfnwhntrnonvddtptr_9',['setFnWhnTrnOnVddtPtr',['../class_vdbl_m_p_bttn.html#a8a7c1f97bc16032dfd75725dcb126c62',1,'VdblMPBttn']]],
+  ['setfnwhntrnonvddptr_9',['setFnWhnTrnOnVddPtr',['../class_vdbl_m_p_bttn.html#a8515217c7ed658a1d360d724c512e813',1,'VdblMPBttn']]],
   ['setfnwhntrnonwrnngptr_10',['setFnWhnTrnOnWrnngPtr',['../class_hntd_tm_ltch_m_p_bttn.html#ac880106b79da490e62fae0138eaa42a5',1,'HntdTmLtchMPBttn']]],
   ['setisnotvoided_11',['setIsNotVoided',['../class_vdbl_m_p_bttn.html#ae868643c7398bc5e351f8a70eb47201c',1,'VdblMPBttn']]],
   ['setisondisabled_12',['setIsOnDisabled',['../class_dbncd_m_p_bttn.html#a55644500cc3b52282c439ca4541a2351',1,'DbncdMPBttn']]],

@@ -47,8 +47,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_button_to_switch___e_s_p32_8cpp.html",
-"index.html#return-value-16"
+"_button_to_switch___e_s_p32_8cpp.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

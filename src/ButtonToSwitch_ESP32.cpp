@@ -2635,7 +2635,7 @@ fncPtrType VdblMPBttn::getFnWhnTrnOnVdd(){
 	return _fnWhnTrnOnVdd;
 }
 
-bool VdblMPBttn::getFrcOtptLvldWhnVdd(){
+bool VdblMPBttn::getFrcOtptLvlWhnVdd(){
 
 	return _frcOtptLvlWhnVdd;
 }
@@ -2704,7 +2704,7 @@ void VdblMPBttn::setFnWhnTrnOffVddPtr(void(*newFnWhnTrnOff)()){
 
 }
 
-void VdblMPBttn::setFnWhnTrnOnVddtPtr(void(*newFnWhnTrnOn)()){
+void VdblMPBttn::setFnWhnTrnOnVddPtr(void(*newFnWhnTrnOn)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);

@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file	: 11_SldrDALtchMPBttn_1a.ino
+  * @file	: 11_SldrDALtchMPBttn_1b.ino
   * @brief  : Example for the ButtonToSwitch_ESP32 library SldrDALtchMPBttn class
   *
   *   Framework: Arduino
@@ -42,25 +42,24 @@
 
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
 const uint8_t dmpbLoadPin{GPIO_NUM_21};
-// const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
-// const uint8_t curValLoadPin{GPIO_NUM_17};
+const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
+const uint8_t curValLoadPin{GPIO_NUM_17};
 
 SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100, 1280);
 
 
 bool mpbttnLstStts{false};
-// bool mpbttnLstOnScndry{false};
+bool mpbttnLstOnScndry{false};
 uint16_t mpbttnLstCurVal{0};
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
-  // pinMode(isOnScndryLoadPin, OUTPUT);
-  // pinMode(curValLoadPin, OUTPUT);
+  pinMode(isOnScndryLoadPin, OUTPUT);
+  pinMode(curValLoadPin, OUTPUT);
 
-  dmpbBttn.setOtptValMin(255);
+  dmpbBttn.setOtptValMin(0);
   dmpbBttn.setOtptValMax(2550);
   dmpbBttn.setSldrDirDn();
-  dmpbBttn.setSwpDirOnEnd(false);
   dmpbBttn.setSwpDirOnPrss(true);
   dmpbBttn.setOtptSldrStpSize(1);
   dmpbBttn.setScndModActvDly(2000);
@@ -71,18 +70,18 @@ void loop() {
   if(dmpbBttn.getOutputsChange()){
     if(mpbttnLstStts != dmpbBttn.getIsOn()){
       mpbttnLstStts = dmpbBttn.getIsOn();
-      // digitalWrite(dmpbLoadPin, mpbttnLstStts?HIGH:LOW);
-      analogWrite(dmpbLoadPin, mpbttnLstStts?(mpbttnLstCurVal/10):0);
+      digitalWrite(dmpbLoadPin, mpbttnLstStts?HIGH:LOW);
+      analogWrite(curValLoadPin, mpbttnLstStts?(mpbttnLstCurVal/10):0);
     }
     
-    // if(mpbttnLstOnScndry != dmpbBttn.getIsOnScndry()){
-    //   mpbttnLstOnScndry = dmpbBttn.getIsOnScndry();
-    //   digitalWrite(isOnScndryLoadPin, mpbttnLstOnScndry?HIGH:LOW);
-    // }
+    if(mpbttnLstOnScndry != dmpbBttn.getIsOnScndry()){
+      mpbttnLstOnScndry = dmpbBttn.getIsOnScndry();
+      digitalWrite(isOnScndryLoadPin, mpbttnLstOnScndry?HIGH:LOW);
+    }
 
     if(mpbttnLstCurVal != dmpbBttn.getOtptCurVal()){
       mpbttnLstCurVal = dmpbBttn.getOtptCurVal();
-      analogWrite(dmpbLoadPin, mpbttnLstCurVal/10);
+      analogWrite(curValLoadPin, mpbttnLstCurVal/10);
     }
 
     dmpbBttn.setOutputsChange(false);
