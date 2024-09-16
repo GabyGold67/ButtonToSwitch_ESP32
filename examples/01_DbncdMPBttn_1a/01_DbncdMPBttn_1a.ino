@@ -10,10 +10,10 @@
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
   *
-  * ### This example doesn't create extra Tasks:
+  * ### This example doesn't create extra Tasks (by using the default `loopTask` Task):
   *
   * This simple example instantiates the DbncdMPBttn object in the setup(),
-  * and uses the default "loop ()" (and yes, loop() is the loopTask() disguised
+  * and uses the default `loop ()` (loop() is the loopTask() disguised
   * in the Ardu-ESP), in it and checks it's attribute flags locally through the 
   * getters methods.
   * 
@@ -34,16 +34,13 @@
   *
   ******************************************************************************
   */
-
 #include <Arduino.h>
 #include <ButtonToSwitch_ESP32.h>
 
-const uint8_t dmpbLoadPin{GPIO_NUM_21};
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
+const uint8_t dmpbLoadPin{GPIO_NUM_21};
 
 DbncdMPBttn dmpbBttn (dmpbSwitchPin);
-
-bool mpbttnLstStts{false};
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
@@ -52,15 +49,13 @@ void setup() {
 
 void loop() {
   if(dmpbBttn.getOutputsChange()){
-    if(mpbttnLstStts != dmpbBttn.getIsOn()){
-      mpbttnLstStts = dmpbBttn.getIsOn();
-      if (mpbttnLstStts){
-        digitalWrite(dmpbLoadPin, HIGH);
-      }
-      else{
-        digitalWrite(dmpbLoadPin, LOW);
-      }
-    }
+    /* The following commented out section is replaced by the single line following, use whichever code you're more used to
+    if (dmpbBttn.getIsOn())
+      digitalWrite(dmpbLoadPin, HIGH);
+    else
+      digitalWrite(dmpbLoadPin, LOW);
+    */
+    digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
     dmpbBttn.setOutputsChange(false);
   }
 }  

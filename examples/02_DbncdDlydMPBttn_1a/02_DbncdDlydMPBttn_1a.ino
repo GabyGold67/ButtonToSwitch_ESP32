@@ -13,9 +13,9 @@
   * ### This example doesn't create extra Tasks:
   *
   * This simple example instantiates the DbncdDlydMPBttn object in the setup(),
-  * and uses the default "loop ()" (and yes, loop() is part of the loopTask()
-  * disguised in the Ardu-ESP), in it and checks it's attribute flags locally
-  * through the getters methods.
+  * and uses the default `loop ()` (loop() is the loopTask() disguised
+  * in the Ardu-ESP), in it and checks it's attribute flags locally through the 
+  * getters methods.
   * 
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
@@ -24,7 +24,7 @@
   * 	@author	: Gabriel D. Goldman
   *
   * 	@date	: 	01/08/2023 First release
-  * 				    05/09/2024 Last update
+  * 				    15/09/2024 Last update
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -34,16 +34,13 @@
   *
   ******************************************************************************
   */
-
 #include <Arduino.h>
 #include <ButtonToSwitch_ESP32.h>
 
-const uint8_t dmpbLoadPin{GPIO_NUM_21};
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
+const uint8_t dmpbLoadPin{GPIO_NUM_21};
 
-DbncdDlydMPBttn dmpbBttn (dmpbSwitchPin, true, true, 50, 250);
-
-bool mpbttnLstStts{false};
+DbncdDlydMPBttn dmpbBttn (dmpbSwitchPin, true, true, 50, 350);
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
@@ -52,15 +49,13 @@ void setup() {
 
 void loop() {
   if(dmpbBttn.getOutputsChange()){
-    if(mpbttnLstStts != dmpbBttn.getIsOn()){
-      mpbttnLstStts = dmpbBttn.getIsOn();
-      if (mpbttnLstStts){
-        digitalWrite(dmpbLoadPin, HIGH);
-      }
-      else{
-        digitalWrite(dmpbLoadPin, LOW);
-      }
-    }
+    /* The following commented out section is replaced by the single line following, use whichever code you're more used to
+    if (dmpbBttn.getIsOn())
+      digitalWrite(dmpbLoadPin, HIGH);
+    else
+      digitalWrite(dmpbLoadPin, LOW);
+    */
+    digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
     dmpbBttn.setOutputsChange(false);
   }
 }  

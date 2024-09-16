@@ -1,0 +1,13 @@
+# v4.0.2 Refactoring update
+All changes are transpartent to the user.
+- outputschange attribute flag setting added, as the isOn, isEnabled, pilotOn, wrnngOn, isVoided, isOnScndry simple value assignement are refactored into full methods.
+- outputschange attribute flag setting by simple assignement after above mentioned methods execution removed (as it now is uneeded code duplication).
+- Examples added for several classes.
+
+
+# v4.0.1 Documentation update
+- Documentation update
+- Non-tested examples deleted from package
+
+# v4.0.0 Initial Release for ESP32-Arduino
+- This initial release refactors the STM32 library version for the ESP32 MCU for the Arduino environment

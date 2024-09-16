@@ -9,8 +9,7 @@
   * The example instantiates a SldrDALtchMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
-  *   - 1 led with it's corresponding resistor between GND and isOnScndryLoadPin
-  *   - 1 led with it's corresponding resistor between GND and curValLoadPin
+  * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
   *
   * ### This example doesn't create extra Tasks:
   *
@@ -22,11 +21,24 @@
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
   * example case are the output of some GPIO pins.
+  * 
+  * This example shows the use of a SldrDALtchMPBttn to:
+  * - Turn On a led
+  * - Turn Off a led
+  * - While the led is On, pressing the MPB for more than 2 seconds (or holding
+  *  the MPB while the led is Off for more than 2 seconds after the debounce
+  *  period) the led brightness will start changing to a lower brightness.
+  * - Releasing the MPB will stop the dimming
+  * - Pressing the MPB back for a long press will start changing the led to a higher
+  * brightness.
+  * - Pressing the MPB back for a short press will turn it Off
+  * - Pressing once again for a short press will turn it On again, at the same brightness
+  * level it was before turned Off
   *
   * 	@author	: Gabriel D. Goldman
   *
   * 	@date	: 	01/08/2023 First release
-  * 				    05/09/2024 Last update
+  * 				    16/09/2024 Last update
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -36,26 +48,19 @@
   *
   ******************************************************************************
   */
-
 #include <Arduino.h>
 #include <ButtonToSwitch_ESP32.h>
 
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
 const uint8_t dmpbLoadPin{GPIO_NUM_21};
-// const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
-// const uint8_t curValLoadPin{GPIO_NUM_17};
 
 SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100, 1280);
 
-
 bool mpbttnLstStts{false};
-// bool mpbttnLstOnScndry{false};
 uint16_t mpbttnLstCurVal{0};
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
-  // pinMode(isOnScndryLoadPin, OUTPUT);
-  // pinMode(curValLoadPin, OUTPUT);
 
   dmpbBttn.setOtptValMin(255);
   dmpbBttn.setOtptValMax(2550);
@@ -68,23 +73,20 @@ void setup() {
 }
 
 void loop() {
-  if(dmpbBttn.getOutputsChange()){
-    if(mpbttnLstStts != dmpbBttn.getIsOn()){
-      mpbttnLstStts = dmpbBttn.getIsOn();
-      // digitalWrite(dmpbLoadPin, mpbttnLstStts?HIGH:LOW);
-      analogWrite(dmpbLoadPin, mpbttnLstStts?(mpbttnLstCurVal/10):0);
-    }
-    
-    // if(mpbttnLstOnScndry != dmpbBttn.getIsOnScndry()){
-    //   mpbttnLstOnScndry = dmpbBttn.getIsOnScndry();
-    //   digitalWrite(isOnScndryLoadPin, mpbttnLstOnScndry?HIGH:LOW);
-    // }
+   if(dmpbBttn.getOutputsChange()){
+      /* The following commented out section is replaced by the single line following, use whichever code you're more used to
+      if(mpbttnLstStts != dmpbBttn.getIsOn()){
+         mpbttnLstStts = dmpbBttn.getIsOn();
+         analogWrite(dmpbLoadPin, mpbttnLstStts?(mpbttnLstCurVal/10):0);
+      }
+      
+      if(mpbttnLstCurVal != dmpbBttn.getOtptCurVal()){
+         mpbttnLstCurVal = dmpbBttn.getOtptCurVal();
+         analogWrite(dmpbLoadPin, mpbttnLstCurVal/10);
+      }
+      */
+      analogWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?(dmpbBttn.getOtptCurVal()/10):0);
 
-    if(mpbttnLstCurVal != dmpbBttn.getOtptCurVal()){
-      mpbttnLstCurVal = dmpbBttn.getOtptCurVal();
-      analogWrite(dmpbLoadPin, mpbttnLstCurVal/10);
-    }
-
-    dmpbBttn.setOutputsChange(false);
-  }  
+      dmpbBttn.setOutputsChange(false);
+   }  
 }

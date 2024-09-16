@@ -12,7 +12,7 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.0.0
+  * @version v4.0.1
   * @date	: Created on: 06/11/2023
   * 		: Last modification: 28/08/2024
   * @copyright GPL-3.0 license
