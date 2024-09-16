@@ -15,9 +15,9 @@
   * ### This example doesn't create extra Tasks:
   *
   * This simple example instantiates the HntdTmLtchMPBttn object in the setup(),
-  * and uses the default "loop ()" (and yes, loop() is part of the loopTask()
-  * disguised in the Ardu-ESP), in it and checks it's attribute flags locally
-  * through the getters methods.
+  * and uses the default `loop ()` (loop() is the loopTask() disguised
+  * in the Ardu-ESP), in it and checks it's attribute flags locally through the 
+  * getters methods.
   * 
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
@@ -26,7 +26,7 @@
   * 	@author	: Gabriel D. Goldman
   *
   * 	@date	: 	01/08/2023 First release
-  * 				    05/09/2024 Last update
+  * 				    15/09/2024 Last update
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -36,7 +36,6 @@
   *
   ******************************************************************************
   */
-
 #include <Arduino.h>
 #include <ButtonToSwitch_ESP32.h>
 
@@ -47,40 +46,41 @@ const uint8_t pltLoadPin{GPIO_NUM_17};
 
 HntdTmLtchMPBttn dmpbBttn (dmpbSwitchPin, 4000, 25, true, true, 20, 50);
 
-bool mpbttnLstStts{false};
-bool mpbttnLstWrnng{false};
-bool mpbttnLstPlt{false};
-
-bool mpbttnCurStts{false};
-bool mpbttnCurWrnng{false};
-bool mpbttnCurPlt{false};
-
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
   pinMode(wrnngLoadPin, OUTPUT);
   pinMode(pltLoadPin, OUTPUT);
-
+  
   dmpbBttn.setKeepPilot(true);
-  dmpbBttn.begin();
+  dmpbBttn.begin(20);
 }
 
 void loop() {
-  mpbttnCurStts = dmpbBttn.getIsOn();
-  mpbttnCurWrnng = dmpbBttn.getWrnngOn();
-  mpbttnCurPlt = dmpbBttn.getPilotOn();
+  if(dmpbBttn.getOutputsChange()){ //FAILS with the use of getOutputsChange!!!
+        /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
+    if (dmpbBttn.getIsOn())
+      digitalWrite(dmpbLoadPin, HIGH);
+    else
+      digitalWrite(dmpbLoadPin, LOW);
+    */
+    digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
 
-  if(mpbttnLstStts != mpbttnCurStts){
-    mpbttnLstStts = mpbttnCurStts;
-    digitalWrite(dmpbLoadPin, mpbttnLstStts?HIGH:LOW);
-  }
+    /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
+    if (dmpbBttn.getWrnngOn())
+      digitalWrite(wrnngLoadPin, HIGH);
+    else
+      digitalWrite(wrnngLoadPin, LOW);
+    */
+    digitalWrite(wrnngLoadPin, (dmpbBttn.getWrnngOn())?HIGH:LOW);
 
-  if(mpbttnLstWrnng != mpbttnCurWrnng){
-    mpbttnLstWrnng = mpbttnCurWrnng;
-    digitalWrite(wrnngLoadPin, mpbttnLstWrnng?HIGH:LOW);
-  }
-
-  if(mpbttnLstPlt != mpbttnCurPlt){
-    mpbttnLstPlt = mpbttnCurPlt;
-    digitalWrite(pltLoadPin, mpbttnLstPlt?HIGH:LOW);
+    /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
+    if (dmpbBttn.getPilotOn())
+      digitalWrite(pltLoadPin, HIGH);
+    else
+      digitalWrite(pltLoadPin, LOW);
+    */
+    digitalWrite(pltLoadPin, (dmpbBttn.getPilotOn())?HIGH:LOW);
+    
+    dmpbBttn.setOutputsChange(false);
   }
 }  

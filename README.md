@@ -17,7 +17,7 @@ Each class offers a wide range of methods to set, read and modify every signific
 * **External Unlatch Toggle** (a.k.a. **Emergency Latched Switch**)
 * **Time Voidable Momentary Push Button**  (a.k.a. **Anti-Tampering Switch**)
 * **Single Service Voidable Momentary Push Button**  (a.k.a. **Trigger Switch**) 
-* **Short Press/Long Press Double action On/Off + Slider combo switch**  (a.k.a. off/on/dimmer, a.k.a. **Off/On/Volume radio switch**)
+* **Short Press/Long Press Double action On/Off + Slider combo switch**  (a.k.a. **Off/On/Dimmer**, a.k.a. Off/On/Volume Radio Switch)
 * **Short Press/Long Press Double action On/Off + Secondary output MPB combo switch**
 
 The benefits of the use of those simulated switches mechanisms are not just economic, as push buttons come in a wide range of prices and qualities as the simulated hardware switches come.  
