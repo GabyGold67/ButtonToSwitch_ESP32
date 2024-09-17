@@ -1,5 +1,9 @@
+# v4.0.3 Minor bug detected
+- The clearStatus() method for the HntdTmLtchMPBttn class ignored the resetting of some flags that left open the possibility of uncomplete state clearing. Corrected.
+- Several examples added for most of the classes.
+
 # v4.0.2 Refactoring update
-All changes are transpartent to the user.
+All changes are transparent to the user.
 - outputschange attribute flag setting added, as the isOn, isEnabled, pilotOn, wrnngOn, isVoided, isOnScndry simple value assignement are refactored into full methods.
 - outputschange attribute flag setting by simple assignement after above mentioned methods execution removed (as it now is uneeded code duplication).
 - Examples added for several classes.

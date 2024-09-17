@@ -1274,8 +1274,13 @@ void HntdTmLtchMPBttn::clrStatus(bool clrIsOn){
 	taskENTER_CRITICAL(&mux);
 	_validWrnngSetPend = false;
 	_validWrnngResetPend = false;
+	_wrnngOn = false; // Direct attribute flag unusual manipulation to avoid triggering Tasks and Functions responses
 	_validPilotSetPend = false;
 	_validPilotResetPend = false;
+	if(_keepPilot)
+		_pilotOn = true; // Direct attribute flag unusual manipulation to avoid triggering Tasks and Functions responses
+	else
+		_pilotOn = false; // Direct attribute flag unusual manipulation to avoid triggering Tasks and Functions responses
 	TmLtchMPBttn::clrStatus(clrIsOn);
 	taskEXIT_CRITICAL(&mux);
 

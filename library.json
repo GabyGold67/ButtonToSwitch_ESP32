@@ -1,6 +1,6 @@
 {
     "name": "ButtonToSwitch_ESP32",
-    "version": "4.0.2",
+    "version": "4.0.3",
     
     "description": "This Arduino-Esp32 library implements all kind of switches out of simple buttons (Momentary Push Buttons or MPBs). Add any kind of switch to a project by using simple MPBs and this library to simulate the internal mechanism of each of them, starting from a Debounced Push Button and extending to Delayed Start Push Button, Toggle (Latched) Push Button, Time Latched Push Button, External Release Latched Push Button, Staircase Timed Button, On/Off/Dimmer,  and more..." ,
     "keywords": "momentary, push, button, debounce, switch, latch, toggle, release, warning, security, staircase, timer, slider, dimmer",
