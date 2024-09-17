@@ -35,7 +35,6 @@
   *
   ******************************************************************************
   */
-
 #include <Arduino.h>
 #include <ButtonToSwitch_ESP32.h>
 
@@ -45,28 +44,36 @@ const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
 
 SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100, 1280);
 
-bool mpbttnLstStts{false};
-bool mpbttnLstOnScndry{false};
+// bool mpbttnLstStts{false};
+// bool mpbttnLstOnScndry{false};
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
   pinMode(isOnScndryLoadPin, OUTPUT);
 
   dmpbBttn.setScndModActvDly(2000);
-  dmpbBttn.begin(5);
+  dmpbBttn.begin();
 }
 
 void loop() {
   if(dmpbBttn.getOutputsChange()){
+    /* The following commented out section is replaced by the single line of code following, use whichever code you're more comfortable with
+    // Keep in mind you'll also need to comment out the variables definition for the variables used in this block, if there are any
     if(mpbttnLstStts != dmpbBttn.getIsOn()){
       mpbttnLstStts = dmpbBttn.getIsOn();
       digitalWrite(dmpbLoadPin, mpbttnLstStts?HIGH:LOW);
     }
-    
+    */
+    digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
+
+    /* The following commented out section is replaced by the single line of code following, use whichever code you're more comfortable with
+    // Keep in mind you'll also need to comment out the variables definition for the variables used in this block, if there are any
     if(mpbttnLstOnScndry != dmpbBttn.getIsOnScndry()){
       mpbttnLstOnScndry = dmpbBttn.getIsOnScndry();
       digitalWrite(isOnScndryLoadPin, mpbttnLstOnScndry?HIGH:LOW);
     }
+    */
+    digitalWrite(isOnScndryLoadPin, dmpbBttn.getIsOnScndry()?HIGH:LOW);
 
     dmpbBttn.setOutputsChange(false);
   }  

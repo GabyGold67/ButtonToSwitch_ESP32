@@ -57,7 +57,8 @@ void setup() {
 
 void loop() {
   if(dmpbBttn.getOutputsChange()){ //FAILS with the use of getOutputsChange!!!
-        /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
+    /* 
+    The following commented out section is replaced by the single line following. Use whichever code you're more used to
     if (dmpbBttn.getIsOn())
       digitalWrite(dmpbLoadPin, HIGH);
     else
@@ -65,7 +66,8 @@ void loop() {
     */
     digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
 
-    /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
+    /*
+    The following commented out section is replaced by the single line following. Use whichever code you're more used to
     if (dmpbBttn.getWrnngOn())
       digitalWrite(wrnngLoadPin, HIGH);
     else
@@ -73,7 +75,8 @@ void loop() {
     */
     digitalWrite(wrnngLoadPin, (dmpbBttn.getWrnngOn())?HIGH:LOW);
 
-    /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
+    /*
+    The following commented out section is replaced by the single line following. Use whichever code you're more used to
     if (dmpbBttn.getPilotOn())
       digitalWrite(pltLoadPin, HIGH);
     else

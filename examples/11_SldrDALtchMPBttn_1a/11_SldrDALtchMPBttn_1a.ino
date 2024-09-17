@@ -13,10 +13,10 @@
   *
   * ### This example doesn't create extra Tasks:
   *
-  * This simple example instantiates the SldrDALtchMPBttn object in the setup(),
-  * and uses the default "loop ()" (and yes, loop() is part of the loopTask()
-  * disguised in the Ardu-ESP), in it and checks it's attribute flags locally
-  * through the getters methods.
+  * This simple example instantiates the TmVdblMPBttn object in the setup(),
+  * and uses the default `loop ()` (loop() is the loopTask() disguised
+  * in the Ardu-ESP), in it and checks it's attribute flags locally through the 
+  * getters methods.
   * 
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
@@ -56,17 +56,14 @@ const uint8_t dmpbLoadPin{GPIO_NUM_21};
 
 SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100, 1280);
 
-bool mpbttnLstStts{false};
-uint16_t mpbttnLstCurVal{0};
-
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
 
-  dmpbBttn.setOtptValMin(255);
-  dmpbBttn.setOtptValMax(2550);
-  dmpbBttn.setSldrDirDn();
-  dmpbBttn.setSwpDirOnEnd(false);
-  dmpbBttn.setSwpDirOnPrss(true);
+  dmpbBttn.setOtptValMin(255);   // Set minimum value to 10% of the total range
+  dmpbBttn.setOtptValMax(2550);  // Set the maximum value to 100% of the total range
+  dmpbBttn.setSwpDirOnEnd(false);   // This sets the SldrDALtchMPBttn dimmer NOT to change the "dimming direction" when reaching the set minimum and maximum values
+  dmpbBttn.setSwpDirOnPrss(true);   // This sets the SldrDALtchMPBttn dimmer to change the "dimming direction" every time the MPB is pressed to enter the Secondary behavior
+  dmpbBttn.setSldrDirUp(); // This sets the dimming direction to start incrementing its value, BUT as the setSwpDirOnPrss() indicates it must change direction as it is pressed, it will start changing directions to Down, and then start the changing values process, si the first time it will start dimming off the led brightness
   dmpbBttn.setOtptSldrStpSize(1);
   dmpbBttn.setScndModActvDly(2000);
   dmpbBttn.begin(5);
@@ -74,17 +71,6 @@ void setup() {
 
 void loop() {
    if(dmpbBttn.getOutputsChange()){
-      /* The following commented out section is replaced by the single line following, use whichever code you're more used to
-      if(mpbttnLstStts != dmpbBttn.getIsOn()){
-         mpbttnLstStts = dmpbBttn.getIsOn();
-         analogWrite(dmpbLoadPin, mpbttnLstStts?(mpbttnLstCurVal/10):0);
-      }
-      
-      if(mpbttnLstCurVal != dmpbBttn.getOtptCurVal()){
-         mpbttnLstCurVal = dmpbBttn.getOtptCurVal();
-         analogWrite(dmpbLoadPin, mpbttnLstCurVal/10);
-      }
-      */
       analogWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?(dmpbBttn.getOtptCurVal()/10):0);
 
       dmpbBttn.setOutputsChange(false);
