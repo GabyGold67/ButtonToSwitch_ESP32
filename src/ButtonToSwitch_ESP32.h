@@ -1142,7 +1142,7 @@ public:
 class DDlydDALtchMPBttn: public DblActnLtchMPBttn{
 protected:
 	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
-   virtual void stDisabled_In();
+   // virtual void stDisabled_In();
    virtual void stOnEndScndMod_Out();
    virtual void stOnScndMod_Do();
    virtual void stOnStrtScndMod_In();
@@ -1197,7 +1197,7 @@ protected:
 
 	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	bool _setSldrDir(const bool &newVal);
-   virtual void stDisabled_In();
+   // virtual void stDisabled_In();
 	void stOnEndScndMod_Out();
    virtual void stOnScndMod_Do();
 	virtual void stOnStrtScndMod_In();

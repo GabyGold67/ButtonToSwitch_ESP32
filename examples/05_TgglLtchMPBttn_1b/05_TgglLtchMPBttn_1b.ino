@@ -68,16 +68,15 @@ void setup() {
     dmpbBttnPtr,
     swpEnableCb
   );
-
-	dmpbBttn.setIsOnDisabled(false);
-  dmpbBttn.begin();
-
   if (enableSwpTmrHndl != NULL){
       tmrModRslt = xTimerStart(enableSwpTmrHndl, portMAX_DELAY);
    }
 	if(tmrModRslt == pdFAIL){
 	    Error_Handler();
 	}
+
+	dmpbBttn.setIsOnDisabled(false);
+  dmpbBttn.begin();
 }
 
 void loop() {
@@ -101,8 +100,7 @@ void loop() {
   }
 }  
 
-//===============================>> User Functions Implementations BEGIN
-
+//===============================>> User Timers Implementations BEGIN
 /**
  * @brief Timer callback function
  * 
@@ -121,7 +119,9 @@ void swpEnableCb(TimerHandle_t pvParam){
 
   return;
 }
+//===============================>> User Timers Implementations END
 
+//===============================>> User Functions Implementations BEGIN
 /**
  * @brief Error Handling function
  * 
@@ -133,5 +133,4 @@ void Error_Handler(){
   
   return;
 }
-
 //===============================>> User Functions Implementations END

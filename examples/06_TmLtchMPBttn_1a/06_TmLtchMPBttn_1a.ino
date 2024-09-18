@@ -44,6 +44,7 @@ TmLtchMPBttn dmpbBttn (dmpbSwitchPin, 4000, true, true, 50, 100);
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
+  
   dmpbBttn.begin();
 }
 

@@ -121,8 +121,10 @@ void mainCtrlTsk(void *pvParameters){
    dmpbBttn.begin();
 
    for(;;){
-      /* No need to do anything, if there's an outputs change in the MPB, the 
-      corresponding task will be notified by the MPBs mechanisms*/
+      /* 
+      Any  code can be placed here to execute while the MPBs are monitored 
+      by the timer, and any output change will be responded by the dmpsOutputTsk
+      */
    }
 }
 
@@ -171,7 +173,7 @@ void swpEnableCb(TimerHandle_t pvParam){
 
   return;
 }
-//===============================>> User Timers Implementations BEGIN
+//===============================>> User Timers Implementations END
 
 //===============================>> User Functions Implementations BEGIN
 /**
@@ -187,5 +189,4 @@ void Error_Handler(){
   
   return;
 }
-
 //===============================>> User Functions Implementations END

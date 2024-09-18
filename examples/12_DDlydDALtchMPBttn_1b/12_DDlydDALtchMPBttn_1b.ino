@@ -1,23 +1,24 @@
 /**
   ******************************************************************************
-  * @file	: 02_DbncdDlydMPBttn_1b.ino
-  * @brief  : Example for the ButtonToSwitch_ESP32 library DbncdDlydMPBttn class
+  * @file	: 12_DDlydDALtchMPBttn_1b.ino
+  * @brief  : Example for the ButtonToSwitch_ESP32 library DDlydDALtchMPBttn class
   *
   *   Framework: Arduino
   *   Platform: ESP32
   * 
-  * The example instantiates a DbncdDlydMPBttn object using:
-  * 	- 1 push button between GND and ddmpbSwitchPin
-  * 	- 1 led with it's corresponding resistor between GND and ddmpbLoadPin
+  * The example instantiates a DDlydDALtchMPBttn object using:
+  * 	- 1 push button between GND and dmpbSwitchPin
+  * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
+  *   - 1 led with it's corresponding resistor between GND and isOnScndryLoadPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsDisabledPin
   *
   * ### This example doesn't create extra Tasks:
   * ### This example creates a software timer
   *
-  * This simple example instantiates the DbncdDlydMPBttn object in the setup(),
-  * and uses the default `loop ()` (loop() is the loopTask() disguised
-  * in the Ardu-ESP), in it and checks it's attribute flags locally through the 
-  * getters methods.
+  * This simple example instantiates the DDlydDALtchMPBttn object in the setup(),
+  * and uses the default "loop ()" (and yes, loop() is part of the loopTask()
+  * disguised in the Ardu-ESP), in it and checks it's attribute flags locally
+  * through the getters methods.
   * 
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
@@ -29,7 +30,7 @@
   * 	@author	: Gabriel D. Goldman
   *
   * 	@date	: 	01/08/2023 First release
-  * 				    15/09/2024 Last update
+  * 				    05/09/2024 Last update
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -49,57 +50,33 @@ void Error_Handler();
 
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
 const uint8_t dmpbLoadPin{GPIO_NUM_21};
+const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
 const uint8_t dmpbIsDisabledPin{GPIO_NUM_18};
 
 TimerHandle_t enableSwpTmrHndl{NULL};
 BaseType_t tmrModRslt;
 
-DbncdDlydMPBttn dmpbBttn (dmpbSwitchPin, true, true, 50, 350);
-DbncdMPBttn* dmpbBttnPtr {&dmpbBttn};
+SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100, 1280);
+DblActnLtchMPBttn* dmpbBttnPtr {&dmpbBttn};
 
 void setup() {
-  pinMode(dmpbLoadPin, OUTPUT);
-  pinMode(dmpbIsDisabledPin, OUTPUT);
+   pinMode(dmpbLoadPin, OUTPUT);
+   pinMode(isOnScndryLoadPin, OUTPUT);
+   pinMode(dmpbIsDisabledPin, OUTPUT);
 
-  enableSwpTmrHndl = xTimerCreate(
-    "isEnabledSwapTimer",
-    10000,
-    pdTRUE,
-    dmpbBttnPtr,
-    swpEnableCb
-  );
-
-	dmpbBttn.setIsOnDisabled(true);
-  dmpbBttn.begin();
-
-  if (enableSwpTmrHndl != NULL){
-      tmrModRslt = xTimerStart(enableSwpTmrHndl, portMAX_DELAY);
-   }
-	if(tmrModRslt == pdFAIL){
-	    Error_Handler();
-	}
+   dmpbBttn.setScndModActvDly(2000);
+   dmpbBttn.begin();
 }
 
 void loop() {
-  if(dmpbBttn.getOutputsChange()){
-    /* The following commented out section is replaced by the single line of code following, use whichever code you're more used to
-    if (dmpbBttn.getIsOn())
-      digitalWrite(dmpbLoadPin, HIGH);
-    else
-      digitalWrite(dmpbLoadPin, LOW);
-    */
-    digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
-    /* The following commented out section is replaced by the single line of code following, use whichever code you're more used to
-    if (dmpbBttn.getIsEnabled()())
-      digitalWrite(dmpbIsDisabledPin, HIGH);
-    else
-      digitalWrite(dmpbIsDisabledPin, LOW);
-    */
-    digitalWrite(dmpbIsDisabledPin, (dmpbBttn.getIsEnabled())?LOW:HIGH);
+   if(dmpbBttn.getOutputsChange()){
+      digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
+      digitalWrite(isOnScndryLoadPin, dmpbBttn.getIsOnScndry()?HIGH:LOW);
+      digitalWrite(dmpbIsDisabledPin, (dmpbBttn.getIsEnabled())?LOW:HIGH);
 
-    dmpbBttn.setOutputsChange(false);
-  }
-}  
+      dmpbBttn.setOutputsChange(false);
+   }  
+}
 
 //===============================>> User Timers Implementations BEGIN
 /**

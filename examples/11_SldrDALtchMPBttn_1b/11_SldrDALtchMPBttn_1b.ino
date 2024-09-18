@@ -1,15 +1,15 @@
 /**
   ******************************************************************************
-  * @file	: 09_TmVdblMPBttn_1b.ino
-  * @brief  : Example for the ButtonToSwitch_ESP32 library TmVdblMPBttn class
+  * @file	: 11_SldrDALtchMPBttn_1b.ino
+  * @brief  : Example for the ButtonToSwitch_ESP32 library SldrDALtchMPBttn class
   *
   *   Framework: Arduino
   *   Platform: ESP32
   * 
-  * The example instantiates a TmVdblMPBttn object using:
+  * The example instantiates a SldrDALtchMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
-  *   - 1 led with it's corresponding resistor between GND and tvlmpbLoadPin
+  * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsDisabledPin
   *
   * ### This example doesn't create extra Tasks:
@@ -23,14 +23,27 @@
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this
   * example case are the output of some GPIO pins.
-  *
+  * 
   * A software timer is created so that it periodically toggles the isEnabled attribute flag
   * value, showing the behavior of the instantiated object when enabled and when disabled.
   * 
+  * This example shows the use of a SldrDALtchMPBttn to:
+  * - Turn On a led
+  * - Turn Off a led
+  * - While the led is On, pressing the MPB for more than 2 seconds (or holding
+  *  the MPB while the led is Off for more than 2 seconds after the debounce
+  *  period) the led brightness will start changing to a lower brightness.
+  * - Releasing the MPB will stop the dimming
+  * - Pressing the MPB back for a long press will start changing the led to a higher
+  * brightness.
+  * - Pressing the MPB back for a short press will turn it Off
+  * - Pressing once again for a short press will turn it On again, at the same brightness
+  * level it was before turned Off
+  *
   * 	@author	: Gabriel D. Goldman
   *
   * 	@date	: 	01/08/2023 First release
-  * 				    16/09/2024 Last update
+  * 				    18/09/2024 Last update
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -50,70 +63,50 @@ void Error_Handler();
 
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
 const uint8_t dmpbLoadPin{GPIO_NUM_21};
-const uint8_t tvLoadPin{GPIO_NUM_19};
 const uint8_t dmpbIsDisabledPin{GPIO_NUM_18};
 
 TimerHandle_t enableSwpTmrHndl{NULL};
 BaseType_t tmrModRslt;
 
-TmVdblMPBttn dmpbBttn (dmpbSwitchPin, 3000, true, true, 50, 50, false);
-VdblMPBttn* dmpbBttnPtr {&dmpbBttn};
+SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100, 1280);
+DblActnLtchMPBttn* dmpbBttnPtr {&dmpbBttn};
 
 void setup() {
-  pinMode(dmpbLoadPin, OUTPUT);
-  pinMode(tvLoadPin, OUTPUT);
-  pinMode(dmpbIsDisabledPin, OUTPUT);
+   pinMode(dmpbLoadPin, OUTPUT);
+   pinMode(dmpbIsDisabledPin, OUTPUT);
 
-  enableSwpTmrHndl = xTimerCreate(
-    "isEnabledSwapTimer",
-    10000,
-    pdTRUE,
-    dmpbBttnPtr,
-    swpEnableCb
-  );
+   enableSwpTmrHndl = xTimerCreate(
+      "isEnabledSwapTimer",
+      15000,
+      pdTRUE,
+      dmpbBttnPtr,
+      swpEnableCb
+   );
 
+   dmpbBttn.setOtptValMin(255);   // Set minimum value to 10% of the total range
+   dmpbBttn.setOtptValMax(2550);  // Set the maximum value to 100% of the total range
+   dmpbBttn.setSwpDirOnEnd(false);   // This sets the SldrDALtchMPBttn dimmer NOT to change the "dimming direction" when reaching the set minimum and maximum values
+   dmpbBttn.setSwpDirOnPrss(true);   // This sets the SldrDALtchMPBttn dimmer to change the "dimming direction" every time the MPB is pressed to enter the Secondary behavior
+   dmpbBttn.setSldrDirUp(); // This sets the dimming direction to start incrementing its value, BUT as the setSwpDirOnPrss() indicates it must change direction as it is pressed, it will start changing directions to Down, and then start the changing values process, si the first time it will start dimming off the led brightness
+   dmpbBttn.setOtptSldrStpSize(1);
+   dmpbBttn.setScndModActvDly(2000);
    dmpbBttn.setIsOnDisabled(false);
    dmpbBttn.begin(5);
-   if (enableSwpTmrHndl != NULL){
+
+   if (enableSwpTmrHndl != NULL)
       tmrModRslt = xTimerStart(enableSwpTmrHndl, portMAX_DELAY);
-   }
-	if(tmrModRslt == pdFAIL){
-	    Error_Handler();
-	}
+   if(tmrModRslt == pdFAIL)
+      Error_Handler();
 }
 
 void loop() {
-  if(dmpbBttn.getOutputsChange()){
-    /* The following commented out section is replaced by the single line of code following, use whichever code you're more comfortable with
-    // Keep in mind you'll also need to comment out the variables definition for the variables used in this block, if there are any
-    if (dmpbBttn.getIsOn())
-      digitalWrite(dmpbLoadPin, HIGH);
-    else
-      digitalWrite(dmpbLoadPin, LOW);
-    */
-    digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
+   if(dmpbBttn.getOutputsChange()){
+      analogWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?(dmpbBttn.getOtptCurVal()/10):0);
+      digitalWrite(dmpbIsDisabledPin, (dmpbBttn.getIsEnabled())?LOW:HIGH);
 
-    /* The following commented out section is replaced by the single line of code following, use whichever code you're more comfortable with
-    // Keep in mind you'll also need to comment out the variables definition for the variables used in this block, if there are any
-    if (dmpbBttn.getIsVoided())
-      digitalWrite(tvLoadPin, HIGH);
-    else
-      digitalWrite(tvLoadPin, LOW);
-    */
-    digitalWrite(tvLoadPin, (dmpbBttn.getIsVoided())?HIGH:LOW);
-    
-    /* The following commented out section is replaced by the single line of code following, use whichever code you're more comfortable with
-    // Keep in mind you'll also need to comment out the variables definition for the variables used in this block, if there are any
-    if (dmpbBttn.getIsEnabled()())
-      digitalWrite(dmpbIsDisabledPin, HIGH);
-    else
-      digitalWrite(dmpbIsDisabledPin, LOW);
-    */
-    digitalWrite(dmpbIsDisabledPin, (dmpbBttn.getIsEnabled())?LOW:HIGH);
-
-    dmpbBttn.setOutputsChange(false);
-  }
-}  
+      dmpbBttn.setOutputsChange(false);
+   }  
+}
 
 //===============================>> User Timers Implementations BEGIN
 /**
@@ -127,12 +120,12 @@ void swpEnableCb(TimerHandle_t pvParam){
   DbncdMPBttn* dbncdMPBLocPtr = (DbncdMPBttn*) pvTimerGetTimerID(pvParam);
   // bool mpbttnIsEnbldStts{dbncdMPBLocPtr->getIsEnabled()};
 
-  if (dbncdMPBLocPtr->getIsEnabled())
-    dbncdMPBLocPtr->disable();
-  else
-    dbncdMPBLocPtr->enable();
+   if (dbncdMPBLocPtr->getIsEnabled())
+      dbncdMPBLocPtr->disable();
+   else
+      dbncdMPBLocPtr->enable();
 
-  return;
+   return;
 }
 //===============================>> User Timers Implementations END
 
@@ -142,11 +135,10 @@ void swpEnableCb(TimerHandle_t pvParam){
  * 
  */
 void Error_Handler(){
-  for(;;)
-  {    
-  }
+   for(;;)
+   {    
+   }
   
-  return;
+   return;
 }
-
 //===============================>> User Functions Implementations END

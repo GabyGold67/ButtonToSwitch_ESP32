@@ -56,6 +56,7 @@ void loop() {
       digitalWrite(dmpbLoadPin, LOW);
     */
     digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
+    
     dmpbBttn.setOutputsChange(false);
   }
 }  

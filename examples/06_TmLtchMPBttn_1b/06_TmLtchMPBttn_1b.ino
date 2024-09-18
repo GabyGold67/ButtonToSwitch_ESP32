@@ -68,41 +68,28 @@ void setup() {
       dmpbBttnPtr,
       swpEnableCb
    );
-
-	dmpbBttn.setIsOnDisabled(false);
-   dmpbBttn.begin();
    if (enableSwpTmrHndl != NULL){
       tmrModRslt = xTimerStart(enableSwpTmrHndl, portMAX_DELAY);
    }
 	if(tmrModRslt == pdFAIL){
       Error_Handler();
 	}
+
+	dmpbBttn.setIsOnDisabled(false);
+   dmpbBttn.begin();
 }
 
 void loop() {
    if(dmpbBttn.getOutputsChange()){
-      /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
-      if (dmpbBttn.getIsOn())
-         digitalWrite(dmpbLoadPin, HIGH);
-      else
-         digitalWrite(dmpbLoadPin, LOW);
-      */
       digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
       digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
-      /* The following commented out section is replaced by the single line of code following, use whichever code you're more used to
-      if (dmpbBttn.getIsEnabled()())
-         digitalWrite(dmpbIsDisabledPin, HIGH);
-      else
-         digitalWrite(dmpbIsDisabledPin, LOW);
-      */
       digitalWrite(dmpbIsDisabledPin, (dmpbBttn.getIsEnabled())?LOW:HIGH);
 
       dmpbBttn.setOutputsChange(false);
    }
 }  
 
-//===============================>> User Functions Implementations BEGIN
-
+//===============================>> User Timers Implementations BEGIN
 /**
  * @brief Timer callback function
  * 
@@ -121,7 +108,9 @@ void swpEnableCb(TimerHandle_t pvParam){
 
   return;
 }
+//===============================>> User Timers Implementations BEGIN
 
+//===============================>> User Functions Implementations BEGIN
 /**
  * @brief Error Handling function
  * 
@@ -133,5 +122,4 @@ void Error_Handler(){
   
   return;
 }
-
 //===============================>> User Functions Implementations END

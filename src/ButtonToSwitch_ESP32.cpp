@@ -1794,9 +1794,8 @@ void DblActnLtchMPBttn::clrStatus(bool clrIsOn){
 	taskENTER_CRITICAL(&mux);
 	_scndModTmrStrt = 0;
 	_validScndModPend = false;
-	if(clrIsOn)
-		if(_isOnScndry)
-			_turnOffScndry();
+	if(clrIsOn && _isOnScndry)
+		_turnOffScndry();
 	LtchMPBttn::clrStatus(clrIsOn);
 	taskEXIT_CRITICAL(&mux);
 
@@ -1930,24 +1929,17 @@ void DblActnLtchMPBttn::_turnOffScndry(){
 		//---------------->> Tasks related actions
 		if(_taskWhileOnScndryHndl != NULL){
 			eTaskState taskWhileOnScndryStts{eTaskGetState(_taskWhileOnScndryHndl)};
-			if (taskWhileOnScndryStts != eSuspended){
-				if(taskWhileOnScndryStts != eDeleted){
+			if (taskWhileOnScndryStts != eSuspended)
+				if(taskWhileOnScndryStts != eDeleted)
 					vTaskSuspend(_taskWhileOnScndryHndl);
-				}
-			}
 		}
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOffScndry != nullptr){
+		if(_fnWhnTrnOffScndry != nullptr)
 			_fnWhnTrnOffScndry();
-		}
-	}
 	//---------------->> Flags related actions
-	if(_isOnScndry){
 		taskENTER_CRITICAL(&mux);
-		if(_isOnScndry){
-			_isOnScndry = false;
-			_outputsChange = true;
-		}
+		_isOnScndry = false;
+		_outputsChange = true;
 		taskEXIT_CRITICAL(&mux);
 	}
 
@@ -1961,25 +1953,18 @@ void DblActnLtchMPBttn::_turnOnScndry(){
 		//---------------->> Tasks related actions
 		if(_taskWhileOnScndryHndl != NULL){
 			eTaskState taskWhileOnScndryStts{eTaskGetState(_taskWhileOnScndryHndl)};
-			if(taskWhileOnScndryStts != eDeleted){
-				if (taskWhileOnScndryStts == eSuspended){
+			if(taskWhileOnScndryStts != eDeleted)
+				if (taskWhileOnScndryStts == eSuspended)
 					vTaskResume(_taskWhileOnScndryHndl);
-				}
-			}
 		}
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnScndry != nullptr){
 			_fnWhnTrnOnScndry();
 		}
-	}
-
-	if(!_isOnScndry){
-		//---------------->> Flags related actions
+	//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
-		if(!_isOnScndry){
-			_isOnScndry = true;
-			_outputsChange = true;
-		}
+		_isOnScndry = true;
+		_outputsChange = true;
 		taskEXIT_CRITICAL(&mux);
 	}
 
@@ -2015,7 +2000,7 @@ void DblActnLtchMPBttn::updFdaState(){
 				_turnOn();
 			}
 			if(_validScndModPend){
-				_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);
+				_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);	//>Gaby is this needed after separating this class from the sldr... class? Better do a subclass function!
 				_mpbFdaState = stOnStrtScndMod;
 				setSttChng();
 			}
@@ -2114,16 +2099,18 @@ void DblActnLtchMPBttn::updFdaState(){
 		case stDisabled:
 			//In: >>---------------------------------->>
 			if(_sttChng){
-				if(_isOn != _isOnDisabled){
-					if(_isOn){
-						_turnOff();
-					}
-					else{
-						_turnOn();
-					}
-				}
-				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 				stDisabled_In();
+				if(_isOn != _isOnDisabled)
+					if(_isOn)
+						_turnOff();
+					else
+						_turnOn();
+				if(_isOnScndry != _isOnDisabled)
+					if(_isOnScndry)
+						_turnOffScndry();
+					else
+						_turnOnScndry();
+				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 				_isEnabled = false;
 				_validDisablePend = false;
 				setOutputsChange(true);
@@ -2232,7 +2219,7 @@ uint32_t DDlydDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
 	return prevVal;
 }
 
-void DDlydDALtchMPBttn::stDisabled_In(){	
+/*void DDlydDALtchMPBttn::stDisabled_In(){	
 	if(_isOnScndry != _isOnDisabled){
 		if(_isOnDisabled)
 			_turnOnScndry();
@@ -2241,7 +2228,7 @@ void DDlydDALtchMPBttn::stDisabled_In(){
 	}
 
 	return;
-}
+}*/
 
 void DDlydDALtchMPBttn::stOnEndScndMod_Out(){
 	if(_isOnScndry){
@@ -2483,7 +2470,7 @@ void SldrDALtchMPBttn::setSwpDirOnPrss(const bool &newVal){
 	return;
 }
 
-void SldrDALtchMPBttn::stDisabled_In(){
+/*void SldrDALtchMPBttn::stDisabled_In(){
 	if(_isOnScndry != _isOnDisabled){
 		if(_isOnDisabled)
 			_turnOnScndry();
@@ -2492,7 +2479,7 @@ void SldrDALtchMPBttn::stDisabled_In(){
 	}
 
 	return;
-}
+}*/
 
 void SldrDALtchMPBttn::stOnEndScndMod_Out(){
 	if(_isOnScndry){
