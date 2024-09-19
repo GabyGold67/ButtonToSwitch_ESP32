@@ -12,7 +12,7 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.0.2
+  * @version v4.0.4
   * @date	: Created on: 06/11/2023
   * 		: Last modification: 15/09/2024
   * @copyright GPL-3.0 license
@@ -103,11 +103,9 @@ void DbncdMPBttn::clrStatus(bool clrIsOn){
 	_validReleasePend = false;
 	_dbncTimerStrt = 0;
 	_dbncRlsTimerStrt = 0;
-	if(clrIsOn){
-		if(_isOn){
+	if(clrIsOn)
+		if(_isOn)
 			_turnOff();
-		}
-	}
 	taskEXIT_CRITICAL(&mux);
     
 	return;
@@ -137,12 +135,10 @@ bool DbncdMPBttn::end(){
    	result = pause();
       if (result){
       	tmrModResult = xTimerDelete(_mpbPollTmrHndl, portMAX_DELAY);
-			if (tmrModResult == pdPASS){
+			if (tmrModResult == pdPASS)
 				_mpbPollTmrHndl = NULL;
-			}
-			else{
+			else
 				result = false;
-			}
       }
    }
 
@@ -348,12 +344,10 @@ bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
 
 	taskENTER_CRITICAL(&mux);
 	if(_dbncTimeTempSett != newDbncTime){
-		if (newDbncTime >= _stdMinDbncTime){
+		if (newDbncTime >= _stdMinDbncTime)
 			_dbncTimeTempSett = newDbncTime;
-		}
-		else{
+		else
 			result = false;
-		}
 	}
 	taskEXIT_CRITICAL(&mux);
 
@@ -364,9 +358,8 @@ void DbncdMPBttn::setFnWhnTrnOffPtr(void (*newFnWhnTrnOff)()){
 	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOff != newFnWhnTrnOff){
+	if (_fnWhnTrnOff != newFnWhnTrnOff)
 		_fnWhnTrnOff = newFnWhnTrnOff;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -376,9 +369,8 @@ void DbncdMPBttn::setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)()){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOn != newFnWhnTrnOn){
+	if (_fnWhnTrnOn != newFnWhnTrnOn)
 		_fnWhnTrnOn = newFnWhnTrnOn;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -413,12 +405,10 @@ void DbncdMPBttn::setIsOnDisabled(const bool &newIsOnDisabled){
 		_isOnDisabled = newIsOnDisabled;
 		if(!_isEnabled){
 			if(_isOn != _isOnDisabled){
-				if(_isOnDisabled){
+				if(_isOnDisabled)
 					_turnOn();
-				}
-				else{
+				else
 					_turnOff();
-				}
 			}
 		}
 	}
@@ -870,9 +860,8 @@ void LtchMPBttn::setTrnOffASAP(const bool &newVal){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if(_trnOffASAP != newVal){
+	if(_trnOffASAP != newVal)
 		_trnOffASAP = newVal;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -1183,12 +1172,10 @@ bool TmLtchMPBttn::setSrvcTime(const unsigned long int &newSrvcTime){
 
    taskENTER_CRITICAL(&mux);
 	if (_srvcTime != newSrvcTime){
-		if (newSrvcTime >= _MinSrvcTime){  //The minimum activation time is _minActTime milliseconds
+		if (newSrvcTime >= _MinSrvcTime)  //The minimum activation time is _minActTime milliseconds
 			_srvcTime = newSrvcTime;
-		}
-		else{
+		else
 			result = false;
-		}
    }
 	taskEXIT_CRITICAL(&mux);
 

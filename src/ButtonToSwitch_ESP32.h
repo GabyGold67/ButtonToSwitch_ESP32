@@ -12,7 +12,7 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.0.1
+  * @version v4.0.4
   * @date	: Created on: 06/11/2023
   * 		: Last modification: 28/08/2024
   * @copyright GPL-3.0 license
@@ -1659,7 +1659,7 @@ public:
  *
  * @note Due to the short time the **isOn** flag will be raised, as described above, the  resuming of the **taskWhileOn** activation mechanism is disabled in this class. For that purpose the setTaskWhileOn(const TaskHandle_t) is made not accessible by setting it's accessibility to **protected**.
  *
- *@note Due to the short time the **isOn** flag will be raised, as described above, the short time between the **fnWhnTrnOn** function and the **fnWhnTrnOff** function callings must also need to be evaluated by the user.
+ * @note Due to the short time the **isOn** flag will be raised, as described above, the short time between the **fnWhnTrnOn** function and the **fnWhnTrnOff** function callings must also need to be evaluated by the user.
  *
  * @class SnglSrvcVdblMPBttn
  */
