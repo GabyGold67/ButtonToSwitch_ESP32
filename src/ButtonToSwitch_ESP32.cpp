@@ -30,7 +30,7 @@
   * @warning **Use of this library is under your own responsibility**
   ******************************************************************************
   */
-#include <ButtonToSwitch_ESP32.h>
+#include "ButtonToSwitch_ESP32.h"
 //===========================>> BEGIN General use Global variables
 static BaseType_t errorFlag {pdFALSE};
 //===========================>> END General use Global variables
@@ -208,7 +208,7 @@ const TaskHandle_t DbncdMPBttn::getTaskWhileOn(){
 bool DbncdMPBttn::init(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett){
 	bool result {false};
 
-	if((_mpbttnPin == _InvalidPinNum) && (mpbttnPin != _InvalidPinNum)){
+	if(_mpbttnPin == _InvalidPinNum){
 		if (_mpbPollTmrName == ""){
 			_mpbttnPin = mpbttnPin;
 			_pulledUp = pulledUp;
@@ -568,15 +568,14 @@ void DbncdMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
-			if(!_isOn){
+			if(!_isOn)
 				_turnOn();
-			}
 			_validPressPend = false;
 			_mpbFdaState = stOn;
 			setSttChng();
 			//Out: >>---------------------------------->>
 			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+//			break;
 
 		case stOn:
 			//In: >>---------------------------------->>
@@ -598,9 +597,8 @@ void DbncdMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
-			if(_isOn){
+			if(_isOn)
 				_turnOff();
-			}
 			_validReleasePend = false;
 			_mpbFdaState = stOffNotVPP;
 			setSttChng();
@@ -612,12 +610,10 @@ void DbncdMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){
 				if(_isOn != _isOnDisabled){
-					if(_isOn){
+					if(_isOn)
 						_turnOff();
-					}
-					else{
+					else
 						_turnOn();
-					}
 				}
 				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 				_isEnabled = false;
@@ -627,9 +623,8 @@ void DbncdMPBttn::updFdaState(){
 			}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
 			if(_validEnablePend){
-				if(_isOn){
+				if(_isOn)
 					_turnOff();
-				}
 				_isEnabled = true;
 				_validEnablePend = false;
 				setOutputsChange(true);
@@ -639,9 +634,9 @@ void DbncdMPBttn::updFdaState(){
 				setSttChng();
 			}
 			//Out: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-			}	// Execute this code only ONCE, when exiting this state
+			if(_sttChng){	// Execute this code only ONCE, when exiting this state
+//				clrStatus(true);
+			}	
 			break;
 
 	default:

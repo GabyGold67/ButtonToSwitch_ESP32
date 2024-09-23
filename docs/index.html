@@ -101,8 +101,10 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
   <div class="headertitle"><div class="title"><b>Buttons to Switches Library</b> (ButtonToSwitch_ESP32) </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md__c_1_2_users_2_dev_padawan_2_documents_2_my_01_projects_2_training_01_projects_2_momentary_push_button_tester_2lib_2_button_to_switch___e_s_p32_2_r_e_a_d_m_e"></a></p>
-<p>This library is an evolutionary refactoring based on my own, now discontinued, <b>mpbToSwitch</b> library.</p>
+<div class="textblock"><p><a class="anchor" id="md__c_1_2_users_2_dev_padawan_2_documents_2_my_01_projects_2_training_01_projects_2_libs_dev___e_s_p32_2lib_2_button_to_switch___e_s_p32_2_r_e_a_d_m_e"></a></p>
+<h1><a class="anchor" id="the-driving-concept-is-pretty-simple-stop-checking-an-input-pin-voltage-start-asking-if-your-switch-is-on-or-off"></a>
+<b>The driving concept is pretty simple: stop checking an input pin voltage, start asking if your switch is On or Off.</b></h1>
+<p>This library is an evolutionary refactoring of my own -now archived- <b>mpbToSwitch</b> library.</p>
 <h1><a class="anchor" id="an-esp32-rtos-arduino-library-that-builds-switch-mechanisms-replacements-out-of-simple-push-buttons"></a>
 An ESP32-RTOS Arduino library that builds switch mechanisms replacements out of simple push buttons.</h1>
 <p>By using just a push button (a.k.a. momentary switches or momentary buttons, <em><b>MPB</b></em> for short from here on) the classes implemented in this library will manage, calculate and update different parameters to <b>generate the behavior of standard electromechanical switches</b>. Those parameters include presses, releases, timings, counters or secondary input readings as needed.</p>
@@ -150,6 +152,8 @@ The library implements the following switches mechanisms:</h1>
 <li>Want to turn off the pilot light because it bothers? Another parameter. <br  />
 </li>
 <li>Want to be sure the door mechanism isn't kept unlocked with an adhesive tape? Change the switch class. <br  />
+</li>
+<li>Want to ensure nobody turns on a dangerous appliance while it's internals are being cleaned? Invoke a method! <br  />
 </li>
 </ul>
 <p><em><b>In an Industrial production machines environment</b></em> the operator's physical security policies enforcement implies that no time can be wasted and the switch must fit perfectly it's purpose, while still giving the chance to change it's working parameters to adjust the mechanism to changing production operations, or to use the security device in other kind of machine. In this case the development depending on a simple "OK to proceed"/"The security device is correctly activated" might become a dangerous issue if not correctly isolated and solved as a remove and replace solution. The security switches must comply with issues as:</p><ul>
@@ -326,7 +330,7 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <li>Validated Unlatch Release signal (or Validated Unlatch signal end). <br  />
 </li>
 </ol>
-<p>The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool), or to <b>set</b> both flags to generate an unlatch (see <a class="el" href="class_ltch_m_p_bttn.html#a25933288a98bd0a2efc406e7a009fbc1" title="Sets the values of the flags needed to unlatch a latched MPB.">LtchMPBttn::unlatch()</a>.</p>
+<p>The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool) ), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool) ), or to <b>set</b> both flags to generate an unlatch (see <a class="el" href="class_ltch_m_p_bttn.html#a25933288a98bd0a2efc406e7a009fbc1" title="Sets the values of the flags needed to unlatch a latched MPB.">LtchMPBttn::unlatch()</a> ).</p>
 <h2><a class="anchor" id="added-or-modified-methods-for-ltchmpbttn-class"></a>
 <b>Added or Modified Methods for LtchMPBttn class</b></h2>
 <table class="markdownTable">
@@ -481,11 +485,11 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <li>A <b>long press</b> activates an alternative behavior, allowing the single MPB to be used as a second MPB. That different behavior -designated as the <b>secondary behavior</b>- defines the sub-classes of the <b>DALDD-MPB</b> class. <br  />
  Using a notation where the first component is the Off/On state of the main behavior and the second component the state of the secondary behavior the only possible combinations would be: <br  />
 </li>
-<li><b>1.</b> Off-Off <br  />
+<li><b>1.</b> Off - Off <br  />
 </li>
-<li><b>2.</b> On-Off <br  />
+<li><b>2.</b> On - Off <br  />
 </li>
-<li><b>3.</b> On-On <br  />
+<li><b>3.</b> On - On <br  />
 </li>
 </ul>
 <p>The presses patterns are: <br  />

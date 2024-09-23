@@ -1,5 +1,9 @@
-# v4.0.4 Minor refactoring
-- Some code cleanup.
+# v4.0.5 Maintenance release
+- DbncdMPBttn::init() conditional execution premises corrected (the condition resulted in a Paradox)
+Pending of test on the STM32 implementation- DFA unconditional state changes allowed to cascade advancement in single step to improve speed and responsiveness for the DbncdMPBttn and DbncdDlydMPBttn classes.
+
+# v4.0.4 Maintenance release
+- Code cleanup.
 - Auto documentation generation problems solved, documentation regenerated.
 - Several examples added for most of the classes.
 

@@ -1,6 +1,7 @@
 # **Buttons to Switches Library** (ButtonToSwitch_ESP32)
+## **The driving concept is pretty simple: stop checking an input pin voltage, start asking if your switch is On or Off.**  
 
-This library is an evolutionary refactoring based on my own, now discontinued, **mpbToSwitch** library.
+This library is an evolutionary refactoring of my own -now archived- **mpbToSwitch** library.
 
 ## An ESP32-RTOS Arduino library that builds switch mechanisms replacements out of simple push buttons.  
 By using just a push button (a.k.a. momentary switches or momentary buttons, _**MPB**_ for short from here on) the classes implemented in this library will manage, calculate and update different parameters to **generate the behavior of standard electromechanical switches**. Those parameters include presses, releases, timings, counters or secondary input readings as needed.
@@ -34,6 +35,7 @@ While with the simulated switches this situation might be solved by just changin
 * Want to keep the timed **lights-on** longer? Just a parameter.  
 * Want to turn off the pilot light because it bothers? Another parameter.  
 * Want to be sure the door mechanism isn't kept unlocked with an adhesive tape? Change the switch class.  
+* Want to ensure nobody turns on a dangerous appliance while it's internals are being cleaned? Invoke a method!  
 
 _**In an Industrial production machines environment**_ the operator's physical security policies enforcement implies that no time can be wasted and the switch must fit perfectly it's purpose, while still giving the chance to change it's working parameters to adjust the mechanism to changing production operations, or to use the security device in other kind of machine. In this case the development depending on a simple "OK to proceed"/"The security device is correctly activated" might become a dangerous issue if not correctly isolated and solved as a remove and replace solution. The security switches must comply with issues as:
 - Activation enforcement
@@ -149,7 +151,7 @@ This is an **Abstract Class** meaning that no object can be instantiated from it
  1. Validated Unlatch signal (or Validated Unlatch signal start).  
  2. Validated Unlatch Release signal (or Validated Unlatch signal end).  
    
- The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool), or to **set** both flags to generate an unlatch (see LtchMPBttn::unlatch().
+ The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool) ), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool) ), or to **set** both flags to generate an unlatch (see LtchMPBttn::unlatch() ).
 
 
 ## **Added or Modified Methods for LtchMPBttn class**  
@@ -269,9 +271,9 @@ The **External released toggle** (a.k.a. Emergency latched), keeps the On state 
  - A **short press** makes the MPB to behave as a Toggle LDD-MPB Switch (**ToLDD-MPB**) -designated as the **main behavior**-, swapping from the **Off state** to the **On state** and back as usual LDD-MPB.  
  - A **long press** activates an alternative behavior, allowing the single MPB to be used as a second MPB. That different behavior -designated as the **secondary behavior**- defines the sub-classes of the **DALDD-MPB** class.  
  Using a notation where the first component is the Off/On state of the main behavior and the second component the state of the secondary behavior the only possible combinations would be:  
- - **1.** Off-Off  
- - **2.** On-Off  
- - **3.** On-On  
+ - **1.** Off - Off  
+ - **2.** On - Off  
+ - **3.** On - On  
   
  The presses patterns are:  
  - **1.** -> **2.**: short press.  

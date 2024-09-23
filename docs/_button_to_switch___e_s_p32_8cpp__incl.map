@@ -1,9 +1,9 @@
-<map id="C:/Users/DevPadawan/Documents/My Projects/Training Projects/MomentaryPushButtonTester/lib/ButtonToSwitch_ESP32/src/ButtonToSwitch_ESP32.cpp" name="C:/Users/DevPadawan/Documents/My Projects/Training Projects/MomentaryPushButtonTester/lib/ButtonToSwitch_ESP32/src/ButtonToSwitch_ESP32.cpp">
-<area shape="rect" id="Node000001" title=": Source file for the ButtonToSwitch_ESP32 library classes" alt="" coords="5,5,266,96"/>
-<area shape="rect" id="Node000002" href="$_button_to_switch___e_s_p32_8h.html" title=": Header file for the ButtonToSwitch_ESP32 library classes" alt="" coords="49,144,222,171"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,96,138,128,133,128,133,96"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="51,219,127,245"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="130,173,107,207,103,204,125,170"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="151,219,216,245"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="146,170,169,204,165,207,142,173"/>
+<map id="C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/src/ButtonToSwitch_ESP32.cpp" name="C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/src/ButtonToSwitch_ESP32.cpp">
+<area shape="rect" id="Node000001" title=": Source file for the ButtonToSwitch_ESP32 library classes" alt="" coords="5,5,193,112"/>
+<area shape="rect" id="Node000002" href="$_button_to_switch___e_s_p32_8h.html" title=": Header file for the ButtonToSwitch_ESP32 library classes" alt="" coords="13,160,185,187"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="102,112,102,144,96,144,96,112"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="14,235,90,261"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="93,189,71,223,66,220,89,186"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="115,235,179,261"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="110,186,133,220,128,223,105,189"/>
 </map>
