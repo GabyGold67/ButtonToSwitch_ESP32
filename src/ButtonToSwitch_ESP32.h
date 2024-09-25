@@ -12,7 +12,7 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.0.4
+  * @version v4.1.0
   * @date	: Created on: 06/11/2023
   * 		: Last modification: 28/08/2024
   * @copyright GPL-3.0 license
@@ -121,7 +121,9 @@ protected:
 	fdaDmpbStts _mpbFdaState {stOffNotVPP};
 	TimerHandle_t _mpbPollTmrHndl {NULL};   //FreeRTOS returns NULL if creation fails (not nullptr)
 	String _mpbPollTmrName {""};
-	volatile bool _outputsChange {false};
+	/*volatile*/ bool _outputsChange {false};
+	uint32_t _outputsChangeCnt{0};
+	bool _outputsChngTskTrggr{false};
 	bool _prssRlsCcl{false};
 	unsigned long int _strtDelay {0};
 	bool _sttChng {true};
@@ -143,6 +145,9 @@ protected:
 	virtual void updFdaState();
 	bool updIsPressed();
 	virtual bool updValidPressesStatus();
+	const bool getOutputsChngTskTrggr() const;
+	void resetOutputsChngTskTrggr();
+
 public:    
 	/**
 	 * @brief Default class constructor
@@ -296,6 +301,15 @@ public:
     * @retval false: no object's behavior flags have changed value since last time **outputsChange** flag was reseted.
 	 */
 	const bool getOutputsChange() const;
+	/**
+	 * @brief Returns the current value of the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag
+	 * 
+	 * Returns the current value of the attribute flag that triggers the execution of the taskToNotify() task if there have been outputs value changes since last MPB update
+	 * 
+	 * @retval true There have been changes since last update, the taskToNotify() task will be unblocked to execute.
+	 * @retval false Otherwise
+	 */
+	// const bool getOutputsChngTskTrggr() const;
    /**
     * @brief Returns the current value of strtDelay attribute.
     *
@@ -355,6 +369,12 @@ public:
 	 * This method is provided for security and for error handling purposes, so that in case of unexpected situations detected, the driving **Deterministic Finite Automaton** used to compute the MPB objects states might be reset to it's initial state to safely restart it, maybe as part of an **Error Handling** procedure.
 	 */
 	void resetFda();
+	/**
+	 * @brief Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag
+	 * 
+	 * Clears the attribute flag that triggers the execution of the taskToNotify() task, so that it would not be unblocked on next MPB status update
+	 */
+	// void resetOutputsChngTskTrggr();
 	/**
 	 * @brief Restarts the software timer updating the calculation of the object internal flags.
 	 *

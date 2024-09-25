@@ -1,6 +1,18 @@
+# v4.1.0 Debugging and improvements release
+Refactoring:
+- The setOutputsChange() and getOutputsChange() transparently changed. The API was not changed -it still sets and returns a boolean value- but internally now keeps a counter to avoid multithread developments generated race conditions.
+Debugging:
+- The use of getters and taskNotify mechanisms for the same attribute flags at the same time generated unexpected results due to race conditions: SOLVED.
+- Code overall simplification and cleanup.
+- DFA unconditional state changes allowed to cascade on more classes' state machines.
+Example files:
+- Several example files added.
+- Some example files modified to show different solutions approaches for the same results.
+
 # v4.0.5 Maintenance release
 - DbncdMPBttn::init() conditional execution premises corrected (the condition resulted in a Paradox)
-Pending of test on the STM32 implementation- DFA unconditional state changes allowed to cascade advancement in single step to improve speed and responsiveness for the DbncdMPBttn and DbncdDlydMPBttn classes.
+Pending of test on the STM32 implementation
+- DFA unconditional state changes allowed to cascade advancement in single step to improve speed and responsiveness for the DbncdMPBttn and DbncdDlydMPBttn classes.
 
 # v4.0.4 Maintenance release
 - Code cleanup.

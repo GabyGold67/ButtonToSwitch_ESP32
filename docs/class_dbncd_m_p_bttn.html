@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.0.4</span>
+   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.1.0</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -195,7 +195,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memdesc:ac646101296a76321e855250ba044c8d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the <b>outputsChange</b> attribute flag.  <br /></td></tr>
 <tr class="separator:ac646101296a76321e855250ba044c8d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4e601d4adc84085481782d5ab71a7d0" id="r_ad4e601d4adc84085481782d5ab71a7d0"><td class="memItemLeft" align="right" valign="top">unsigned long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4e601d4adc84085481782d5ab71a7d0">getStrtDelay</a> ()</td></tr>
-<tr class="memdesc:ad4e601d4adc84085481782d5ab71a7d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current value of strtDelay attribute.  <br /></td></tr>
+<tr class="memdesc:ad4e601d4adc84085481782d5ab71a7d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current value of the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag.  <br /></td></tr>
 <tr class="separator:ad4e601d4adc84085481782d5ab71a7d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3da781ff0ad5ec1064d62570fd005a3a" id="r_a3da781ff0ad5ec1064d62570fd005a3a"><td class="memItemLeft" align="right" valign="top">const TaskHandle_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3da781ff0ad5ec1064d62570fd005a3a">getTaskToNotify</a> () const</td></tr>
 <tr class="memdesc:a3da781ff0ad5ec1064d62570fd005a3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the task to be notified by the object when its output flags changes.  <br /></td></tr>
@@ -216,7 +216,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memdesc:a2df98cfb822df05bc232143f883e5c32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the MPB behavior automaton to it's <b>Initial</b> or <b>Start State</b>  <br /></td></tr>
 <tr class="separator:a2df98cfb822df05bc232143f883e5c32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9540a12554008a6705056b02fbafed38" id="r_a9540a12554008a6705056b02fbafed38"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9540a12554008a6705056b02fbafed38">resume</a> ()</td></tr>
-<tr class="memdesc:a9540a12554008a6705056b02fbafed38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restarts the software timer updating the calculation of the object internal flags.  <br /></td></tr>
+<tr class="memdesc:a9540a12554008a6705056b02fbafed38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag.  <br /></td></tr>
 <tr class="separator:a9540a12554008a6705056b02fbafed38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa8a94396ee3fe8f9cc41c8ea9d8b8d3" id="r_afa8a94396ee3fe8f9cc41c8ea9d8b8d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa8a94396ee3fe8f9cc41c8ea9d8b8d3">setDbncTime</a> (const unsigned long int &amp;newDbncTime)</td></tr>
 <tr class="memdesc:afa8a94396ee3fe8f9cc41c8ea9d8b8d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the debounce process time.  <br /></td></tr>
@@ -395,7 +395,7 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="244,143,203,143,203,137,244,137"/>
 <area shape="rect" href="class_tm_vdbl_m_p_bttn.html#a33bb7f6a78ea9c912a6d2c906ef756e5" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="259,228,430,255"/>
 <area shape="poly" title=" " alt="" coords="476,244,430,244,430,239,476,239"/>
-<area shape="rect" href="class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Restarts the software timer updating the calculation of the object internal flags." alt="" coords="267,279,422,305"/>
+<area shape="rect" href="class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag." alt="" coords="267,279,422,305"/>
 <area shape="poly" title=" " alt="" coords="470,295,422,295,422,289,470,289"/>
 </map>
 </div>
@@ -721,7 +721,16 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the current value of strtDelay attribute. </p>
+<p>Returns the current value of the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag. </p>
+<p>Returns the current value of the attribute flag that triggers the execution of the taskToNotify() task if there have been outputs value changes since last MPB update</p>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">true</td><td>There have been changes since last update, the taskToNotify() task will be unblocked to execute. </td></tr>
+    <tr><td class="paramname">false</td><td>Otherwise</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Returns the current value of strtDelay attribute.</p>
 <p>Returns the current value of time used by the object to rise the isOn flag, after the debouncing process ends, in milliseconds. If the MPB is released before completing the debounce <b>and</b> the strtDelay time, no press will be detected by the object, and the isOn flag will not be affected. The original value for the delay process used at instantiation time might be changed with the <b>setStrtDelay()</b> method, so this method is provided to get the current value in use.</p>
 <dl class="section return"><dt>Returns</dt><dd>The current strtDelay time in milliseconds.</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>The strtDelay attribute is forced to a 0 ms value at instantiation of <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> class objects, and no setter mechanism is provided in this class. The inherited <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn</a> class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to olde versions of the library. </dd></dl>
@@ -930,7 +939,7 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="class_dbncd_m_p_bttn_a2df98cfb822df05bc232143f883e5c32_icgraph.png" border="0" usemap="#aclass_dbncd_m_p_bttn_a2df98cfb822df05bc232143f883e5c32_icgraph" alt=""/></div>
 <map name="aclass_dbncd_m_p_bttn_a2df98cfb822df05bc232143f883e5c32_icgraph" id="aclass_dbncd_m_p_bttn_a2df98cfb822df05bc232143f883e5c32_icgraph">
 <area shape="rect" title="Resets the MPB behavior automaton to it&#39;s Initial or Start State" alt="" coords="208,5,370,32"/>
-<area shape="rect" href="class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Restarts the software timer updating the calculation of the object internal flags." alt="" coords="5,5,160,32"/>
+<area shape="rect" href="class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag." alt="" coords="5,5,160,32"/>
 <area shape="poly" title=" " alt="" coords="192,21,160,21,160,16,192,16"/>
 </map>
 </div>
@@ -952,7 +961,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p>Restarts the software timer updating the calculation of the object internal flags. </p>
+<p>Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag. </p>
+<p>Clears the attribute flag that triggers the execution of the taskToNotify() task, so that it would not be unblocked on next MPB status update</p>
+<p>Restarts the software timer updating the calculation of the object internal flags.</p>
 <p>The timer will stop calling the functions for computing the flags values after calling the <b><a class="el" href="#a3cf51be801e6024cc3ca6b984deb52c6" title="Pauses the software timer updating the computation of the object&#39;s internal flags value.">pause()</a></b> method and will not be updated until the timer is restarted with this method.</p>
 <dl class="retval"><dt>Return values</dt><dd>
   <table class="retval">
@@ -967,7 +978,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_dbncd_m_p_bttn_a9540a12554008a6705056b02fbafed38_cgraph.png" border="0" usemap="#aclass_dbncd_m_p_bttn_a9540a12554008a6705056b02fbafed38_cgraph" alt=""/></div>
 <map name="aclass_dbncd_m_p_bttn_a9540a12554008a6705056b02fbafed38_cgraph" id="aclass_dbncd_m_p_bttn_a9540a12554008a6705056b02fbafed38_cgraph">
-<area shape="rect" title="Restarts the software timer updating the calculation of the object internal flags." alt="" coords="5,5,160,32"/>
+<area shape="rect" title="Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag." alt="" coords="5,5,160,32"/>
 <area shape="rect" href="class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32" title="Resets the MPB behavior automaton to it&#39;s Initial or Start State" alt="" coords="208,5,370,32"/>
 <area shape="poly" title=" " alt="" coords="160,16,192,16,192,21,160,21"/>
 <area shape="rect" href="class_dbncd_m_p_bttn.html#a3009725646aeb160884b8109d180b530" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing." alt="" coords="418,5,581,32"/>

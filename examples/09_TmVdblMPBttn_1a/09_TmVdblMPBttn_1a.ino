@@ -51,23 +51,23 @@ void setup() {
 }
 
 void loop() {
-  if(dmpbBttn.getOutputsChange()){
-    /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
-    if (dmpbBttn.getIsOn())
-      digitalWrite(dmpbLoadPin, HIGH);
-    else
-      digitalWrite(dmpbLoadPin, LOW);
-    */
-    digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
+   if(dmpbBttn.getOutputsChange()){
+      /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
+      if (dmpbBttn.getIsOn())
+         digitalWrite(dmpbLoadPin, HIGH);
+      else
+         digitalWrite(dmpbLoadPin, LOW);
+      */
+      digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
 
-    /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
-    if (dmpbBttn.getIsVoided())
-      digitalWrite(tvLoadPin, HIGH);
-    else
-      digitalWrite(tvLoadPin, LOW);
-    */
-    digitalWrite(tvLoadPin, (dmpbBttn.getIsVoided())?HIGH:LOW);
-    
-    dmpbBttn.setOutputsChange(false);
-  }
+      /* The following commented out section is replaced by the single line following. Use whichever code you're more used to
+      if (dmpbBttn.getIsVoided())
+         digitalWrite(tvLoadPin, HIGH);
+      else
+         digitalWrite(tvLoadPin, LOW);
+      */
+      digitalWrite(tvLoadPin, (dmpbBttn.getIsVoided())?HIGH:LOW);
+      
+      dmpbBttn.setOutputsChange(false);
+   }
 }  

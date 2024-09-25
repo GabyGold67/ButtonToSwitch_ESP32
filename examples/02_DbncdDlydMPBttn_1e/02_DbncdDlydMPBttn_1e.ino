@@ -75,7 +75,6 @@ void dmpsOutputTsk(void *pvParameters);
 void dmpsActWhlOnTsk(void *pvParameters);
 void fnExecTrnOn();
 void fnExecTrnOff();
-
 //===============================>> User Functions Prototypes END
 
 //===============================>> User Tasks & Timers related declarations BEGIN

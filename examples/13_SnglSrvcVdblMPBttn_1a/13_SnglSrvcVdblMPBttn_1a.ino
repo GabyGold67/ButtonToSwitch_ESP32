@@ -12,12 +12,12 @@
   *   - 1 led with it's corresponding resistor between GND and tvlmpbLoadPin
   *   - 1 led with it's corresponding resistor between GND and fnOnmpbLoadPin
   *
-  * ### This example doesn't create extra Tasks:
+  * ### This example doesn't create extra Tasks (by using the default `loopTask` Task):
   *
-  * This simple example instantiates the SnglSrvcVdblMPBttn object in the setup(),
-  * and uses the default "loop ()" (and yes, loop() is part of the loopTask()
-  * disguised in the Ardu-ESP), in it and checks it's attribute flags locally
-  * through the getters methods.
+  * This simple example instantiates the DbncdMPBttn object in the setup(),
+  * and uses the default `loop ()` (loop() is the loopTask() disguised
+  * in the Ardu-ESP), in it and checks it's attribute flags locally through the 
+  * getters methods.
   * 
   * When a change in the object's outputs attribute flags values is detected, it
   * manages the loads and resources that the switch turns On and Off, in this

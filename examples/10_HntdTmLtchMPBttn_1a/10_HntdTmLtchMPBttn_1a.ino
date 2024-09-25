@@ -47,6 +47,11 @@ const uint8_t pltLoadPin{GPIO_NUM_17};
 HntdTmLtchMPBttn dmpbBttn (dmpbSwitchPin, 4000, 25, true, true, 20, 50);
 
 void setup() {
+  /* 
+  ! NOTE: The following line ensures that the provided standard "Arduino loopTask" priority is set to a convenient level for the example purpose. 
+   */
+  vTaskPrioritySet(NULL, configTIMER_TASK_PRIORITY);  
+
   pinMode(dmpbLoadPin, OUTPUT);
   pinMode(wrnngLoadPin, OUTPUT);
   pinMode(pltLoadPin, OUTPUT);

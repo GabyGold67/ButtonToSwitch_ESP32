@@ -9,7 +9,6 @@
   * The example instantiates a SldrDALtchMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
-  * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsDisabledPin
   *
   * ### This example doesn't create extra Tasks:
@@ -82,6 +81,10 @@ void setup() {
       dmpbBttnPtr,
       swpEnableCb
    );
+   if (enableSwpTmrHndl != NULL)
+      tmrModRslt = xTimerStart(enableSwpTmrHndl, portMAX_DELAY);
+   if(tmrModRslt == pdFAIL)
+      Error_Handler();
 
    dmpbBttn.setOtptValMin(255);   // Set minimum value to 10% of the total range
    dmpbBttn.setOtptValMax(2550);  // Set the maximum value to 100% of the total range
@@ -92,11 +95,6 @@ void setup() {
    dmpbBttn.setScndModActvDly(2000);
    dmpbBttn.setIsOnDisabled(false);
    dmpbBttn.begin(5);
-
-   if (enableSwpTmrHndl != NULL)
-      tmrModRslt = xTimerStart(enableSwpTmrHndl, portMAX_DELAY);
-   if(tmrModRslt == pdFAIL)
-      Error_Handler();
 }
 
 void loop() {

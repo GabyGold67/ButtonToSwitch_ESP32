@@ -85,7 +85,7 @@ void setup() {
 void loop() {
   if(dmpbBttn.getOutputsChange()){
     /* The following commented out section is replaced by the single line of code following, use whichever code you're more comfortable with
-    // Keep in mind you'll also need to comment out the variables definition for the variables used in this block, if there are any
+    
     if (dmpbBttn.getIsOn())
       digitalWrite(dmpbLoadPin, HIGH);
     else
@@ -94,7 +94,7 @@ void loop() {
     digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
 
     /* The following commented out section is replaced by the single line of code following, use whichever code you're more comfortable with
-    // Keep in mind you'll also need to comment out the variables definition for the variables used in this block, if there are any
+    
     if (dmpbBttn.getIsVoided())
       digitalWrite(tvLoadPin, HIGH);
     else
@@ -103,7 +103,7 @@ void loop() {
     digitalWrite(tvLoadPin, (dmpbBttn.getIsVoided())?HIGH:LOW);
     
     /* The following commented out section is replaced by the single line of code following, use whichever code you're more comfortable with
-    // Keep in mind you'll also need to comment out the variables definition for the variables used in this block, if there are any
+    
     if (dmpbBttn.getIsEnabled()())
       digitalWrite(dmpbIsDisabledPin, HIGH);
     else
@@ -148,5 +148,4 @@ void Error_Handler(){
   
   return;
 }
-
 //===============================>> User Functions Implementations END

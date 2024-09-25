@@ -225,7 +225,7 @@ var NAVTREEINDEX0 =
 "index.html#included-methods-for-dbncdmpbttn-class":[0,4,0],
 "index.html#ltchmpbttn-class":[0,9],
 "index.html#tgglltchmpbttn-class":[0,11],
-"index.html#the-driving-concept-is-pretty-simple-stop-checking-an-input-pin-voltage-start-asking-if-your-switch-is-on-or-off":[0,0],
+"index.html#the-driving-concept-is-pretty-simple-stop-checking-an-input-pin-voltage-start-asking-if-the-switch-is-on-or-off":[0,0],
 "index.html#the-embedded-behavior-also-includes-logical-replacements-for-temporary-or-extraordinary-responses-that-usually-need-external-hardware-modifications-in-electromechanical-switches":[0,3,0],
 "index.html#the-library-implements-the-following-switches-mechanisms":[0,2],
 "index.html#tmltchmpbttn-class":[0,13],

@@ -64,8 +64,24 @@ void setup() {
    pinMode(isOnScndryLoadPin, OUTPUT);
    pinMode(dmpbIsDisabledPin, OUTPUT);
 
+   enableSwpTmrHndl = xTimerCreate(
+      "isEnabledSwapTimer",
+      10000,
+      pdTRUE,
+      dmpbBttnPtr,
+      swpEnableCb
+   );
+
+	dmpbBttn.setIsOnDisabled(true);
    dmpbBttn.setScndModActvDly(2000);
    dmpbBttn.begin();
+
+   if (enableSwpTmrHndl != NULL){
+      tmrModRslt = xTimerStart(enableSwpTmrHndl, portMAX_DELAY);
+   }
+   if(tmrModRslt == pdFAIL){
+      Error_Handler();
+   }
 }
 
 void loop() {
@@ -88,7 +104,6 @@ void loop() {
  */
 void swpEnableCb(TimerHandle_t pvParam){
   DbncdMPBttn* dbncdMPBLocPtr = (DbncdMPBttn*) pvTimerGetTimerID(pvParam);
-  // bool mpbttnIsEnbldStts{dbncdMPBLocPtr->getIsEnabled()};
 
   if (dbncdMPBLocPtr->getIsEnabled())
     dbncdMPBLocPtr->disable();

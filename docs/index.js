@@ -1,6 +1,6 @@
 var index =
 [
-    [ "The driving concept is pretty simple: stop checking an input pin voltage, start asking if your switch...", "index.html#the-driving-concept-is-pretty-simple-stop-checking-an-input-pin-voltage-start-asking-if-your-switch-is-on-or-off", null ],
+    [ "The driving concept is pretty simple: stop checking an input pin voltage, start asking if the switch ...", "index.html#the-driving-concept-is-pretty-simple-stop-checking-an-input-pin-voltage-start-asking-if-the-switch-is-on-or-off", null ],
     [ "An ESP32-RTOS Arduino library that builds switch mechanisms replacements out of simple push buttons.", "index.html#an-esp32-rtos-arduino-library-that-builds-switch-mechanisms-replacements-out-of-simple-push-buttons", null ],
     [ "The library implements the following switches mechanisms:", "index.html#the-library-implements-the-following-switches-mechanisms", null ],
     [ "For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!", "index.html#for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32", [

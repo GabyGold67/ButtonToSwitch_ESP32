@@ -82,7 +82,6 @@ void setup() {
 void loop() {
    if(dmpbBttn.getOutputsChange()){
       digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
-      digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
       digitalWrite(dmpbIsDisabledPin, (dmpbBttn.getIsEnabled())?LOW:HIGH);
 
       dmpbBttn.setOutputsChange(false);

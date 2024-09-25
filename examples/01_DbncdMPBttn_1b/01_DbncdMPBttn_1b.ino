@@ -58,35 +58,35 @@ DbncdMPBttn dmpbBttn (dmpbSwitchPin);
 DbncdMPBttn* dmpbBttnPtr {&dmpbBttn};
 
 void setup() {
-  pinMode(dmpbLoadPin, OUTPUT);
-  pinMode(dmpbIsDisabledPin, OUTPUT);
+   pinMode(dmpbLoadPin, OUTPUT);
+   pinMode(dmpbIsDisabledPin, OUTPUT);
 
-  enableSwpTmrHndl = xTimerCreate(
-    "isEnabledSwapTimer",
-    10000,
-    pdTRUE,
-    dmpbBttnPtr,
-    swpEnableCb
-  );
+   enableSwpTmrHndl = xTimerCreate(
+      "isEnabledSwapTimer",
+      10000,
+      pdTRUE,
+      dmpbBttnPtr,
+      swpEnableCb
+   );
 
 	dmpbBttn.setIsOnDisabled(true);
-  dmpbBttn.begin();
+   dmpbBttn.begin();
 
-  if (enableSwpTmrHndl != NULL){
+   if (enableSwpTmrHndl != NULL){
       tmrModRslt = xTimerStart(enableSwpTmrHndl, portMAX_DELAY);
    }
-	if(tmrModRslt == pdFAIL){
-	    Error_Handler();
-	}
+   if(tmrModRslt == pdFAIL){
+      Error_Handler();
+   }
 }
 
 void loop() {
-  if(dmpbBttn.getOutputsChange()){
+   if(dmpbBttn.getOutputsChange()){
       digitalWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?HIGH:LOW);
       digitalWrite(dmpbIsDisabledPin, (dmpbBttn.getIsEnabled())?LOW:HIGH);
       
       dmpbBttn.setOutputsChange(false);
-  }
+   }
 }  
 
 //===============================>> User Timers Implementations BEGIN
@@ -99,14 +99,13 @@ void loop() {
  */
 void swpEnableCb(TimerHandle_t pvParam){
   DbncdMPBttn* dbncdMPBLocPtr = (DbncdMPBttn*) pvTimerGetTimerID(pvParam);
-  // bool mpbttnIsEnbldStts{dbncdMPBLocPtr->getIsEnabled()};
 
-  if (dbncdMPBLocPtr->getIsEnabled())
-    dbncdMPBLocPtr->disable();
-  else
-    dbncdMPBLocPtr->enable();
+   if (dbncdMPBLocPtr->getIsEnabled())
+      dbncdMPBLocPtr->disable();
+   else
+      dbncdMPBLocPtr->enable();
 
-  return;
+   return;
 }
 //===============================>> User Timers Implementations END
 
@@ -116,10 +115,10 @@ void swpEnableCb(TimerHandle_t pvParam){
  * 
  */
 void Error_Handler(){
-  for(;;)
-  {    
-  }
+   for(;;)
+   {    
+   }
   
-  return;
+   return;
 }
 //===============================>> User Functions Implementations END
