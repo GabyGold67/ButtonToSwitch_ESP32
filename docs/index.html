@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ButtonToSwitch Library for ESP32 (Arduino): &lt;strong&gt;Buttons to Switches Library&lt;/strong&gt; (ButtonToSwitch_ESP32)</title>
+<title>ButtonToSwitch Library for ESP32 (Arduino): Buttons to Switches Library (ButtonToSwitch_ESP32)</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -98,7 +98,7 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title"><b>Buttons to Switches Library</b> (ButtonToSwitch_ESP32) </div></div>
+  <div class="headertitle"><div class="title">Buttons to Switches Library (ButtonToSwitch_ESP32) </div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md__c_1_2_users_2_dev_padawan_2_documents_2_my_01_projects_2_training_01_projects_2_libs_dev___e_s_p32_2lib_2_button_to_switch___e_s_p32_2_r_e_a_d_m_e"></a></p>
@@ -217,11 +217,11 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <hr  />
  <hr  />
  <h1><a class="anchor" id="dbncdmpbttn-class"></a>
-<b>DbncdMPBttn class</b></h1>
+DbncdMPBttn class</h1>
 <p>The <b>Debounced Momentary Button</b> keeps the ON state since the moment the signal is stable (debouncing process) and until the moment the MPB is released. <br  />
 </p>
 <h2><a class="anchor" id="included-methods-for-dbncdmpbttn-class"></a>
-<b>Included Methods for DbncdMPBttn class</b></h2>
+Included Methods for DbncdMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -288,18 +288,18 @@ The embedded behavior also includes logical replacements for temporary or extrao
 </table>
 <hr  />
  <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description"></a>
-## <b>Methods definition and use description</b></h2>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-dbncdmpbttn-class-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_dbncd_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_m_p_bttn-members.html">For DbncdMPBttn class Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-1"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="dbncddlydmpbttn-class"></a>
-<b>DbncdDlydMPBttn class</b></h1>
+DbncdDlydMPBttn class</h1>
 <p>The <b>Debounced Delayed Momentary Button</b>, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released. The reasons to add the delay are design related and are usually used to avoid registering unintentional presses, or to give some equipment (load) that needs time between repeated activations the benefit of the pause. If the push button is released before the delay configured, no press is registered at all. The delay time in this class as in the other classes that implement it, might be zero (0), defined by the developer and/or modified in runtime. <br  />
 </p>
 <h1><a class="anchor" id="added-or-modified-methods-for-dbncddlydmpbttn-class"></a>
-<b>Added or modified Methods for DbncdDlydMPBttn class</b></h1>
+Added or modified Methods for DbncdDlydMPBttn class</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -314,14 +314,14 @@ The embedded behavior also includes logical replacements for temporary or extrao
 </table>
 <hr  />
  <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-1"></a>
-## <b>Methods definition and use description</b></h2>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-dbncddlydmpbttn-class-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_dbncd_dlyd_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_dlyd_m_p_bttn-members.html">For DbncdDlydMPBttn class Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-2"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="ltchmpbttn-class"></a>
-<b>LtchMPBttn class</b></h1>
+LtchMPBttn class</h1>
 <p>This is an <b>Abstract Class</b> meaning that no object can be instantiated from it. The members defined are meant to be available for the <a class="el" href="class_ltch_m_p_bttn.html" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD-MPB).">LtchMPBttn</a> <b>subclasses</b> instantiated objects, and define common behavior for all the "Latched Button Subclasses".</p><ul>
 <li><b>Latched DD-MPBs</b> are MPBs whose distinctive characteristic is that models switches that keep the ON state since the moment the input signal is stable (debouncing + Delay process), and keeps the ON state after the MPB is released and until an event un-latches them, setting them free to move back to the <b>Off State</b>.</li>
 <li>The un-latching mechanisms include but are not limited to: same MPB presses, timers, other MPB presses, other GPIO external un-latch signals or the use of the public method unlatch(). <br  />
@@ -336,7 +336,7 @@ The embedded behavior also includes logical replacements for temporary or extrao
 </ol>
 <p>The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool) ), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool) ), or to <b>set</b> both flags to generate an unlatch (see <a class="el" href="class_ltch_m_p_bttn.html#a25933288a98bd0a2efc406e7a009fbc1" title="Sets the values of the flags needed to unlatch a latched MPB.">LtchMPBttn::unlatch()</a> ).</p>
 <h2><a class="anchor" id="added-or-modified-methods-for-ltchmpbttn-class"></a>
-<b>Added or Modified Methods for LtchMPBttn class</b></h2>
+Added or Modified Methods for LtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -358,19 +358,19 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone"><b>unlatch()</b>   </td><td class="markdownTableBodyNone">None   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-2"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description--"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-ltchdmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_ltch_m_p_bttn-members.html">For LtchdMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-3"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="tgglltchmpbttn-class"></a>
-<b>TgglLtchMPBttn class</b></h1>
+TgglLtchMPBttn class</h1>
 <p>The <b>Toggle switch</b> keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. So this simulates a simple On-Off switch like the ones used to turn on/off a room light, or any electronic device. There's a lot of advantages in software simulated switches: any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource, the switch might be temporarily disabled, either keeping the On State or the Off State, and some more. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-ltchmpbttn-class-1"></a>
-<b>Added or Modified Methods for LtchMPBttn class</b></h2>
+Added or Modified Methods for LtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -378,19 +378,19 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone">**_TgglLtchMPBttn_**   </td><td class="markdownTableBodyNone">uint8_t <b>mpbttnPin</b>(, bool <b>pulledUp</b>(, bool <b>typeNO</b>(, unsigned long int <b>dbncTimeOrigSett</b>(, unsigned long int <b>strtDelay</b>))))   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-3"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-2"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-tgglltchdmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_tggl_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tggl_ltch_m_p_bttn-members.html">For TgglLtchdMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-4"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="tmltchmpbttn-class"></a>
-<b>TmLtchMPBttn class</b></h1>
+TmLtchMPBttn class</h1>
 <p>The <b>Time latched</b> or <b>Timer Switch</b> keeps the ON state <b>since the moment the signal is debounced and delayed</b>, and keeps the ON state during a set time. The <b>Service time</b> is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before reaches the time limit if the push button is pressed again. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-tmltchmpbttn-class"></a>
-<b>Added or Modified Methods for TmLtchMPBttn class</b></h2>
+Added or Modified Methods for TmLtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -404,19 +404,19 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone"><b>setTmerRstbl()</b>   </td><td class="markdownTableBodyNone">bool <b>newIsRstbl</b>   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-4"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---1"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-tmltchdmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_tm_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html">For TmLtchdMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-5"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="hntdtmltchmpbttn-class"></a>
-<b>HntdTmLtchMPBttn class</b></h1>
+HntdTmLtchMPBttn class</h1>
 <p>The <b>Hinted Timer Latched</b>, or <b>Staircase Timer Switch</b>, keeps the ON state since the moment the signal is debounced, and keeps the state during a set time, the switch time is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before it gets to the end if the push button is pressed, the option to give a warning when the time is close to the end through a second flag (remaining time is defined as a percentage of the total ON time and it's configurable), and the possibility to set a third signal ON while the switch is off, just like the pilot light (hint) in a staircase timer switch. The warning signal is independent of the off hint. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-hntdtmltchmpbttn-class"></a>
-<b>Added or Modified Methods for HntdTmLtchMPBttn class</b></h2>
+Added or Modified Methods for HntdTmLtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -448,19 +448,19 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone"><b>setWrnngPrctg()</b>   </td><td class="markdownTableBodyNone">unsigned int newWrnngPrctg   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-5"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---2"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-hntdtmltchmpbttn-class-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_hntd_tm_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_hntd_tm_ltch_m_p_bttn-members.html">For HntdTmLtchMPBttn class Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-6"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h1><a class="anchor" id="xtrnunltchmpbttn-class"></a>
-<b>XtrnUnLtchMPBttn class</b></h1>
+XtrnUnLtchMPBttn class</h1>
 <p>The <b>External released toggle</b> (a.k.a. Emergency latched), keeps the On state since the moment the signal is debounced, and until an external signal is received. This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. Smoke, flood, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physically or logically generated it can be implemented to be received from a switch or a remote signal of any usual kind. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-xtrnunltchmpbttn-class"></a>
-<b>Added or Modified Methods for XtrnUnltchMPBttn class</b></h2>
+Added or Modified Methods for XtrnUnltchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -470,15 +470,15 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone">**_XtrnUnLtchMPBttn_**   </td><td class="markdownTableBodyNone">uint8_t <b>mpbttnPin</b>, DbncDlydMPBttn* <b>unltchBttn</b>(, bool <b>pulledUp</b>(, bool <b>typeNO</b>(, unsigned long int <b>dbncTimeOrigSett</b>(, unsigned long int <b>strtDelay</b>))))   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-6"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---3"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-xtrnunltchmpbttn-class-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_xtrn_unltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_xtrn_unltch_m_p_bttn-members.html">For XtrnUnltchMPBttn class Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-7"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
 <h2><a class="anchor" id="autotoc_md-dblactnltchmpbttn-class--"></a>
-# <b>DblActnLtchMPBttn class</b></h2>
+# DblActnLtchMPBttn class</h2>
 <p>This is an <b>Abstract Class</b> meaning that no object can be instantiated from it. The members defined are meant to be available for the <b>Double Action Latched DD-MPB</b> (<a class="el" href="class_dbl_actn_ltch_m_p_bttn.html" title="Abstract class, base to model Double Action LDD-MPBs (DALDD-MPBs).">DblActnLtchMPBttn</a>) <b>subclasses</b> instantiated objects, and define common behavior for all the "Double Action Latched Button Subclasses". <br  />
 </p>
 <p><b>Double Action Latched DD-MPB</b> are MPBs whose distinctive characteristic is that models switches that present different behaviors based on the <b>time length</b> of the presses detected and the <b>sequence</b> of the presses. <br  />
@@ -518,7 +518,7 @@ The embedded behavior also includes logical replacements for temporary or extrao
  </p>
 </blockquote>
 <h2><a class="anchor" id="added-or-modified-methods-for-dblactnltchmpbttn-class"></a>
-<b>Added or Modified Methods for DblActnLtchMPBttn class</b></h2>
+Added or Modified Methods for DblActnLtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -542,15 +542,15 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone"><b>setTaskWhileOnScndry()</b>   </td><td class="markdownTableBodyNone">TaskHandle_t <b>newTaskHandle</b>   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-7"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---4"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-dblactnltchmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_dbl_actn_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbl_actn_ltch_m_p_bttn-members.html">For DblActnLtchMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-8"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
-<h2><a class="anchor" id="autotoc_md-ddlyddaltchmpbttn-class"></a>
-# <b>DDlydDALtchMPBttn class</b></h2>
+<h2><a class="anchor" id="autotoc_md-ddlyddaltchmpbttn-class--"></a>
+# DDlydDALtchMPBttn class</h2>
 <p><a class="el" href="class_d_dlyd_d_a_ltch_m_p_bttn.html" title="Models a Debounced Delayed Double Action Latched MPB combo switch (Debounced Delayed DALDD-MPB - DD-D...">DDlydDALtchMPBttn</a> models a Debounced Delayed Double Action Latched MPB combo switch (Debounced Delayed DALDD-MPB - <b>DD-DALDD-MPB</b>). <br  />
  This is a subclass of the <b>DALDD-MPB</b> whose <b>secondary behavior</b> is that of a <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn</a> (DD-MPB), that implies that:</p><ul>
 <li>While on the 1.state (Off-Off), a short press will activate only the regular <b>main On state</b> 2. (On-Off). <br  />
@@ -567,7 +567,7 @@ The embedded behavior also includes logical replacements for temporary or extrao
 </li>
 </ul>
 <h2><a class="anchor" id="added-or-modified-methods-for-ddlyddaltchmpbttn-class"></a>
-<b>Added or Modified Methods for DDlydDALtchMPBttn class</b></h2>
+Added or Modified Methods for DDlydDALtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -575,15 +575,15 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone"><b><a class="el" href="class_d_dlyd_d_a_ltch_m_p_bttn.html" title="Models a Debounced Delayed Double Action Latched MPB combo switch (Debounced Delayed DALDD-MPB - DD-D...">DDlydDALtchMPBttn()</a></b>   </td><td class="markdownTableBodyNone">uint8_t <b>mpbttnPin</b>(, bool <b>pulledUp</b>(, bool <b>typeNO</b>(, unsigned long int <b>dbncTimeOrigSett</b>(, unsigned long int <b>strtDelay</b>))))   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-8"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---5"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-ddlyddaltchmpbttn-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_d_dlyd_d_a_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_d_dlyd_d_a_ltch_m_p_bttn-members.html">For DDlydDALtchMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-9"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
-<h2><a class="anchor" id="autotoc_md-sldrdaltchmpbttn-class"></a>
-# <b>SldrDALtchMPBttn class</b></h2>
+<h2><a class="anchor" id="autotoc_md-sldrdaltchmpbttn-class--"></a>
+# SldrDALtchMPBttn class</h2>
 <p><a class="el" href="class_sldr_d_a_ltch_m_p_bttn.html" title="Models a Slider Double Action LDD-MPB combo switch, a.k.a. off/on/dimmer, a.k.a. off/on/volume radio ...">SldrDALtchMPBttn</a> models a Slider Double Action LDD-MPB combo switch, a.k.a. off/on/dimmer, a.k.a. off/on/volume radio switch)(<b>S-DALDD-MPB</b>)</p>
 <p>This is a subclass of the <b>DALDD-MPB</b> whose <b>secondary behavior</b> is analog to that of a <b>Digital potentiometer (DigiPot)</b> or a <b>Discreet values increment/decrement register</b>. That means that when in the second mode, while the MPB remains pressed, an attribute set as a register changes its value -the <b>otptCurVal</b> register-. <br  />
  When the timer callback function used to keep the MPB status updated is called -while in the secondary mode state- the time since the last call is calculated and the time lapse in milliseconds is converted into <b>Steps</b>, using as configurable factor the <b>outputSliderSpeed</b> in a pre-scaler fashion. At instantiation the <b>outputSliderSpeed</b> is configured to 1 (step/millisecond, i.e. 1 step for each millisecond). <br  />
@@ -602,7 +602,7 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <li>Revert direction by methods invocation (see setSldrDirDn(), setSldrDirUp(), swapSldrDir()).</li>
 </ul>
 <h2><a class="anchor" id="added-or-modified-methods-for-sldrdaltchmpbttn-class"></a>
-<b>Added or Modified Methods for SldrDALtchMPBttn class</b></h2>
+Added or Modified Methods for SldrDALtchMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -646,15 +646,15 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone"><b>swapSldrDir()</b>   </td><td class="markdownTableBodyNone">None   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-9"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---6"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-sldrdaltchmpbttn-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_sldr_d_a_ltch_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_sldr_d_a_ltch_m_p_bttn-members.html">For SldrDALtchMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-10"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-vdblmpbttn-class"></a>
-# <b>VdblMPBttn class</b></h2>
+ <h2><a class="anchor" id="autotoc_md-vdblmpbttn-class--"></a>
+# VdblMPBttn class</h2>
 <p>This is an <b>Abstract Class</b> meaning that no object can be instantiated from it. The members defined are meant to be available for the <b><a class="el" href="class_vdbl_m_p_bttn.html" title="Abstract class, base to model Voidable DD-MPBs (VDD-MPB).">VdblMPBttn</a> DD-MPB</b> (<b>VDD-MPB</b>) <b>subclasses</b> instantiated objects, and define common behavior for all the "Voidable  Button Subclasses". <br  />
  <b>Voidable DD-MPBs</b> are MPBs whose distinctive characteristic is that implement non-latching switches that while being pressed their state might change from <b>On State</b> to a <b>Voided state</b> due to different voiding conditions. Depending on the classes the voided state might be <b>Voided &amp; Off state</b>, <b>Voided &amp; On state</b> or <b>Voided &amp; Not enforced</b> states, being this last one those which enter the voided state but the <b>On state</b> will not be forced to change due to the voidance. <br  />
  Those conditions to change to a voided state include -but are not limited to- the following conditions: <br  />
@@ -676,7 +676,7 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <p>The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclasses. <br  />
 </p>
 <h2><a class="anchor" id="added-or-modified-methods-for-vdblmpbttn-class"></a>
-<b>Added or Modified Methods for VdblMPBttn class</b></h2>
+Added or Modified Methods for VdblMPBttn class</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -700,19 +700,19 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone"><b>setIsVoided()</b>   </td><td class="markdownTableBodyNone">None   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-10"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---7"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-vdblmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_vdbl_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_vdbl_m_p_bttn-members.html">For VdblMPBttn Subclasses Common Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-11"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
  <h2><a class="anchor" id="autotoc_md-tmvdblmpbttn-class--"></a>
-# <b>TmVdblMPBttn class</b></h2>
+# TmVdblMPBttn class</h2>
 <p>The <b>Time Voidable Momentary Button</b>, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released, or until a preset time in the ON state is reached. Then the switch will return to the Off position until the push button is released and pushed back. This kind of switches are used to activate limited resources related management or physical safety devices, and the possibility of a physical blocking of the switch to extend the ON signal artificially beyond designer's plans is highly undesired. Water valves, door unlocking mechanisms, hands-off security mechanisms, high power heating devices are some of the usual uses for these type of switches. It's implemented in the <b><a class="el" href="class_tm_vdbl_m_p_bttn.html" title="Models a Time Voidable DD-MPB, a.k.a. Anti-tampering switch (TVDD-MPB)">TmVdblMPBttn</a></b> class. <br  />
 </p>
 <h1><a class="anchor" id="added-methods-for-tmvdblmpbttn-class"></a>
-<b>Added Methods for TmVdblMPBttn class</b></h1>
+Added Methods for TmVdblMPBttn class</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
@@ -724,15 +724,15 @@ The embedded behavior also includes logical replacements for temporary or extrao
 <td class="markdownTableBodyNone"><b>setVoidTime()</b>   </td><td class="markdownTableBodyNone">None   </td></tr>
 </table>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-11"></a>
-## <b>Methods definition and use description</b></h2>
+ <h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---8"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-tmvdblmpbttn-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_tm_vdbl_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_vdbl_m_p_bttn-members.html">For TmVdblMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-12"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/">For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!</a></h2>
 <hr  />
- <h2><a class="anchor" id="autotoc_md-snglsrvcvdblmpbttn-class"></a>
-# <b>SnglSrvcVdblMPBttn class</b></h2>
+ <h2><a class="anchor" id="autotoc_md-snglsrvcvdblmpbttn-class--"></a>
+# SnglSrvcVdblMPBttn class</h2>
 <p>This class models a Single Service Voidable DD-MPB a.k.a. Trigger switch (<b>SSVDD-MPB</b>) <br  />
 </p>
 <p>The <b>Single Service Voidable Momentary Push Button</b> keeps the <b>On state</b> since the moment the signal is stable (debounce &amp; delay process) and until the moment the provided mechanisms implemented to be executed when the switch enters the <b>On State</b> are started, that means calling the <b>fnWhnTrnOn</b> function, notifying the <b>taskToNotify</b> task and setting the <b>isOn</b> attribute flag. <br  />
@@ -748,15 +748,15 @@ The embedded behavior also includes logical replacements for temporary or extrao
  </p>
 </blockquote>
 <h1><a class="anchor" id="added-methods-for-tmvdblmpbttn-class-1"></a>
-<b>Added Methods for TmVdblMPBttn class</b></h1>
+Added Methods for TmVdblMPBttn class</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Method   </th><th class="markdownTableHeadNone">Parameters    </th></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">**_TmVdblMPBttn_**   </td><td class="markdownTableBodyNone">uint8_t <b>mpbttnPin</b>(, bool <b>pulledUp</b>(, bool <b>typeNO</b>(, unsigned long int <b>dbncTimeOrigSett</b>(, unsigned long int <b>strtDelay</b>))))   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description-12"></a>
-## <b>Methods definition and use description</b></h2>
+<h2><a class="anchor" id="autotoc_md-methods-definition-and-use-description---9"></a>
+## Methods definition and use description</h2>
 <h1><a class="anchor" id="for-snglsrvcvdblmpbttn-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_sngl_srvc_vdbl_m_p_bttn-membershtml"></a>
 <a href="https://gabygold67.github.io/ButtonToSwitch_ESP32/class_sngl_srvc_vdbl_m_p_bttn-members.html">For SnglSrvcVdblMPBttn Members Documentation Click Here!</a></h1>
 <h2><a class="anchor" id="for-buttontoswitch-for-esp32-library-complete-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32-13"></a>

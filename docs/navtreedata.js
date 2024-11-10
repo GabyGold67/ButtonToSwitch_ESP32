@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "ButtonToSwitch Library for ESP32 (Arduino)", "index.html", [
-    [ "<strong>Buttons to Switches Library</strong> (ButtonToSwitch_ESP32)", "index.html", "index" ],
+    [ "Buttons to Switches Library (ButtonToSwitch_ESP32)", "index.html", "index" ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
