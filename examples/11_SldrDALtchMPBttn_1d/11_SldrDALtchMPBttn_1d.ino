@@ -9,6 +9,7 @@
   * The example instantiates a SldrDALtchMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
+  *   - 1 led with it's corresponding resistor between GND and isOnScndryLoadPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsDisabledPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbTskWhlOnPin
   *
@@ -42,7 +43,7 @@
   * 	@author	: Gabriel D. Goldman
   *
   * 	@date	: 	01/08/2023 First release
-  * 				    24/09/2024 Last update
+  * 				    07/11/2024 Last update
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -162,9 +163,11 @@ void mainCtrlTsk(void *pvParameters){
 void dmpsOutputTsk(void *pvParameters){
    const uint8_t dmpbLoadPin{GPIO_NUM_21};
    const uint8_t dmpbIsDisabledPin{GPIO_NUM_18};
+   const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
 
    pinMode(dmpbLoadPin, OUTPUT);
    pinMode(dmpbIsDisabledPin, OUTPUT);
+   pinMode(isOnScndryLoadPin, OUTPUT);
 
    uint32_t mpbSttsRcvd{0};
 	MpbOtpts_t mpbCurStateDcdd;
@@ -181,6 +184,7 @@ void dmpsOutputTsk(void *pvParameters){
 
 		mpbCurStateDcdd = otptsSttsUnpkg(mpbSttsRcvd);
       analogWrite(dmpbLoadPin, mpbCurStateDcdd.isOn?(mpbCurStateDcdd.otptCurVal/10):0);
+      digitalWrite(isOnScndryLoadPin, (mpbCurStateDcdd.isOnScndry)?HIGH:LOW);
       digitalWrite(dmpbIsDisabledPin, (mpbCurStateDcdd.isEnabled)?LOW:HIGH);
    }
 }

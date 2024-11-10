@@ -87,7 +87,7 @@ void loop() {
 void mainCtrlTsk(void *pvParameters){
    const uint8_t dmpbSwitchPin{GPIO_NUM_25};
 
-   HntdTmLtchMPBttn dmpbBttn (dmpbSwitchPin, 4000, 25, true, true, 20, 50);
+   HntdTmLtchMPBttn dmpbBttn (dmpbSwitchPin, 4000, 33, true, true, 20, 50);
    LtchMPBttn* dmpbBttnPtr {&dmpbBttn};
 
   //Create the task to keep the GPIO outputs updated to reflect the MPBs states
@@ -106,7 +106,7 @@ void mainCtrlTsk(void *pvParameters){
    //Create the timer to keep the isEnabled state of the MPB changing to see the effects over the MPBs behavior
    enableSwpTmrHndl = xTimerCreate(
       "isEnabledSwapTimer",
-      10000,
+      15000,
       pdTRUE,
       dmpbBttnPtr,
       swpEnableCb

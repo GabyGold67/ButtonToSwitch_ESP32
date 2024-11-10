@@ -12,9 +12,9 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.1.0
+  * @version v4.2.0
   * @date	: Created on: 06/11/2023
-  * 		: Last modification: 15/09/2024
+  * 		: Last modification: 08/11/2024
   * @copyright GPL-3.0 license
   *
   ******************************************************************************
@@ -34,7 +34,6 @@
 //===========================>> BEGIN General use Global variables
 static BaseType_t errorFlag {pdFALSE};
 //===========================>> END General use Global variables
-
 
 DbncdMPBttn::DbncdMPBttn()
 : _mpbttnPin{_InvalidPinNum}, _pulledUp{true}, _typeNO{true}, _dbncTimeOrigSett{0}
@@ -103,14 +102,15 @@ void DbncdMPBttn::clrStatus(bool clrIsOn){
 	_validReleasePend = false;
 	_dbncTimerStrt = 0;
 	_dbncRlsTimerStrt = 0;
-	// _validDisablePend = false;
-	// _validEnablePend = false;
-	// _isEnabled = true;
 	if(clrIsOn)
 		if(_isOn)
 			_turnOff();
+	// _validDisablePend = false;
+	// _validEnablePend = false;
+	// _isEnabled = true;
 	// if(!(getOutputsChange()))
 	// 	setOutputsChange(true);
+	//_outputsChangeCnt = 0;
 	taskEXIT_CRITICAL(&mux);
 
 
@@ -291,18 +291,14 @@ void DbncdMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 }
 
 uint32_t DbncdMPBttn::_otptsSttsPkg(uint32_t prevVal){
-	if(_isOn){
+	if(_isOn)
 		prevVal |= ((uint32_t)1) << IsOnBitPos;
-	}
-	else{
+	else
 		prevVal &= ~(((uint32_t)1) << IsOnBitPos);
-	}
-	if(_isEnabled){
+	if(_isEnabled)
 		prevVal |= ((uint32_t)1) << IsEnabledBitPos;
-	}
-	else{
+	else
 		prevVal &= ~(((uint32_t)1) << IsEnabledBitPos);
-	}
 
 	return prevVal;
 }
@@ -1104,9 +1100,8 @@ void LtchMPBttn::updFdaState(){
 			}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
 			if(_validEnablePend){
-				if(_isOn){
+				if(_isOn)
 					_turnOff();
-				}
 				_isEnabled = true;
 				_validEnablePend = false;
 				setOutputsChange(true);
@@ -1367,18 +1362,14 @@ void HntdTmLtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 
 uint32_t HntdTmLtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
 	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
-	if(_pilotOn){
+	if(_pilotOn)
 		prevVal |= ((uint32_t)1) << PilotOnBitPos;
-	}
-	else{
+	else
 		prevVal &= ~(((uint32_t)1) << PilotOnBitPos);
-	}
-	if(_wrnngOn){
+	if(_wrnngOn)
 		prevVal |= ((uint32_t)1) << WrnngOnBitPos;
-	}
-	else{
+	else
 		prevVal &= ~(((uint32_t)1) << WrnngOnBitPos);
-	}
 
 	return prevVal;
 }
@@ -1387,9 +1378,8 @@ void HntdTmLtchMPBttn::setFnWhnTrnOffPilotPtr(void(*newFnWhnTrnOff)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOffPilot != newFnWhnTrnOff){
+	if (_fnWhnTrnOffPilot != newFnWhnTrnOff)
 		_fnWhnTrnOffPilot = newFnWhnTrnOff;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;	
@@ -1399,9 +1389,8 @@ void HntdTmLtchMPBttn::setFnWhnTrnOffWrnngPtr(void(*newFnWhnTrnOff)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOffWrnng != newFnWhnTrnOff){
+	if (_fnWhnTrnOffWrnng != newFnWhnTrnOff)
 		_fnWhnTrnOffWrnng = newFnWhnTrnOff;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -1411,9 +1400,8 @@ void HntdTmLtchMPBttn::setFnWhnTrnOnPilotPtr(void(*newFnWhnTrnOn)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOnPilot != newFnWhnTrnOn){
+	if (_fnWhnTrnOnPilot != newFnWhnTrnOn)
 		_fnWhnTrnOnPilot = newFnWhnTrnOn;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -1423,9 +1411,8 @@ void HntdTmLtchMPBttn::setFnWhnTrnOnWrnngPtr(void(*newFnWhnTrnOn)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOnWrnng != newFnWhnTrnOn){
+	if (_fnWhnTrnOnWrnng != newFnWhnTrnOn)
 		_fnWhnTrnOnWrnng = newFnWhnTrnOn;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -1488,11 +1475,13 @@ void HntdTmLtchMPBttn::stDisabled_In(){
 		_validPilotSetPend = false;
 	if(_validPilotResetPend)
 		_validPilotResetPend = false;
-	if(_keepPilot && !_isOnDisabled && !_pilotOn){
-		_turnOnPilot();
+
+	if(_keepPilot){
+		if(_isOnDisabled && _pilotOn)
+			_turnOffPilot();
+		else if(!_isOnDisabled && !_pilotOn)
+			_turnOnPilot();
 	}
-	else if(_pilotOn == true)
-		_turnOffPilot();
 
 	return;
 }
@@ -1514,13 +1503,11 @@ void HntdTmLtchMPBttn::stLtchNVUP_Do(){
 void HntdTmLtchMPBttn::stOffNotVPP_In(){
 	//This method is invoked exclusively from the updFdaState, no need to declare it critical section
 	if(_keepPilot){
-		if(!_pilotOn){
+		if(!_pilotOn)
 			_turnOnPilot();
-		}
 	}
-	if(_wrnngOn){
+	if(_wrnngOn)
 		_turnOffWrnng();
-	}
 
 	return;
 }
@@ -1528,9 +1515,8 @@ void HntdTmLtchMPBttn::stOffNotVPP_In(){
 void HntdTmLtchMPBttn::stOffVPP_Out(){
 	//This method is invoked exclusively from the updFdaState, no need to declare it critical section
 	TmLtchMPBttn::stOffVPP_Out();
-	if(_pilotOn){
+	if(_pilotOn)
 		_turnOffPilot();
-	}
 
 	return;
 }
@@ -1553,15 +1539,12 @@ void HntdTmLtchMPBttn::_turnOffPilot(){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;   
 
 	if(_pilotOn){
-		//---------------->> Tasks related actions
-		// None
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOffPilot != nullptr){
+		if(_fnWhnTrnOffPilot != nullptr)
 			_fnWhnTrnOffPilot();
-		}
-	}
+//	}
 	//---------------->> Flags related actions
-	if(_pilotOn){
+//	if(_pilotOn){
 		taskENTER_CRITICAL(&mux);
 		_pilotOn = false;
 		setOutputsChange(true);
@@ -1575,15 +1558,12 @@ void HntdTmLtchMPBttn::_turnOffWrnng(){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	if(_wrnngOn){
-		//---------------->> Tasks related actions
-		// None
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOffWrnng != nullptr){
+		if(_fnWhnTrnOffWrnng != nullptr)
 			_fnWhnTrnOffWrnng();
-		}
-	}
+//	}
 	//---------------->> Flags related actions
-	if(_wrnngOn){
+//	if(_wrnngOn){
 		taskENTER_CRITICAL(&mux);
 		_wrnngOn = false;
 		setOutputsChange(true);
@@ -1597,15 +1577,12 @@ void HntdTmLtchMPBttn::_turnOnPilot(){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	if(!_pilotOn){
-		//---------------->> Tasks related actions
-		// None
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOnPilot != nullptr){
+		if(_fnWhnTrnOnPilot != nullptr)
 			_fnWhnTrnOnPilot();
-		}
-	}
+//	}
 	//---------------->> Flags related actions
-	if(!_pilotOn){
+//	if(!_pilotOn){
 		taskENTER_CRITICAL(&mux);
 		_pilotOn = true;
 		setOutputsChange(true);
@@ -1619,15 +1596,12 @@ void HntdTmLtchMPBttn::_turnOnWrnng(){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	if(!_wrnngOn){
-		//---------------->> Tasks related actions
-		// None
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOnWrnng != nullptr){
+		if(_fnWhnTrnOnWrnng != nullptr)
 			_fnWhnTrnOnWrnng();
-		}
-	}
+//	}
 	//---------------->> Flags related actions
-	if(!_wrnngOn){
+//	if(!_wrnngOn){
 		taskENTER_CRITICAL(&mux);
 		_wrnngOn = true;
 		setOutputsChange(true);
@@ -1872,13 +1846,22 @@ void DblActnLtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	return;
 }
 
+uint32_t DblActnLtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
+	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+	if(_isOnScndry)
+		prevVal |= ((uint32_t)1) << IsOnScndryBitPos;
+	else
+		prevVal &= ~(((uint32_t)1) << IsOnScndryBitPos);
+
+	return prevVal;
+}
+
 void DblActnLtchMPBttn::setFnWhnTrnOffScndryPtr(void (*newFnWhnTrnOff)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOffScndry != newFnWhnTrnOff){
+	if (_fnWhnTrnOffScndry != newFnWhnTrnOff)
 		_fnWhnTrnOffScndry = newFnWhnTrnOff;
-	}
 	taskEXIT_CRITICAL(&mux);
 	return;
 }
@@ -1887,9 +1870,8 @@ void DblActnLtchMPBttn::setFnWhnTrnOnScndryPtr(void (*newFnWhnTrnOn)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOnScndry != newFnWhnTrnOn){
+	if (_fnWhnTrnOnScndry != newFnWhnTrnOn)
 		_fnWhnTrnOnScndry = newFnWhnTrnOn;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -1901,12 +1883,10 @@ bool DblActnLtchMPBttn::setScndModActvDly(const unsigned long &newVal){
 
 	taskENTER_CRITICAL(&mux);
 	if(newVal != _scndModActvDly){
-		if (newVal >= _MinSrvcTime){  //The minimum activation time is _minActTime
+		if (newVal >= _MinSrvcTime)  //The minimum activation time is _minActTime
 			_scndModActvDly = newVal;
-		}
-		else{
+		else
 			result = false;
-		}
 	}
 	taskEXIT_CRITICAL(&mux);
 
@@ -1928,9 +1908,8 @@ void DblActnLtchMPBttn::setTaskWhileOnScndry(const TaskHandle_t &newTaskHandle){
 				}
 			}
 		}
-		if (newTaskHandle != NULL){
+		if (newTaskHandle != NULL)
 			_taskWhileOnScndryHndl = newTaskHandle;
-		}
 	}
 	taskEXIT_CRITICAL(&mux);
 
@@ -1951,7 +1930,7 @@ void DblActnLtchMPBttn::_turnOffScndry(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffScndry != nullptr)
 			_fnWhnTrnOffScndry();
-	//---------------->> Flags related actions
+		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_isOnScndry = false;
 		setOutputsChange(true);
@@ -1973,10 +1952,9 @@ void DblActnLtchMPBttn::_turnOnScndry(){
 					vTaskResume(_taskWhileOnScndryHndl);
 		}
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOnScndry != nullptr){
+		if(_fnWhnTrnOnScndry != nullptr)
 			_fnWhnTrnOnScndry();
-		}
-	//---------------->> Flags related actions
+		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_isOnScndry = true;
 		setOutputsChange(true);
@@ -2040,7 +2018,7 @@ void DblActnLtchMPBttn::updFdaState(){
 			setSttChng();
 			//Out: >>---------------------------------->>
 			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 		case stOnScndMod:
 			//In: >>---------------------------------->>
@@ -2075,7 +2053,7 @@ void DblActnLtchMPBttn::updFdaState(){
 			if(_sttChng){
 				stOnEndScndMod_Out();
 			}
-			break;
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 		case stOnMPBRlsd:
 			//In: >>---------------------------------->>
@@ -2133,6 +2111,10 @@ void DblActnLtchMPBttn::updFdaState(){
 			}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
 			if(_validEnablePend){
+				if(_isOnScndry)
+					_turnOffScndry();
+				if(_isOn)
+					_turnOff();
 				_isEnabled = true;
 				_validEnablePend = false;
 				setOutputsChange(true);
@@ -2215,40 +2197,17 @@ void DDlydDALtchMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	
 	taskENTER_CRITICAL(&mux);
-	if(clrIsOn && _isOnScndry){
+	if(clrIsOn && _isOnScndry)
 		_turnOffScndry();
-	}
 	DblActnLtchMPBttn::clrStatus(clrIsOn);
 	taskEXIT_CRITICAL(&mux);
 
 	return;
 }
 
-uint32_t DDlydDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
-	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
-	if(_isOnScndry)
-		prevVal |= ((uint32_t)1) << IsOnScndryBitPos;
-	else
-		prevVal &= ~(((uint32_t)1) << IsOnScndryBitPos);
-
-	return prevVal;
-}
-
-/*void DDlydDALtchMPBttn::stDisabled_In(){	
-	if(_isOnScndry != _isOnDisabled){
-		if(_isOnDisabled)
-			_turnOnScndry();
-		else
-			_turnOffScndry();
-	}
-
-	return;
-}*/
-
 void DDlydDALtchMPBttn::stOnEndScndMod_Out(){
-	if(_isOnScndry){
+	if(_isOnScndry)
 		_turnOffScndry();
-	}
 
 	return;
 }
@@ -2283,9 +2242,8 @@ void SldrDALtchMPBttn::clrStatus(bool clrIsOn){
 
 	taskENTER_CRITICAL(&mux);
 	// Might the option to return the _otpCurVal to the initVal be added? To one the extreme values?
-	if(clrIsOn && _isOnScndry){
+	if(clrIsOn && _isOnScndry)
 		_turnOffScndry();
-	}
 	DblActnLtchMPBttn::clrStatus(clrIsOn);
 	taskEXIT_CRITICAL(&mux);
 
@@ -2333,7 +2291,7 @@ bool SldrDALtchMPBttn::getSldrDirUp(){
 }
 
 uint32_t SldrDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
-	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
+	prevVal = DblActnLtchMPBttn::_otptsSttsPkg(prevVal);
 	prevVal |= (((uint32_t)_otptCurVal) << OtptCurValBitPos);
 
 	return prevVal;
@@ -2345,12 +2303,10 @@ bool SldrDALtchMPBttn::setOtptCurVal(const uint16_t &newVal){
 
 	taskENTER_CRITICAL(&mux);
 	if(_otptCurVal != newVal){
-		if(newVal >= _otptValMin && newVal <= _otptValMax){
+		if(newVal >= _otptValMin && newVal <= _otptValMax)
 			_otptCurVal = newVal;
-		}
-		else{
+		else
 			result = false;
-		}
 	}
 	taskEXIT_CRITICAL(&mux);
 
@@ -2363,12 +2319,10 @@ bool SldrDALtchMPBttn::setOtptSldrSpd(const uint16_t &newVal){
 
 	taskENTER_CRITICAL(&mux);
 	if(newVal != _otptSldrSpd){
-		if(newVal > 0){
+		if(newVal > 0)
 			_otptSldrSpd = newVal;
-		}
-		else{
+		else
 			result = false;
-		}
 	}
 	taskEXIT_CRITICAL(&mux);
 
@@ -2381,12 +2335,10 @@ bool SldrDALtchMPBttn::setOtptSldrStpSize(const uint16_t &newVal){
 
 	taskENTER_CRITICAL(&mux);
 	if(newVal != _otptSldrStpSize){
-		if((newVal > 0) && (newVal <= (_otptValMax - _otptValMin) / _otptSldrSpd)){	//If newVal == (_otptValMax - _otptValMin) the slider will work as kind of an On/Off switch
+		if((newVal > 0) && (newVal <= (_otptValMax - _otptValMin) / _otptSldrSpd))	//If newVal == (_otptValMax - _otptValMin) the slider will work as kind of an On/Off switch
 			_otptSldrStpSize = newVal;
-		}
-		else{
+		else
 			result = false;
-		}
 	}
 	taskEXIT_CRITICAL(&mux);
 
@@ -2444,14 +2396,12 @@ bool SldrDALtchMPBttn::_setSldrDir(const bool &newVal){
 	taskENTER_CRITICAL(&mux);
 	if(newVal != _curSldrDirUp){
 		if(newVal){	//Try to set new direction Up
-			if(_otptCurVal != _otptValMax){
+			if(_otptCurVal != _otptValMax)
 				_curSldrDirUp = true;
-			}
 		}
 		else{		//Try to set new direction down
-			if(_otptCurVal != _otptValMin){
+			if(_otptCurVal != _otptValMin)
 				_curSldrDirUp = false;
-			}
 		}
 		if(_curSldrDirUp != newVal)
 			result = false;
@@ -2497,9 +2447,8 @@ void SldrDALtchMPBttn::setSwpDirOnPrss(const bool &newVal){
 }*/
 
 void SldrDALtchMPBttn::stOnEndScndMod_Out(){
-	if(_isOnScndry){
+	if(_isOnScndry)
 		_turnOffScndry();
-	}
 
 	return;
 }
@@ -2520,56 +2469,41 @@ void SldrDALtchMPBttn::stOnScndMod_Do(){
 	if(_curSldrDirUp){
 		// The slider is moving up
 		if(_otptCurVal != _otptValMax){
-			if((_otptValMax - _otptCurVal) >= (_otpStpsChng * _otptSldrStpSize)){
-				//The value change is in range
-				_otptCurVal += (_otpStpsChng * _otptSldrStpSize);
-			}
-			else{
-				//The value change goes out of range
-				_otptCurVal = _otptValMax;
-			}
+			if((_otptValMax - _otptCurVal) >= (_otpStpsChng * _otptSldrStpSize))				
+				_otptCurVal += (_otpStpsChng * _otptSldrStpSize);	//The value change is in range
+			else				
+				_otptCurVal = _otptValMax;	//The value change goes out of range
 			setOutputsChange(true);
 		}
 		if(getOutputsChange()){
-			if(_otptCurVal == _otptValMax){
-				if(_autoSwpDirOnEnd == true){
+			if(_otptCurVal == _otptValMax)
+				if(_autoSwpDirOnEnd == true)
 					_curSldrDirUp = false;
-				}
-			}
 		}
 	}
 	else{
 		// The slider is moving down
 		if(_otptCurVal != _otptValMin){
-			if((_otptCurVal - _otptValMin) >= (_otpStpsChng * _otptSldrStpSize)){
-				//The value change is in range
-				_otptCurVal -= (_otpStpsChng * _otptSldrStpSize);
-			}
-			else{
-				//The value change goes out of range
-				_otptCurVal = _otptValMin;
-			}
+			if((_otptCurVal - _otptValMin) >= (_otpStpsChng * _otptSldrStpSize))
+				_otptCurVal -= (_otpStpsChng * _otptSldrStpSize);	//The value change is in range
+			else
+				_otptCurVal = _otptValMin;	//The value change goes out of range
 			setOutputsChange(true);
 		}
-		if(getOutputsChange()){
-			if(_otptCurVal == _otptValMin){
-				if(_autoSwpDirOnEnd == true){
+		if(getOutputsChange())
+			if(_otptCurVal == _otptValMin)
+				if(_autoSwpDirOnEnd == true)
 					_curSldrDirUp = true;
-				}
-			}
-		}
 	}
 
 	return;
 }
 
 void SldrDALtchMPBttn::stOnStrtScndMod_In(){
-	if(!_isOnScndry){
+	if(!_isOnScndry)
 		_turnOnScndry();
-	}
-	if(_autoSwpDirOnPrss){
+	if(_autoSwpDirOnPrss)
 		swapSldrDir();
-	}
 
 	return;
 }
@@ -2595,9 +2529,8 @@ void VdblMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if(_isVoided){
+	if(_isVoided)
 		setIsNotVoided();
-	}
 	DbncdMPBttn::clrStatus(clrIsOn);
 	taskEXIT_CRITICAL(&mux);
 
@@ -2621,7 +2554,7 @@ bool VdblMPBttn::getFrcOtptLvlWhnVdd(){
 
 const bool VdblMPBttn::getIsVoided() const{
 
-    return _isVoided;
+	return _isVoided;
 }
 
 bool VdblMPBttn::getStOnWhnOtpFrcd(){
@@ -2675,9 +2608,8 @@ void VdblMPBttn::setFnWhnTrnOffVddPtr(void(*newFnWhnTrnOff)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOffVdd != newFnWhnTrnOff){
+	if (_fnWhnTrnOffVdd != newFnWhnTrnOff)
 		_fnWhnTrnOffVdd = newFnWhnTrnOff;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -2688,9 +2620,8 @@ void VdblMPBttn::setFnWhnTrnOnVddPtr(void(*newFnWhnTrnOn)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if (_fnWhnTrnOnVdd != newFnWhnTrnOn){
+	if (_fnWhnTrnOnVdd != newFnWhnTrnOn)
 		_fnWhnTrnOnVdd = newFnWhnTrnOn;
-	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -2745,12 +2676,10 @@ bool VdblMPBttn::setVoided(const bool &newVoidValue){
 
 void VdblMPBttn::stDisabled_In(){
 	if(_isOn != _isOnDisabled){
-		if(_isOn){
+		if(_isOn)
 			_turnOff();
-		}
-		else{
+		else
 			_turnOn();
-		}
 	}
 	clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 
@@ -2767,15 +2696,12 @@ void VdblMPBttn::_turnOffVdd(){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	if(_isVoided){
-		//---------------->> Tasks related actions
-		// None
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOffVdd != nullptr){
+		if(_fnWhnTrnOffVdd != nullptr)
 			_fnWhnTrnOffVdd();
-		}
-	}
+//	}
 	//---------------->> Flags related actions
-	if(_isVoided){
+//	if(_isVoided){
 		taskENTER_CRITICAL(&mux);
 		_isVoided = false;
 		setOutputsChange(true);
@@ -2789,15 +2715,12 @@ void VdblMPBttn::_turnOnVdd(){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	if(!_isVoided){
-		//---------------->> Tasks related actions
-		// None
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOnVdd != nullptr){
+		if(_fnWhnTrnOnVdd != nullptr)
 			_fnWhnTrnOnVdd();
-		}
-	}
+//	}
 		//---------------->> Flags related actions
-	if(!_isVoided){
+//	if(!_isVoided){
 		taskENTER_CRITICAL(&mux);
 		_isVoided = true;
 		setOutputsChange(true);
@@ -2836,16 +2759,15 @@ void VdblMPBttn::updFdaState(){
 			//In: >>---------------------------------->>
 			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
 			//Do: >>---------------------------------->>
-			if(!_isOn){
+			if(!_isOn)
 				_turnOn();
-			}
 			_validPressPend = false;
 			stOffVPP_Do();	// This provides a setting point for the voiding mechanism to be started
 			_mpbFdaState = stOnNVRP;
 			setSttChng();
 			//Out: >>---------------------------------->>
 			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 		case stOnNVRP:
 			//In: >>---------------------------------->>
@@ -2877,7 +2799,7 @@ void VdblMPBttn::updFdaState(){
 			setSttChng();
 			//Out: >>---------------------------------->>
 			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 		case stOnVddNVUP:
 			//In: >>---------------------------------->>
@@ -2888,7 +2810,7 @@ void VdblMPBttn::updFdaState(){
 			setSttChng();
 			//Out: >>---------------------------------->>
 			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 		case stOffVddNVUP:
 			//In: >>---------------------------------->>
@@ -2917,7 +2839,7 @@ void VdblMPBttn::updFdaState(){
 			setSttChng();
 			//Out: >>---------------------------------->>
 			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 		case stOffUnVdd:
 			//In: >>---------------------------------->>
@@ -2938,7 +2860,7 @@ void VdblMPBttn::updFdaState(){
 			setSttChng();
 			//Out: >>---------------------------------->>
 			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 		case stOnTurnOff:
 			//In: >>---------------------------------->>
@@ -2949,7 +2871,7 @@ void VdblMPBttn::updFdaState(){
 			setSttChng();
 			//Out: >>---------------------------------->>
 			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 		case stOff:
 			//In: >>---------------------------------->>
@@ -3208,4 +3130,3 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
 
 	return mpbCurSttsDcdd;
 }
-

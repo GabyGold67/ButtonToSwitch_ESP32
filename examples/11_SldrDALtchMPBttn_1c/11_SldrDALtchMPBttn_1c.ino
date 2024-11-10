@@ -9,6 +9,7 @@
   * The example instantiates a SldrDALtchMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
+  *   - 1 led with it's corresponding resistor between GND and isOnScndryLoadPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsDisabledPin
   *
   * ### This example creates two Tasks and deletes the default `loopTask` task
@@ -138,9 +139,11 @@ void mainCtrlTsk(void *pvParameters){
 void dmpsOutputTsk(void *pvParameters){
    const uint8_t dmpbLoadPin{GPIO_NUM_21};
    const uint8_t dmpbIsDisabledPin{GPIO_NUM_18};
+   const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
 
    pinMode(dmpbLoadPin, OUTPUT);
    pinMode(dmpbIsDisabledPin, OUTPUT);
+   pinMode(isOnScndryLoadPin, OUTPUT);
 
    uint32_t mpbSttsRcvd{0};
 	MpbOtpts_t mpbCurStateDcdd;
@@ -157,6 +160,7 @@ void dmpsOutputTsk(void *pvParameters){
 
 		mpbCurStateDcdd = otptsSttsUnpkg(mpbSttsRcvd);
       analogWrite(dmpbLoadPin, mpbCurStateDcdd.isOn?(mpbCurStateDcdd.otptCurVal/10):0);
+      digitalWrite(isOnScndryLoadPin, (mpbCurStateDcdd.isOnScndry)?HIGH:LOW);
       digitalWrite(dmpbIsDisabledPin, (mpbCurStateDcdd.isEnabled)?LOW:HIGH);
    }
 }

@@ -14,7 +14,7 @@
   * 	- 1 led with it's corresponding resistor between GND and dmpbFnWhnTrnOnOffPin
   *
   * ### This example creates three tasks and deletes the default `loopTask` task
-  * ### This example created two dedicated functions
+  * ### This example creates two dedicated functions
   * ### This example creates a software timer
   *
   * The "Main control task" is created in the regular setup() and then that 
