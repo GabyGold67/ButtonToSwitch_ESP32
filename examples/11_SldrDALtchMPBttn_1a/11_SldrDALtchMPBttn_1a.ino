@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file	: 11_SldrDALtchMPBttn_1a.ino
-  * @brief  : Example for the ButtonToSwitch_ESP32 library SldrDALtchMPBttn class
+  * @brief : Example for the ButtonToSwitch_ESP32 library SldrDALtchMPBttn class
   *
   *   Framework: Arduino
   *   Platform: ESP32
@@ -9,7 +9,7 @@
   * The example instantiates a SldrDALtchMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
-  * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
+  *   - 1 led with it's corresponding resistor between GND and isOnScndryLoadPin
   *
   * ### This example doesn't create extra Tasks:
   *
@@ -31,6 +31,7 @@
   * - Releasing the MPB will stop the dimming
   * - Pressing the MPB back for a long press will start changing the led to a higher
   * brightness.
+  * - Every time the Secondary mode is activated a led is turned on to show it's acting
   * - Pressing the MPB back for a short press will turn it Off
   * - Pressing once again for a short press will turn it On again, at the same brightness
   * level it was before turned Off
@@ -38,7 +39,7 @@
   * 	@author	: Gabriel D. Goldman
   *
   * 	@date	: 	01/08/2023 First release
-  * 				    16/09/2024 Last update
+  * 				    07/11/2024 Last update
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -53,11 +54,13 @@
 
 const uint8_t dmpbSwitchPin{GPIO_NUM_25};
 const uint8_t dmpbLoadPin{GPIO_NUM_21};
+const uint8_t isOnScndryLoadPin{GPIO_NUM_19};
 
 SldrDALtchMPBttn dmpbBttn(dmpbSwitchPin, true, true, 50, 100, 1280);
 
 void setup() {
   pinMode(dmpbLoadPin, OUTPUT);
+  pinMode(isOnScndryLoadPin, OUTPUT);
 
   dmpbBttn.setOtptValMin(255);   // Set minimum value to 10% of the total range
   dmpbBttn.setOtptValMax(2550);  // Set the maximum value to 100% of the total range
@@ -72,6 +75,7 @@ void setup() {
 void loop() {
    if(dmpbBttn.getOutputsChange()){
       analogWrite(dmpbLoadPin, (dmpbBttn.getIsOn())?(dmpbBttn.getOtptCurVal()/10):0);
+      digitalWrite(isOnScndryLoadPin, dmpbBttn.getIsOnScndry()?HIGH:LOW);
 
       dmpbBttn.setOutputsChange(false);
    }  

@@ -1,3 +1,12 @@
+# v4.2.0 Debugging, improvements and normalization release
+Debugging:
+- HntdTmLtchMPBttn objects had wrong logic settings when entering the **isDisabled** state for some keepPilot and isOnDisabled combinations.
+Improvements:
+- DFA unconditional state changes allowed to cascade on more classes' state machines.
+Normalization:
+- The DblActnLtchMPBttn subclasses objects exited the **isDisabled** state in a sequence not consistent with other classes' objects.
+- isOnScndry attribute flag moved upwards the classes hierachy. Now all DblActnLtchMPBttn subclasses include the attribute flag and have access to it's value through its getters, task and functions execution when turning On & Off.
+
 # v4.1.0 Debugging and improvements release
 Refactoring:
 - The setOutputsChange() and getOutputsChange() transparently changed. The API was not changed -it still sets and returns a boolean value- but internally now keeps a counter to avoid multithread developments generated race conditions.

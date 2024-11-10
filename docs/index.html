@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.1.0</span>
+   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.2.0</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -102,17 +102,21 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md__c_1_2_users_2_dev_padawan_2_documents_2_my_01_projects_2_training_01_projects_2_libs_dev___e_s_p32_2lib_2_button_to_switch___e_s_p32_2_r_e_a_d_m_e"></a></p>
-<h1><a class="anchor" id="the-driving-concept-is-pretty-simple-stop-checking-an-input-pin-voltage-start-asking-if-the-switch-is-on-or-off"></a>
-<b>The driving concept is pretty simple: stop checking an input pin voltage, start asking if the switch is On or Off.</b></h1>
+<h1><a class="anchor" id="the-driving-concept-is-pretty-simple"></a>
+The driving concept is pretty simple:</h1>
+<h1><a class="anchor" id="autotoc_md--_stop-checking-the-input-pin-voltage_"></a>
+- <em>Stop checking the input pin voltage.</em></h1>
+<h1><a class="anchor" id="autotoc_md--_start-asking-if-the-switch-is-on-or-off_"></a>
+- <em>Start asking if the switch is On or Off.</em></h1>
 <p>This library is an evolutionary refactoring of my own -now archived- <b>mpbToSwitch</b> library.</p>
-<h1><a class="anchor" id="an-esp32-rtos-arduino-library-that-builds-switch-mechanisms-replacements-out-of-simple-push-buttons"></a>
-An ESP32-RTOS Arduino library that builds switch mechanisms replacements out of simple push buttons.</h1>
+<h2><a class="anchor" id="an-esp32-rtos-arduino-library-that-builds-switch-mechanisms-replacements-out-of-simple-push-buttons"></a>
+An ESP32-RTOS Arduino library that builds switch mechanisms replacements out of simple push buttons.</h2>
 <p>By using just a push button (a.k.a. momentary switches or momentary buttons, <em><b>MPB</b></em> for short from here on) the classes implemented in this library will manage, calculate and update different parameters to <b>generate the behavior of standard electromechanical switches</b>. Those parameters include presses, releases, timings, counters or secondary input readings as needed.</p>
 <p>The instantiated switch state is updated independently by a standard FreeRTOS software timer (or ESP-IDF FreeRTOS in this case), that keeps the state of the objects created constantly refreshed including the ON/OFF condition, without constant polling needed. The timer setup is managed by in-class methods, including the possibility to pause, resume or end the timer of each object independently of the others. <br  />
  Each class offers a wide range of methods to set, read and modify every significant aspect of each switch mechanism simulated, and the signal received from the push button is debounced for a correct behavior of the event processing. <br  />
 </p>
-<h1><a class="anchor" id="the-library-implements-the-following-switches-mechanisms"></a>
-The library implements the following switches mechanisms:</h1>
+<h2><a class="anchor" id="the-library-implements-the-following-switches-mechanisms"></a>
+The library implements the following switches mechanisms:</h2>
 <ul>
 <li><b>Debounced Momentary Push Button</b> (a.k.a. Momentary switch, a.k.a. <b>Pushbutton</b>) <br  />
 </li>

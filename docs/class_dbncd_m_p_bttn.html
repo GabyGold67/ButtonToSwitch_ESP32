@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.1.0</span>
+   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.2.0</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -733,7 +733,7 @@ Here is the caller graph for this function:</div>
 <p>Returns the current value of strtDelay attribute.</p>
 <p>Returns the current value of time used by the object to rise the isOn flag, after the debouncing process ends, in milliseconds. If the MPB is released before completing the debounce <b>and</b> the strtDelay time, no press will be detected by the object, and the isOn flag will not be affected. The original value for the delay process used at instantiation time might be changed with the <b>setStrtDelay()</b> method, so this method is provided to get the current value in use.</p>
 <dl class="section return"><dt>Returns</dt><dd>The current strtDelay time in milliseconds.</dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>The strtDelay attribute is forced to a 0 ms value at instantiation of <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> class objects, and no setter mechanism is provided in this class. The inherited <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn</a> class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to olde versions of the library. </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>The strtDelay attribute is forced to a 0 ms value at instantiation of <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> class objects, and no setter mechanism is provided in this class. The inherited <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn</a> class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to old versions of the library. </dd></dl>
 
 </div>
 </div>

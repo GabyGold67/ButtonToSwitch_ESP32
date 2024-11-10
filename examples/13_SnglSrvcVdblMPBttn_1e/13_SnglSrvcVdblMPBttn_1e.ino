@@ -1,42 +1,33 @@
 /**
   ******************************************************************************
-  * @file	: 10_HntdTmLtchMPBttn_1e.ino
-  * @brief  : Example for the ButtonToSwitch_ESP32 library HntdTmLtchMPBttn class
+  * @file	: 13_SnglSrvcVdblMPBttn_1e.ino
+  * @brief  : Example for the ButtonToSwitch_ESP32 library SnglSrvcVdblMPBttn class
   *
   *   Framework: Arduino
   *   Platform: ESP32
   * 
-  * The example instantiates a HntdTmLtchMPBttn object using:
+  * The example instantiates a SnglSrvcVdblMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsDisabledPin
-  * 	- 1 led with it's corresponding resistor between GND and dmpbTskWhlOnPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbFnWhnTrnOnOffPin
   *
-  * ### This example creates three tasks and deletes the default `loopTask` task
-  * ### This example created two dedicated functions
+  * ### This example creates two tasks and deletes the default `loopTask` task
+  * ### This example creates two dedicated functions
   * ### This example creates a software timer
   *
   * The "Main control task" is created in the regular setup() and then that 
   * arduino standard `loopTask` is deleted in the loop()
   * 
-  * In the main control task the HntdTmLtchMPBttn object is instantiated and configured
-  * as usual, including a task to be unblocked when the isOn state changes by using
-  * `dmpbBttn.setTaskToNotify(dmpsOutputTskHdl)`. The second task is also created
-  * in the main control task, as is created the software timer that controls the 
-  * isEnabled state.
+  * In the main control task the SnglSrvcVdblMPBttn object is instantiated and configured
+  * as usual. The second task is also created in the main control task, as is 
+  * created the software timer that controls the isEnabled state.
   * 
   * When a change in the object's outputs attribute flags values is detected, the
   * task that manages the loads and resources that the switch turns On and Off is 
   * unblocked, with the provision of the MPB state passed as a 32-bits argument.
   * The task then takes care of updating the GPIO outputs.
   *
-  * - The third task is created, started and blocked, like the second, it's 
-  * purpose is to execute while the MPB is in "isOn state". 
-  * Please read the library documentation regarding the consequences of executing
-  * a task that is resumed and paused externally and without previous notification
-  * to let the task to be paused in an orderly manner!!
-  * 
   * The software timer created periodically toggles the isEnabled attribute flag
   * value, showing the behavior of the instantiated object when enabled and when
   * disabled.
@@ -50,7 +41,7 @@
   * 	@author	: Gabriel D. Goldman
   *
   * 	@date	: 	01/08/2023 First release
-  * 				    25/09/2024 Last update
+  * 				    23/09/2024 Last update
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -71,16 +62,13 @@ void Error_Handler();
 
 void mainCtrlTsk(void *pvParameters);
 void dmpsOutputTsk(void *pvParameters);
-void dmpsActWhlOnTsk(void *pvParameters);
 void fnExecTrnOn();
 void fnExecTrnOff();
-
 //===============================>> User Functions Prototypes END
 
 //===============================>> User Tasks & Timers related declarations BEGIN
 TaskHandle_t mainCtrlTskHndl {NULL};
 TaskHandle_t dmpsOutputTskHdl;
-TaskHandle_t dmpsActWhlOnTskHndl;
 BaseType_t xReturned;
 
 TimerHandle_t enableSwpTmrHndl{NULL};
@@ -111,8 +99,8 @@ void loop() {
 void mainCtrlTsk(void *pvParameters){
    const uint8_t dmpbSwitchPin{GPIO_NUM_25};
 
-   HntdTmLtchMPBttn dmpbBttn (dmpbSwitchPin, 4000, 25, true, true, 20, 50);
-   LtchMPBttn* dmpbBttnPtr {&dmpbBttn};
+   SnglSrvcVdblMPBttn dmpbBttn (dmpbSwitchPin, true, true, 50, 50);
+   VdblMPBttn* dmpbBttnPtr {&dmpbBttn};
 
   //Create the task to keep the GPIO outputs updated to reflect the MPBs states
    xReturned = xTaskCreatePinnedToCore(
@@ -126,20 +114,6 @@ void mainCtrlTsk(void *pvParameters){
    );
    if(xReturned != pdPASS)
       Error_Handler();
-
-  //Create the task to resume every time the the MPB enters the On state and blocks when enters the Off state
-   xReturned = xTaskCreatePinnedToCore(
-      dmpsActWhlOnTsk,  //Callback function/task to be called
-      "ExecWhileOnTask",  //Name of the task
-      1024,   //Stack size (in bytes in ESP32, words in FreeRTOS), the minimum value is in the config file, for this is 768 bytes
-      NULL,  //Pointer to the parameters for the function to work with
-      configTIMER_TASK_PRIORITY,  //Priority level given to the task: use the same as the Software Timers priority level      
-      &dmpsActWhlOnTskHndl, //Task handle
-      xPortGetCoreID() //Run in the App Core if it's a dual core mcu (ESP-FreeRTOS specific)
-   );
-   if(xReturned != pdPASS)
-      Error_Handler();
-   vTaskSuspend(dmpsActWhlOnTskHndl);
 
    //Create the timer to keep the isEnabled state of the MPB changing to see the effects over the MPBs behavior
    enableSwpTmrHndl = xTimerCreate(
@@ -155,9 +129,7 @@ void mainCtrlTsk(void *pvParameters){
       Error_Handler();
    
    dmpbBttn.setIsOnDisabled(false);
-   dmpbBttn.setKeepPilot(true);
    dmpbBttn.setTaskToNotify(dmpsOutputTskHdl);
-   dmpbBttn.setTaskWhileOn(dmpsActWhlOnTskHndl);
    dmpbBttn.setFnWhnTrnOnPtr(&fnExecTrnOn);
    dmpbBttn.setFnWhnTrnOffPtr(&fnExecTrnOff);
    dmpbBttn.begin();
@@ -172,13 +144,11 @@ void mainCtrlTsk(void *pvParameters){
 
 void dmpsOutputTsk(void *pvParameters){
    const uint8_t dmpbLoadPin{GPIO_NUM_21};
-   const uint8_t wrnngLoadPin{GPIO_NUM_19};
-   const uint8_t pltLoadPin{GPIO_NUM_17};
+   const uint8_t voidedPin{GPIO_NUM_19};
    const uint8_t dmpbIsDisabledPin{GPIO_NUM_18};
 
    pinMode(dmpbLoadPin, OUTPUT);
-   pinMode(wrnngLoadPin, OUTPUT);
-   pinMode(pltLoadPin, OUTPUT);
+   pinMode(voidedPin, OUTPUT);
    pinMode(dmpbIsDisabledPin, OUTPUT);
 
    uint32_t mpbSttsRcvd{0};
@@ -196,32 +166,9 @@ void dmpsOutputTsk(void *pvParameters){
 
 		mpbCurStateDcdd = otptsSttsUnpkg(mpbSttsRcvd);
       digitalWrite(dmpbLoadPin, (mpbCurStateDcdd.isOn)?HIGH:LOW);
-      digitalWrite(wrnngLoadPin, (mpbCurStateDcdd.wrnngOn)?HIGH:LOW);
-      digitalWrite(pltLoadPin, (mpbCurStateDcdd.pilotOn)?HIGH:LOW);
+      digitalWrite(voidedPin, (mpbCurStateDcdd.isVoided)?HIGH:LOW);
       digitalWrite(dmpbIsDisabledPin, (mpbCurStateDcdd.isEnabled)?LOW:HIGH);
    }
-}
-
-void dmpsActWhlOnTsk(void *pvParameters){
-   const uint8_t dmpbTskWhlOnPin{GPIO_NUM_16};
-   
-   pinMode(dmpbTskWhlOnPin, OUTPUT);
-
-	const unsigned long int swapTimeMs{500};
-	unsigned long int strtTime{0};
-	unsigned long int curTime{0};
-	unsigned long int elapTime{0};
-	bool blinkOn {false};
-
-	strtTime = xTaskGetTickCount() / portTICK_RATE_MS;
-	for(;;){
-		curTime = (xTaskGetTickCount() / portTICK_RATE_MS);
-		if ((curTime - strtTime) > swapTimeMs){
-			blinkOn = !blinkOn;
-         digitalWrite(dmpbTskWhlOnPin, blinkOn?HIGH:LOW);
-			strtTime = curTime;
-		}
-	}
 }
 //===============================>> User Tasks Implementations END
 
@@ -309,10 +256,10 @@ void fnExecTrnOff(){
  * will be trapped in this endless loop
  */
 void Error_Handler(){
-  for(;;)
-  {    
-  }
-  
-  return;
+   for(;;)
+   {    
+   }
+
+   return;
 }
 //===============================>> User Functions Implementations END

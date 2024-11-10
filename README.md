@@ -1,5 +1,9 @@
-# **Buttons to Switches Library** (ButtonToSwitch_ESP32)
-## **The driving concept is pretty simple: stop checking an input pin voltage, start asking if the switch is On or Off.**  
+# **Buttons to Switches Library** (ButtonToSwitch_ESP32)  
+
+## The driving concept is pretty simple:
+# - _Stop checking the input pin voltage._  
+# - _Start asking if the switch is On or Off._  
+
 
 This library is an evolutionary refactoring of my own -now archived- **mpbToSwitch** library.
 

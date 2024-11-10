@@ -12,7 +12,7 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.1.0
+  * @version v4.2.0
   * @date	: Created on: 06/11/2023
   * 		: Last modification: 28/08/2024
   * @copyright GPL-3.0 license
@@ -149,9 +149,9 @@ protected:
 	void resetOutputsChngTskTrggr();
 
 public:    
-	/**
+	/** 
 	 * @brief Default class constructor
-         *
+	 *
 	 */
 	DbncdMPBttn();
 	/**
@@ -317,7 +317,7 @@ public:
     *
     * @return The current strtDelay time in milliseconds.
     *
-    * @attention The strtDelay attribute is forced to a 0 ms value at instantiation of DbncdMPBttn class objects, and no setter mechanism is provided in this class. The inherited DbncdDlydMPBttn class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to olde versions of the library.
+    * @attention The strtDelay attribute is forced to a 0 ms value at instantiation of DbncdMPBttn class objects, and no setter mechanism is provided in this class. The inherited DbncdDlydMPBttn class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to old versions of the library.
     */
 	unsigned long int getStrtDelay();
    /**
@@ -1022,6 +1022,7 @@ protected:
 	TaskHandle_t _taskWhileOnScndryHndl{NULL};
 
 	static void mpbPollCallback(TimerHandle_t mpbTmrCbArg);
+	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
    virtual void stDisabled_In(){};
    virtual void stOnEndScndMod_Out(){};
    virtual void stOnScndMod_Do() = 0;
@@ -1161,8 +1162,6 @@ public:
  */
 class DDlydDALtchMPBttn: public DblActnLtchMPBttn{
 protected:
-	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
-   // virtual void stDisabled_In();
    virtual void stOnEndScndMod_Out();
    virtual void stOnScndMod_Do();
    virtual void stOnStrtScndMod_In();
