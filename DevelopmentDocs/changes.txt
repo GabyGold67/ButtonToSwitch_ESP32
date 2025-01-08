@@ -1,3 +1,10 @@
+# v4.3.0 Improvements and additions
+- Added default constructors to all the classes that hadn't. Addition required for some dinamically created objects.
+- Added the use of standard GPIO_NUM_NC to define an invalid pin number (non connected)
+- Added the use of standard GPIO_NUM_MAX to validate the pin number for verifications
+- All pin related constructor parameters types have been changed from uint8_t to int8_t, to make easy use of the GPIO_NUM_NC macro value (-1)
+- Added support for the GPIO_NUM_MAX macro value (hardware dependant)
+
 # v4.2.0 Debugging, improvements and normalization release
 Debugging:
 - HntdTmLtchMPBttn objects had wrong logic settings when entering the **isDisabled** state for some keepPilot and isOnDisabled combinations.

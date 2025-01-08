@@ -12,9 +12,9 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.2.0
-  * @date	: Created on: 06/11/2023
-  * 		: Last modification: 28/08/2024
+  * @version v4.3.0
+  * @date First release: 06/11/2023 
+  *       Last update:   08/01/2025 11:30 (GMT+0300 DST)
   * @copyright GPL-3.0 license
   *
   ******************************************************************************
@@ -39,7 +39,8 @@
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
 #define _MinSrvcTime 100
-#define _InvalidPinNum 0xFF	// Value to give as "yet to be defined", the "Valid pin number" range and characteristics are development platform and environment related
+#define _InvalidPinNum GPIO_NUM_NC  //Not Connected pin number (in this hardware platform -1), so a signed numeric type must be used! Value to give as "yet to be defined pin"
+#define _maxValidPinNum GPIO_NUM_MAX-1
 
 /*---------------- xTaskNotify() mechanism related constants, argument structs, information packing and unpacking BEGIN -------*/
 const uint8_t IsOnBitPos {0};
@@ -103,7 +104,7 @@ protected:
 	};
 	const unsigned long int _stdMinDbncTime {_HwMinDbncTime};
 
-	uint8_t _mpbttnPin{};
+	int8_t _mpbttnPin{};
 	bool _pulledUp{};
 	bool _typeNO{};
 	unsigned long int _dbncTimeOrigSett{};
@@ -112,8 +113,10 @@ protected:
 	unsigned long int _dbncRlsTimeTempSett{0};
 	unsigned long int _dbncTimerStrt{0};
 	unsigned long int _dbncTimeTempSett{0};
-	void (*_fnWhnTrnOff)() {nullptr};
-	void (*_fnWhnTrnOn)() {nullptr};
+	//void (*_fnWhnTrnOff)() {nullptr};
+	fncPtrType _fnWhnTrnOff{nullptr};
+	// void (*_fnWhnTrnOn)() {nullptr};
+	fncPtrType _fnWhnTrnOn{nullptr};
 	bool _isEnabled{true};
 	volatile bool _isOn{false};
 	bool _isOnDisabled{false};
@@ -121,7 +124,7 @@ protected:
 	fdaDmpbStts _mpbFdaState {stOffNotVPP};
 	TimerHandle_t _mpbPollTmrHndl {NULL};   //FreeRTOS returns NULL if creation fails (not nullptr)
 	String _mpbPollTmrName {""};
-	/*volatile*/ bool _outputsChange {false};
+	bool _outputsChange {false};
 	uint32_t _outputsChangeCnt{0};
 	bool _outputsChngTskTrggr{false};
 	bool _prssRlsCcl{false};
@@ -163,7 +166,7 @@ public:
 	 * @param dbncTimeOrigSett (Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.
 	 *
 	 */
-	DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
+	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
 	/**
  * @brief Default virtual destructor
  *
@@ -345,9 +348,9 @@ public:
 	/**
 	 * @brief Initializes an object instantiated by the default constructor
 	 *
-	 * All the parameters correspond to the non-default constructor of the class, DbncdMPBttn(const uint8_t, const bool, const bool, const unsigned long int)
+	 * All the parameters correspond to the non-default constructor of the class, DbncdMPBttn(const int8_t, const bool, const bool, const unsigned long int)
 	 */
-	bool init(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
+	bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
 	/**
 	 * @brief Pauses the software timer updating the computation of the object's internal flags value.
 	 *
@@ -405,7 +408,9 @@ public:
 	 *
 	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
-	void setFnWhnTrnOffPtr(void(*newFnWhnTrnOff)());
+//	void setFnWhnTrnOffPtr(void(*newFnWhnTrnOff)());
+	void setFnWhnTrnOffPtr(fncPtrType newFnWhnTrnOff);
+
 	/**
 	 * @brief Sets the function that will be called to execute every time the object **enters** the **On State**.
 	 *
@@ -413,7 +418,8 @@ public:
 	 *
 	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
-	void setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)());
+	// void setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)());
+	void setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn);
    /**
 	 * @brief Sets the value of the **isOnDisabled** attribute flag.
 	 *
@@ -484,20 +490,20 @@ public:
      *
      * @param strtDelay Sets the initial value for the **strtDelay** attribute.
      *
-     * @note For the rest of the parameters see DbncdMPBttn(const uint8_t, const bool, const bool, const unsigned long int)
+     * @note For the rest of the parameters see DbncdMPBttn(const int8_t, const bool, const bool, const unsigned long int)
      *
      * @note If the **delay** attribute is set to 0, the resulting object is equivalent in functionality to a **DbncdMPBttn** class object.
      */
-	DbncdDlydMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
     /**
      *
-     * @brief see DbncdMPBttn::init(const uint8_t, const bool, const bool, const unsigned long int)
+     * @brief see DbncdMPBttn::init(const int8_t, const bool, const bool, const unsigned long int)
      * 
      * @param strtDelay Sets the initial value for the **strtDelay** attribute.
      *
      * @note For the rest of the parameters see DbncdMPBttn::init(GPIO_TypeDef*, const uint16_t, const bool, const bool, const unsigned long int)
      */
-	bool init(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
     /**
      * @brief Sets a new value to the "Start Delay" **strtDelay** attribute
      *
@@ -562,12 +568,16 @@ protected:
 	virtual void updFdaState();
 	virtual void updValidUnlatchStatus() = 0;
 public:
+	/**
+	 * @brief Default constructor
+	 */
+	LtchMPBttn();
     /**
     * @brief Class constructor
     *
-    * @note For the parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+    * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
-	LtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
    /**
 	 * @brief See DbncdMPBttn::begin(const unsigned long int)
     */
@@ -667,11 +677,16 @@ protected:
 	virtual void updValidUnlatchStatus();
 public:
 /**
+ * @brief Default constructor
+ * 
+ */
+TgglLtchMPBttn();
+/**
  * @brief Class constructor
  *
- * For the parameters see DbncdMPBttn(const uint8_t, const bool, const bool, const unsigned long int)
+ * For the parameters see DbncdMPBttn(const int8_t, const bool, const bool, const unsigned long int)
  */
-	TgglLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
 };
 
 //==========================================================>>
@@ -695,14 +710,19 @@ protected:
     virtual void stOffVPP_Out();
     virtual void updValidUnlatchStatus();
 public:
+	/**
+	 * @brief Default constructor
+	 * 
+	 */
+	TmLtchMPBttn();
  	/**
  	 * @brief Class constructor
  	 *
  	 * @param srvcTime The service time (time to keep the **isOn** attribute flag raised).
  	 *
- 	 * @note For the other parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+ 	 * @note For the other parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
      */
-    TmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &svcTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+    TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &svcTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
     /**
      * @brief see DbncdMPBttn::clrStatus(bool)
      */
@@ -778,13 +798,18 @@ protected:
 	bool updWrnngOn();
 public:
 	/**
+	 * @brief Default constructor
+	 * 
+	 */
+	HntdTmLtchMPBttn();
+	/**
 	 * @brief Class constructor
 	 *
 	 * @param wrnngPrctg Time **before expiration** of service time that the warning flag must be set. The time is expressed as a percentage of the total service time so it's a value in the 0 <= wrnngPrctg <= 100 range.
 	 *
-	 * For the rest of the parameters see TmLtchMPBttn(const uint8_t, const unsigned long int, const bool, const bool, const unsigned long int, const unsigned long int)
+	 * For the rest of the parameters see TmLtchMPBttn(const int8_t, const unsigned long int, const bool, const bool, const unsigned long int, const unsigned long int)
 	 */
-    HntdTmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &svcTime, const unsigned int &wrnngPrctg = 0, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+    HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &svcTime, const unsigned int &wrnngPrctg = 0, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
 	/**
 	 * @brief See DbncdMPBttn::begin(const unsigned long int)
 	 */
@@ -935,6 +960,11 @@ protected:
  	virtual void stOffNVURP_Do();
  	virtual void updValidUnlatchStatus();
 public:
+	/**
+	 * @brief Default constructor
+	 * 
+	 */
+	XtrnUnltchMPBttn();
  	/**
 	 * @brief Class constructor
 	 *
@@ -944,20 +974,20 @@ public:
  	 *
  	 * @warning Referencing a DbncdDlydMPBttn subclass object that keeps the isOn flag set for a preset time period might affect the latching/unlatching process, as this class's objects don't check for the isOn condition of the unlatching object prior to setting it's own isOn flag.
  	 *
- 	 * @note For the other parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+ 	 * @note For the other parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
  	 *
  	 * @note Other unlatch signal origins might be developed through the unlatch() method provided.
  	 */
-    XtrnUnltchMPBttn(const uint8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
+    XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
     /**
      * @brief Class constructor
      *
      * This class constructor instantiates an object that relies on the **unlatch()** method invocation to release the latched MPB
      *
-     * @note For the parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+     * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
      */
-    XtrnUnltchMPBttn(const uint8_t &mpbttnPin,  
+    XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
 
     /**
@@ -1035,11 +1065,16 @@ protected:
 
 public:
 	/**
+	 * @brief Abstract Class default constructor
+	 * 
+	 */
+	DblActnLtchMPBttn();
+	/**
 	 * @brief Abstract Class constructor
 	 *
-	 * @note For parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+	 * @note For parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
 	 */
-   DblActnLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+   DblActnLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
    /**
 	 * @brief Virtual destructor
     */
@@ -1166,12 +1201,17 @@ protected:
    virtual void stOnScndMod_Do();
    virtual void stOnStrtScndMod_In();
 public:
+	/**
+	 * @brief Default class constructor
+	 * 
+	 */
+	DDlydDALtchMPBttn();
    /**
 	 * @brief Class constructor
     *
-	 * @note For parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+	 * @note For parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
-   DDlydDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+   DDlydDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
    /**
 	 * @brief Class virtual destructor
     */
@@ -1221,14 +1261,19 @@ protected:
    virtual void stOnScndMod_Do();
 	virtual void stOnStrtScndMod_In();
 public:
-   /**
+	/**
+	 * @brief Default constructor
+	 * 
+	 */
+	SldrDALtchMPBttn();
+	/**
 	 * @brief Class constructor
     *
     * @param initVal (Optional) Initial value of the **wiper** (taking the analogy of a potentiometer working parts), in this implementation the value corresponds to the **Output Current Value (otpCurVal)** attribute of the class. As the attribute type is uint16_t and the minimum and maximum limits are set to 0x0000 and 0xFFFF respectively, the initial value might be set to any value of the type. If no value is provided 0xFFFF will be the instantiation value.
     *
-    * @note For the remaining parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+    * @note For the remaining parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
-	SldrDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const uint16_t initVal = 0xFFFF);
+	SldrDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const uint16_t initVal = 0xFFFF);
    /**
 	 * @brief Virtual class destructor
     */
@@ -1502,6 +1547,10 @@ protected:
 	virtual void updFdaState();
 	virtual bool updVoidStatus() = 0;
 public:
+	/**
+	 * @brief Default constructor
+	 */
+	VdblMPBttn();
     /**
      * @brief Class constructor
      *
@@ -1509,7 +1558,7 @@ public:
      *
      * @note For the other parameters see DbncdDlydMPBttn(GPIO_TypeDef*, const uint16_t, const bool, const bool, const unsigned long int, const unsigned long int)
      */
-	VdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
+	VdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
     /**
      * @brief Default virtual destructor
      */
@@ -1624,14 +1673,18 @@ protected:
 	bool updIsPressed();
 	virtual bool updVoidStatus();
 public:
+	/**
+	 * @brief Default constructor 
+	 */
+	TmVdblMPBttn();
     /**
      * @brief Class constructor
      *
      * @param voidTime The time -in milliseconds- the MPB must be pressed to enter the **voided state**.
      *
-     * @note For the rest of the parameters see VdblMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int, const bool)
+     * @note For the rest of the parameters see VdblMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int, const bool)
      */
-	TmVdblMPBttn(const uint8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
+	TmVdblMPBttn(const int8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
     /**
      * @brief Class virtual destructor
      */
@@ -1689,11 +1742,16 @@ protected:
    virtual bool updVoidStatus();
 public:
    /**
+    * @brief Default constructor
+    * 
+    */
+	SnglSrvcVdblMPBttn();
+	/**
 	 * @brief Class constructor
     *
-    * @note For the parameters see DbncdDlydMPBttn(const uint8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+    * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
-	SnglSrvcVdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	SnglSrvcVdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
    /**
     * @brief Class virtual destructor
     */

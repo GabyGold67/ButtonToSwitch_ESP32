@@ -12,9 +12,9 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.2.0
-  * @date	: Created on: 06/11/2023
-  * 		: Last modification: 08/11/2024
+  * @version v4.3.0
+  * @date First release: 06/11/2023 
+  *       Last update:   08/01/2025 11:30 (GMT+0300 DST)
   * @copyright GPL-3.0 license
   *
   ******************************************************************************
@@ -40,7 +40,7 @@ DbncdMPBttn::DbncdMPBttn()
 {
 }
 
-DbncdMPBttn::DbncdMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett)
+DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett)
 : _mpbttnPin{mpbttnPin}, _pulledUp{pulledUp}, _typeNO{typeNO}, _dbncTimeOrigSett{dbncTimeOrigSett}
 {
 
@@ -217,7 +217,7 @@ const TaskHandle_t DbncdMPBttn::getTaskWhileOn(){
 	return _taskWhileOnHndl;
 }
 
-bool DbncdMPBttn::init(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett){
+bool DbncdMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett){
 	bool result {false};
 
 	if(_mpbttnPin == _InvalidPinNum){
@@ -377,7 +377,8 @@ bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
 	return result;
 }
 
-void DbncdMPBttn::setFnWhnTrnOffPtr(void (*newFnWhnTrnOff)()){
+void DbncdMPBttn::setFnWhnTrnOffPtr(fncPtrType newFnWhnTrnOff){
+//void DbncdMPBttn::setFnWhnTrnOffPtr(void (*newFnWhnTrnOff)()){
 	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
@@ -388,7 +389,8 @@ void DbncdMPBttn::setFnWhnTrnOffPtr(void (*newFnWhnTrnOff)()){
 	return;
 }
 
-void DbncdMPBttn::setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)()){
+void DbncdMPBttn::setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn){
+// void DbncdMPBttn::setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)()){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
@@ -761,13 +763,13 @@ DbncdDlydMPBttn::DbncdDlydMPBttn()
 {
 }
 
-DbncdDlydMPBttn::DbncdDlydMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+DbncdDlydMPBttn::DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :DbncdMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett)
 {
 	_strtDelay = strtDelay;
 }
 
-bool DbncdDlydMPBttn::init(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
+bool DbncdDlydMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
 	bool result {false};
 
 	result = DbncdMPBttn::init(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett);
@@ -790,7 +792,11 @@ void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
 
 //=========================================================================> Class methods delimiter
 
-LtchMPBttn::LtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+LtchMPBttn::LtchMPBttn()
+{
+}
+
+LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 }
@@ -1127,7 +1133,11 @@ void LtchMPBttn::updFdaState(){
 
 //=========================================================================> Class methods delimiter
 
-TgglLtchMPBttn::TgglLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+TgglLtchMPBttn::TgglLtchMPBttn()
+{
+}
+
+TgglLtchMPBttn::TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 }
@@ -1165,7 +1175,11 @@ void TgglLtchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
-TmLtchMPBttn::TmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &actTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+TmLtchMPBttn::TmLtchMPBttn()
+{
+}
+
+TmLtchMPBttn::TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &actTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _srvcTime{actTime}
 {
 	if(_srvcTime < _MinSrvcTime)    //Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
@@ -1247,7 +1261,11 @@ void TmLtchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
-HntdTmLtchMPBttn::HntdTmLtchMPBttn(const uint8_t &mpbttnPin, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+HntdTmLtchMPBttn::HntdTmLtchMPBttn()
+{
+}
+
+HntdTmLtchMPBttn::HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :TmLtchMPBttn(mpbttnPin, actTime, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
 {
 	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;   
@@ -1657,13 +1675,17 @@ bool HntdTmLtchMPBttn::updWrnngOn(){
 
 //=========================================================================> Class methods delimiter
 
-XtrnUnltchMPBttn::XtrnUnltchMPBttn(const uint8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
+XtrnUnltchMPBttn::XtrnUnltchMPBttn()
+{
+}
+
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _unLtchBttn{unLtchBttn}
 {
 }
 
-XtrnUnltchMPBttn::XtrnUnltchMPBttn(const uint8_t &mpbttnPin,  
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
@@ -1744,7 +1766,11 @@ void XtrnUnltchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
-DblActnLtchMPBttn::DblActnLtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+DblActnLtchMPBttn::DblActnLtchMPBttn()
+{
+}
+
+DblActnLtchMPBttn::DblActnLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 }
@@ -2184,7 +2210,11 @@ void DblActnLtchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
-DDlydDALtchMPBttn::DDlydDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+DDlydDALtchMPBttn::DDlydDALtchMPBttn()
+{
+}
+
+DDlydDALtchMPBttn::DDlydDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 }
@@ -2227,7 +2257,11 @@ void DDlydDALtchMPBttn::stOnStrtScndMod_In(){
 
 //=========================================================================> Class methods delimiter
 
-SldrDALtchMPBttn::SldrDALtchMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const uint16_t initVal)
+SldrDALtchMPBttn::SldrDALtchMPBttn()
+{
+}
+
+SldrDALtchMPBttn::SldrDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const uint16_t initVal)
 :DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _initOtptCurVal{initVal}
 {
 	_otptCurVal = _initOtptCurVal;
@@ -2515,7 +2549,11 @@ bool SldrDALtchMPBttn::swapSldrDir(){
 
 //=========================================================================> Class methods delimiter
 
-VdblMPBttn::VdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+VdblMPBttn::VdblMPBttn()
+{
+}
+
+VdblMPBttn::VdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
 :DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 	_isOnDisabled = isOnDisabled;
@@ -2919,7 +2957,11 @@ void VdblMPBttn::updFdaState(){
 
 //=========================================================================> Class methods delimiter
 
-TmVdblMPBttn::TmVdblMPBttn(const uint8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+TmVdblMPBttn::TmVdblMPBttn()
+{
+}
+
+TmVdblMPBttn::TmVdblMPBttn(const int8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
 :VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, isOnDisabled), _voidTime{voidTime}
 {
 }
@@ -3023,7 +3065,11 @@ bool TmVdblMPBttn::updVoidStatus(){
 
 //=========================================================================> Class methods delimiter
 
-SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const uint8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn()
+{
+}
+
+SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, false)
 {
 	_isOnDisabled = false;
