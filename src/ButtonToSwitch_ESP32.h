@@ -14,7 +14,7 @@
   * @author	: Gabriel D. Goldman
   * @version v4.3.0
   * @date First release: 06/11/2023 
-  *       Last update:   08/01/2025 11:30 (GMT+0300 DST)
+  *       Last update:   19/01/2025 16:00 (GMT+0300 DST)
   * @copyright GPL-3.0 license
   *
   ******************************************************************************
@@ -113,9 +113,7 @@ protected:
 	unsigned long int _dbncRlsTimeTempSett{0};
 	unsigned long int _dbncTimerStrt{0};
 	unsigned long int _dbncTimeTempSett{0};
-	//void (*_fnWhnTrnOff)() {nullptr};
 	fncPtrType _fnWhnTrnOff{nullptr};
-	// void (*_fnWhnTrnOn)() {nullptr};
 	fncPtrType _fnWhnTrnOn{nullptr};
 	bool _isEnabled{true};
 	volatile bool _isOn{false};
@@ -784,7 +782,7 @@ protected:
 	bool _validPilotResetPend{false};
 
 	static void mpbPollCallback(TimerHandle_t mpbTmrCbArg);
-	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	virtual void stDisabled_In();
 	virtual void stLtchNVUP_Do();
 	virtual void stOffNotVPP_In();
@@ -1052,7 +1050,7 @@ protected:
 	TaskHandle_t _taskWhileOnScndryHndl{NULL};
 
 	static void mpbPollCallback(TimerHandle_t mpbTmrCbArg);
-	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
    virtual void stDisabled_In(){};
    virtual void stOnEndScndMod_Out(){};
    virtual void stOnScndMod_Do() = 0;
@@ -1254,9 +1252,8 @@ protected:
 	uint16_t _otptValMax{0xFFFF};
 	uint16_t _otptValMin{0x0000};
 
-	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	bool _setSldrDir(const bool &newVal);
-   // virtual void stDisabled_In();
 	void stOnEndScndMod_Out();
    virtual void stOnScndMod_Do();
 	virtual void stOnStrtScndMod_In();
@@ -1535,12 +1532,12 @@ protected:
 	bool _validUnvoidPend{false};
 
 	static void mpbPollCallback(TimerHandle_t mpbTmrCb);
-	uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	bool setVoided(const bool &newVoidValue);
 	virtual void stDisabled_In();
 	virtual void stDisabled_Out();
 	virtual void stOffNotVPP_In(){};
-	virtual void stOffVddNVUP_Do(){};	//This provides a setting point for calculating the _validUnvoidPend
+	virtual void stOffVddNVUP_Do(){};	// This provides a setting point for calculating the _validUnvoidPend
 	virtual void stOffVPP_Do(){};	// This provides a setting point for the voiding mechanism to be started
 	void _turnOffVdd();
 	void _turnOnVdd();
@@ -1668,7 +1665,7 @@ protected:
 	unsigned long int _voidTmrStrt{0};
 
 	virtual void stOffNotVPP_In();
-	virtual void stOffVddNVUP_Do();	//This provides a setting point for calculating the _validUnvoidPend
+	virtual void stOffVddNVUP_Do();	// This provides a setting point for calculating the _validUnvoidPend
 	virtual void stOffVPP_Do();	// This provides a setting point for the voiding mechanism to be started
 	bool updIsPressed();
 	virtual bool updVoidStatus();
@@ -1738,7 +1735,7 @@ public:
 class SnglSrvcVdblMPBttn: public VdblMPBttn{
 protected:
 	virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
-   virtual void stOffVddNVUP_Do();	//This provides the calculation for the _validUnvoidPend
+   virtual void stOffVddNVUP_Do();	// This provides the calculation for the _validUnvoidPend
    virtual bool updVoidStatus();
 public:
    /**
