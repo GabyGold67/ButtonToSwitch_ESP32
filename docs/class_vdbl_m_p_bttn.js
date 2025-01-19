@@ -1,6 +1,7 @@
 var class_vdbl_m_p_bttn =
 [
-    [ "VdblMPBttn", "class_vdbl_m_p_bttn.html#af456bee65784bdaa6c81d2625abbf73b", null ],
+    [ "VdblMPBttn", "class_vdbl_m_p_bttn.html#a9a66706295d3de374cba43fdf82ec88d", null ],
+    [ "VdblMPBttn", "class_vdbl_m_p_bttn.html#a73c4a6007b5ef15752d264bf0a317a03", null ],
     [ "~VdblMPBttn", "class_vdbl_m_p_bttn.html#a99c75dd8225c791015dcdbc8b1c9a07e", null ],
     [ "clrStatus", "class_vdbl_m_p_bttn.html#a7ea82534da6a8f39d9715a3126387d30", null ],
     [ "getFnWhnTrnOffVdd", "class_vdbl_m_p_bttn.html#a9d2d6568745db4c67e326af0ef93e531", null ],
