@@ -24,6 +24,7 @@ var class_dbncd_m_p_bttn =
     [ "resetDbncTime", "class_dbncd_m_p_bttn.html#a5b8cd9ec64370e6aafb62ecd94a82aef", null ],
     [ "resetFda", "class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32", null ],
     [ "resume", "class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38", null ],
+    [ "setBeginDisabled", "class_dbncd_m_p_bttn.html#a0ebb74dc4cf265035b016f520b8597e2", null ],
     [ "setDbncTime", "class_dbncd_m_p_bttn.html#afa8a94396ee3fe8f9cc41c8ea9d8b8d3", null ],
     [ "setFnWhnTrnOffPtr", "class_dbncd_m_p_bttn.html#a17526110092f47a643b41199b0694256", null ],
     [ "setFnWhnTrnOnPtr", "class_dbncd_m_p_bttn.html#ada6b4a1dad6e7c38133266dd3674237b", null ],
