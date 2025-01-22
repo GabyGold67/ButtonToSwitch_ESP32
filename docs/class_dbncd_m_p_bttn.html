@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.3.1</span>
+   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.4.0</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -218,6 +218,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memitem:a9540a12554008a6705056b02fbafed38" id="r_a9540a12554008a6705056b02fbafed38"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9540a12554008a6705056b02fbafed38">resume</a> ()</td></tr>
 <tr class="memdesc:a9540a12554008a6705056b02fbafed38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag.  <br /></td></tr>
 <tr class="separator:a9540a12554008a6705056b02fbafed38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ebb74dc4cf265035b016f520b8597e2" id="r_a0ebb74dc4cf265035b016f520b8597e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ebb74dc4cf265035b016f520b8597e2">setBeginDisabled</a> (const bool &amp;newBeginDisabled=false)</td></tr>
+<tr class="memdesc:a0ebb74dc4cf265035b016f520b8597e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the starting isDisabled state.  <br /></td></tr>
+<tr class="separator:a0ebb74dc4cf265035b016f520b8597e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa8a94396ee3fe8f9cc41c8ea9d8b8d3" id="r_afa8a94396ee3fe8f9cc41c8ea9d8b8d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa8a94396ee3fe8f9cc41c8ea9d8b8d3">setDbncTime</a> (const unsigned long int &amp;newDbncTime)</td></tr>
 <tr class="memdesc:afa8a94396ee3fe8f9cc41c8ea9d8b8d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the debounce process time.  <br /></td></tr>
 <tr class="separator:afa8a94396ee3fe8f9cc41c8ea9d8b8d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -985,6 +988,32 @@ Here is the call graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="371,16,402,16,402,21,371,21"/>
 </map>
 </div>
+
+</div>
+</div>
+<a id="a0ebb74dc4cf265035b016f520b8597e2" name="a0ebb74dc4cf265035b016f520b8597e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ebb74dc4cf265035b016f520b8597e2">&#9670;&#160;</a></span>setBeginDisabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DbncdMPBttn::setBeginDisabled </td>
+          <td>(</td>
+          <td class="paramtype">const bool &amp;</td>          <td class="paramname"><span class="paramname"><em>newBeginDisabled</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the starting isDisabled state. </p>
+<p>This method adds the possibility to start the object either in Enabled or Disabled state. The default is to be started in Enabled state (isEnabled = true). The selected state must be set before the object update timer is started, i.e. before the .<a class="el" href="#a5b4061687a017d5db4a62298b7278cb8" title="Attaches the instantiated object to a timer that monitors the input pins and updates the object statu...">begin()</a> method is executed. Once the update timer is started the use of this method has no consequences over the object behavior.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newBeginDisabled</td><td>States if the object must be started in the default Enabled state (false), or in the Disabled state (true). </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

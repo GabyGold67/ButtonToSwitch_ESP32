@@ -44,6 +44,7 @@ pause   KEYWORD2
 resetDbncTime   KEYWORD2
 resetFda KEYWORD2
 resume  KEYWORD2
+setBeginDisabled  KEYWORD2
 setDbncTime KEYWORD2
 setFnWhnTrnOffPtr KEYWORD2
 setFnWhnTrnOnPtr  KEYWORD2

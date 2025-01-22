@@ -6,12 +6,16 @@
   *   Framework: Arduino
   *   Platform: ESP32
   * 
+  * Simulation: https://wokwi.com/projects/420713765959097345
+  * 
   * The example instantiates a HntdTmLtchMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
+  *  	- 1 led with it's corresponding resistor between GND and wrnngLoadPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsDisabledPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbTskWhlOnPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbFnWhnTrnOnOffPin
+  * 	- 1 led with it's corresponding resistor between GND and dmpbTskWhlOnPin
   *
   * ### This example creates three tasks and deletes the default `loopTask` task
   * ### This example created two dedicated functions
@@ -49,8 +53,8 @@
   * 
   * 	@author	: Gabriel D. Goldman
   *
-  * 	@date	: 	01/08/2023 First release
-  * 				    25/09/2024 Last update
+  * @date First release: 01/08/2023 
+  *       Last update:   22/01/2025 19:40 (GMT+0200 DST)
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -64,6 +68,7 @@
 #include <ButtonToSwitch_ESP32.h>
 
 const uint8_t dmpbFnWhnTrnOnOffPin{GPIO_NUM_4};
+const  BaseType_t tstExecTskPrrty = 2; // Timers run in configTIMER_TASK_PRIORITY;
 
 //===============================>> User Functions Prototypes BEGIN
 void swpEnableCb(TimerHandle_t pvParam);
@@ -89,15 +94,15 @@ TimerHandle_t enableSwpTmrHndl{NULL};
 void setup() {
    pinMode(dmpbFnWhnTrnOnOffPin, OUTPUT);
 
-  //Create the Main control task to keep, the MPBs outputs updated and set the Callback task function
+  // Create the Main control task to keep, the MPBs outputs updated and set the Callback task function
    xReturned = xTaskCreatePinnedToCore(
-      mainCtrlTsk,  //Callback function/task to be called
-      "MainControlTask",  //Name of the task
-      1716,   //Stack size (in bytes in ESP32, words in FreeRTOS), the minimum value is in the config file, for this is 768 bytes
-      NULL,  //Pointer to the parameters for the function to work with
-      configTIMER_TASK_PRIORITY,  //Priority level given to the task: use the same as the Software Timers priority level      
-      &mainCtrlTskHndl, //Task handle
-      xPortGetCoreID() //Run in the App Core if it's a dual core mcu (ESP-FreeRTOS specific)
+      mainCtrlTsk,  // Callback function/task to be called
+      "MainControlTask",  // Name of the task
+      1716,   // Stack size (in bytes in ESP32, words in FreeRTOS), the minimum value is in the config file, for this is 768 bytes
+      NULL,  // Pointer to the parameters for the function to work with
+      tstExecTskPrrty,  // Priority level given to the task
+      &mainCtrlTskHndl, // Task handle
+      xPortGetCoreID() // Run in the App Core if it's a dual core mcu (ESP-FreeRTOS specific)
    );
    if(xReturned != pdPASS)
       Error_Handler();
@@ -114,34 +119,34 @@ void mainCtrlTsk(void *pvParameters){
    HntdTmLtchMPBttn dmpbBttn (dmpbSwitchPin, 4000, 25, true, true, 20, 50);
    LtchMPBttn* dmpbBttnPtr {&dmpbBttn};
 
-  //Create the task to keep the GPIO outputs updated to reflect the MPBs states
+  // Create the task to keep the GPIO outputs updated to reflect the MPBs states
    xReturned = xTaskCreatePinnedToCore(
-      dmpsOutputTsk,  //Callback function/task to be called
-      "SwitchOutputsControlTask",  //Name of the task
-      1716,   //Stack size (in bytes in ESP32, words in FreeRTOS), the minimum value is in the config file, for this is 768 bytes
-      NULL,  //Pointer to the parameters for the function to work with
-      configTIMER_TASK_PRIORITY,  //Priority level given to the task: use the same as the Software Timers priority level      
-      &dmpsOutputTskHdl, //Task handle
-      xPortGetCoreID() //Run in the App Core if it's a dual core mcu (ESP-FreeRTOS specific)
+      dmpsOutputTsk,  // Callback function/task to be called
+      "SwitchOutputsControlTask",  // Name of the task
+      1716,   // Stack size (in bytes in ESP32, words in FreeRTOS), the minimum value is in the config file, for this is 768 bytes
+      NULL,  // Pointer to the parameters for the function to work with
+      tstExecTskPrrty,  // Priority level given to the task for test purposes
+      &dmpsOutputTskHdl, // Task handle
+      xPortGetCoreID() // Run in the App Core if it's a dual core mcu (ESP-FreeRTOS specific)
    );
    if(xReturned != pdPASS)
       Error_Handler();
 
-  //Create the task to resume every time the the MPB enters the On state and blocks when enters the Off state
+  // Create the task to resume every time the the MPB enters the On state and blocks when enters the Off state
    xReturned = xTaskCreatePinnedToCore(
-      dmpsActWhlOnTsk,  //Callback function/task to be called
-      "ExecWhileOnTask",  //Name of the task
-      1024,   //Stack size (in bytes in ESP32, words in FreeRTOS), the minimum value is in the config file, for this is 768 bytes
-      NULL,  //Pointer to the parameters for the function to work with
-      configTIMER_TASK_PRIORITY,  //Priority level given to the task: use the same as the Software Timers priority level      
-      &dmpsActWhlOnTskHndl, //Task handle
-      xPortGetCoreID() //Run in the App Core if it's a dual core mcu (ESP-FreeRTOS specific)
+      dmpsActWhlOnTsk,  // Callback function/task to be called
+      "ExecWhileOnTask",  // Name of the task
+      1024,   // Stack size (in bytes in ESP32, words in FreeRTOS), the minimum value is in the config file, for this is 768 bytes
+      NULL,  // Pointer to the parameters for the function to work with
+      tstExecTskPrrty,  // Priority level given to the task for test purposes
+      &dmpsActWhlOnTskHndl, // Task handle
+      xPortGetCoreID() // Run in the App Core if it's a dual core mcu (ESP-FreeRTOS specific)
    );
    if(xReturned != pdPASS)
       Error_Handler();
    vTaskSuspend(dmpsActWhlOnTskHndl);
 
-   //Create the timer to keep the isEnabled state of the MPB changing to see the effects over the MPBs behavior
+   // Create the timer to keep the isEnabled state of the MPB changing to see the effects over the MPBs behavior
    enableSwpTmrHndl = xTimerCreate(
       "isEnabledSwapTimer",
       15000,
@@ -154,12 +159,14 @@ void mainCtrlTsk(void *pvParameters){
 	if(xReturned == pdFAIL)
       Error_Handler();
    
+   dmpbBttn.setTmerRstbl(true);
    dmpbBttn.setIsOnDisabled(false);
    dmpbBttn.setKeepPilot(true);
    dmpbBttn.setTaskToNotify(dmpsOutputTskHdl);
    dmpbBttn.setTaskWhileOn(dmpsActWhlOnTskHndl);
    dmpbBttn.setFnWhnTrnOnPtr(&fnExecTrnOn);
    dmpbBttn.setFnWhnTrnOffPtr(&fnExecTrnOff);
+   dmpbBttn.setBeginDisabled(true);
    dmpbBttn.begin();
 
    for(;;){
@@ -186,10 +193,10 @@ void dmpsOutputTsk(void *pvParameters){
 
    for(;;){
 		xReturned = xTaskNotifyWait(
-         0x00,	//uint32_t ulBitsToClearOnEntry
-         0xFFFFFFFF,	//uint32_t ulBitsToClearOnExit,
+         0x00,	// uint32_t ulBitsToClearOnEntry
+         0xFFFFFFFF,	// uint32_t ulBitsToClearOnExit,
          &mpbSttsRcvd,	// uint32_t *pulNotificationValue,
-         portMAX_DELAY//TickType_t xTicksToWait
+         portMAX_DELAY  // TickType_t xTicksToWait
 		);
       if (xReturned != pdPASS)
          Error_Handler();
@@ -296,8 +303,6 @@ void fnExecTrnOff(){
          ++blinks;
 		}
 	}
-
-   // digitalWrite(dmpbFnWhnTrnOnOffPin, LOW);
 
    return;
 }

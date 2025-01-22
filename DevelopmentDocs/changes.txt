@@ -1,3 +1,7 @@
+#v4.4.0
+- Added the possibility to start the MPBttn disabled.
+- Added the setBeginDisabled() method to control the option of starting the MPB update in isDisabled = true state
+
 # v4.3.1 Improvements and additions
 - Added support for the GPIO_NUM_MAX macro value (hardware dependant).
 - _otptsSttsPkg() virtual property confirmation for all subclasses.

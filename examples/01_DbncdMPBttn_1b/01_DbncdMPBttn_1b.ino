@@ -26,10 +26,10 @@
   * A software timer is created so that it periodically toggles the isEnabled attribute flag
   * value, showing the behavior of the instantiated object when enabled and when disabled.
   *
-  * 	@author	: Gabriel D. Goldman
+  * @author	: Gabriel D. Goldman
   *
-  * 	@date	: 	01/08/2023 First release
-  * 				    05/09/2024 Last update
+  * @date First release: 01/08/2023 
+  *       Last update:   20/01/2025 19:50 (GMT+0300 DST)
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -63,13 +63,14 @@ void setup() {
 
    enableSwpTmrHndl = xTimerCreate(
       "isEnabledSwapTimer",
-      10000,
+      5000,
       pdTRUE,
       dmpbBttnPtr,
       swpEnableCb
    );
 
 	dmpbBttn.setIsOnDisabled(true);
+   dmpbBttn.setBeginDisabled(false);
    dmpbBttn.begin();
 
    if (enableSwpTmrHndl != NULL){
