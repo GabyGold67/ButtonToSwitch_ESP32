@@ -12,9 +12,9 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.3.0
+  * @version v4.4.0
   * @date First release: 06/11/2023 
-  *       Last update:   19/01/2025 16:00 (GMT+0300 DST)
+  *       Last update:   21/01/2025 15:40 (GMT+0300 DST)
   * @copyright GPL-3.0 license
   *
   ******************************************************************************
@@ -109,6 +109,7 @@ protected:
 	bool _typeNO{};
 	unsigned long int _dbncTimeOrigSett{};
 
+	bool _beginDisabled{false};
 	unsigned long int _dbncRlsTimerStrt{0};
 	unsigned long int _dbncRlsTimeTempSett{0};
 	unsigned long int _dbncTimerStrt{0};
@@ -387,6 +388,14 @@ public:
 	 * @warning This method will restart the inactive timer after a **pause()** method. If the object's timer was modified by an **end()* method then a **begin()** method will be needed to restart it's timer.
 	 */
 	bool resume();
+	/**
+	 * @brief Sets the starting isDisabled state
+	 * 
+	 * This method adds the possibility to start the object either in Enabled or Disabled state. The default is to be started in Enabled state (isEnabled = true). The selected state must be set before the object update timer is started, i.e. before the .begin() method is executed. Once the update timer is started the use of this method has no consequences over the object behavior.
+	 * 
+	 * @param newBeginDisabled States if the object must be started in the default Enabled state (false), or in the Disabled state (true).
+	 */
+	void setBeginDisabled(const bool &newBeginDisabled = false);
 	/**
 	 * @brief Sets the debounce process time.
 	 *

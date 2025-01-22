@@ -12,9 +12,9 @@
   * behavior of standard electromechanical switches**.
   *
   * @author	: Gabriel D. Goldman
-  * @version v4.3.0
+  * @version v4.4.0
   * @date First release: 06/11/2023 
-  *       Last update:   19/01/2025 16:00 (GMT+0300 DST)
+  *       Last update:   21/01/2025 15:40 (GMT+0300 DST)
   * @copyright GPL-3.0 license
   *
   ******************************************************************************
@@ -69,6 +69,11 @@ DbncdMPBttn::~DbncdMPBttn(){
 bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 	bool result {false};
 	BaseType_t tmrModResult {pdFAIL};
+
+	if(_beginDisabled){
+		_isEnabled = false;
+		_validDisablePend = true;
+	}
 
 	if (pollDelayMs > 0){
 		if (!_mpbPollTmrHndl){        
@@ -354,6 +359,13 @@ bool DbncdMPBttn::resume(){
 	}
 
 	return result;
+}
+
+void DbncdMPBttn::setBeginDisabled(const bool &newBeginDisabled){
+	if(_beginDisabled != newBeginDisabled)
+		_beginDisabled = newBeginDisabled;
+
+	return;
 }
 
 bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
@@ -796,6 +808,11 @@ bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
    bool result {false};
    BaseType_t tmrModResult {pdFAIL};
 
+	if(_beginDisabled){
+		_isEnabled = false;
+		_validDisablePend = true;
+	}
+	
    if (pollDelayMs > 0){
       if (!_mpbPollTmrHndl){        
          _mpbPollTmrHndl = xTimerCreate(
@@ -1266,6 +1283,11 @@ bool HntdTmLtchMPBttn::begin(const unsigned long int &pollDelayMs){
 	bool result {false};
 	BaseType_t tmrModResult {pdFAIL};
 
+	if(_beginDisabled){
+		_isEnabled = false;
+		_validDisablePend = true;
+	}
+	
 	if (pollDelayMs > 0){
 		if (!_mpbPollTmrHndl){
 			_mpbPollTmrHndl = xTimerCreate(
@@ -1678,6 +1700,11 @@ bool XtrnUnltchMPBttn::begin(const unsigned long int &pollDelayMs){
    BaseType_t tmrModResult {pdFAIL};
    bool result {false};
 
+	if(_beginDisabled){
+		_isEnabled = false;
+		_validDisablePend = true;
+	}
+	
    if (pollDelayMs > 0){
 		if (!_mpbPollTmrHndl){
 			_mpbPollTmrHndl = xTimerCreate(
@@ -1766,6 +1793,11 @@ bool DblActnLtchMPBttn::begin(const unsigned long int &pollDelayMs) {
 	BaseType_t tmrModResult {pdFAIL};
 	bool result {false};
 
+	if(_beginDisabled){
+		_isEnabled = false;
+		_validDisablePend = true;
+	}
+	
 	if (pollDelayMs > 0){
 		if (!_mpbPollTmrHndl){
 			_mpbPollTmrHndl = xTimerCreate(
@@ -2953,6 +2985,11 @@ bool TmVdblMPBttn::begin(const unsigned long int &pollDelayMs){
    bool result {false};
    BaseType_t tmrModResult {pdFAIL};
 
+	if(_beginDisabled){
+		_isEnabled = false;
+		_validDisablePend = true;
+	}
+	
    if (!_mpbPollTmrHndl){
 		_mpbPollTmrHndl = xTimerCreate(
 			_mpbPollTmrName.c_str(),  // Timer name
@@ -3064,6 +3101,11 @@ bool SnglSrvcVdblMPBttn::begin(const unsigned long int &pollDelayMs){
    BaseType_t tmrModResult {pdFAIL};
    bool result {false};
 
+	if(_beginDisabled){
+		_isEnabled = false;
+		_validDisablePend = true;
+	}
+	
    if (!_mpbPollTmrHndl){
 		_mpbPollTmrHndl = xTimerCreate(
 			_mpbPollTmrName.c_str(),  // Timer name
