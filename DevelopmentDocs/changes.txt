@@ -1,5 +1,5 @@
 #v4.4.0
-- Added the possibility to start the MPBttn disabled.
+- Added the possibility to start the MPBttn disabled. Implemented for all DbncdMPBttn subclasses objects
 - Added the setBeginDisabled() method to control the option of starting the MPB update in isDisabled = true state
 
 # v4.3.1 Improvements and additions
