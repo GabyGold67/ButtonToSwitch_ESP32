@@ -54,7 +54,7 @@
   * 	@author	: Gabriel D. Goldman
   *
   * @date First release: 01/08/2023 
-  *       Last update:   22/01/2025 19:40 (GMT+0200 DST)
+  *       Last update:   23/01/2025 09:50 (GMT+0200 DST)
   *
   ******************************************************************************
   * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
@@ -92,8 +92,6 @@ TimerHandle_t enableSwpTmrHndl{NULL};
 //===============================>> User Tasks & Timers related declarations END
 
 void setup() {
-   pinMode(dmpbFnWhnTrnOnOffPin, OUTPUT);
-
   // Create the Main control task to keep, the MPBs outputs updated and set the Callback task function
    xReturned = xTaskCreatePinnedToCore(
       mainCtrlTsk,  // Callback function/task to be called
@@ -115,6 +113,7 @@ void loop() {
 //===============================>> User Tasks Implementations BEGIN
 void mainCtrlTsk(void *pvParameters){
    const uint8_t dmpbSwitchPin{GPIO_NUM_25};
+   pinMode(dmpbFnWhnTrnOnOffPin, OUTPUT);
 
    HntdTmLtchMPBttn dmpbBttn (dmpbSwitchPin, 4000, 25, true, true, 20, 50);
    LtchMPBttn* dmpbBttnPtr {&dmpbBttn};
