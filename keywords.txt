@@ -1,5 +1,5 @@
 ###############################################
-# Syntax Coloring Map For mpbToSwitch_ESP32
+# Syntax Coloring Map For ButtonToSwitch_ESP32
 ###############################################
 
 ###############################################
