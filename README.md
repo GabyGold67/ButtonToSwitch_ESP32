@@ -7,6 +7,9 @@
 
 This library is an evolutionary refactoring of my own -now archived- **mpbToSwitch** library.
 
+## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+
+
 ## An ESP32-RTOS Arduino library that builds switch mechanisms replacements out of simple push buttons.  
 By using just a push button (a.k.a. momentary switches or momentary buttons, _**MPB**_ for short from here on) the classes implemented in this library will manage, calculate and update different parameters to **generate the behavior of standard electromechanical switches**. Those parameters include presses, releases, timings, counters or secondary input readings as needed.
 
