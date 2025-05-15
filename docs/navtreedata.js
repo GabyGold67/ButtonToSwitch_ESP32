@@ -25,7 +25,6 @@
 var NAVTREE =
 [
   [ "ButtonToSwitch Library for ESP32 (Arduino)", "index.html", [
-    [ "Buttons to Switches Library (ButtonToSwitch_ESP32)", "index.html", null ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -50,5 +49,5 @@ var NAVTREEINDEX =
 "_button_to_switch___e_s_p32_8cpp.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click to disable panel synchronization';
+var SYNCOFFMSG = 'click to enable panel synchronization';
