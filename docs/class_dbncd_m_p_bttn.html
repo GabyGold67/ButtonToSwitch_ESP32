@@ -195,7 +195,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memdesc:ac646101296a76321e855250ba044c8d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the <b>outputsChange</b> attribute flag.  <br /></td></tr>
 <tr class="separator:ac646101296a76321e855250ba044c8d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4e601d4adc84085481782d5ab71a7d0" id="r_ad4e601d4adc84085481782d5ab71a7d0"><td class="memItemLeft" align="right" valign="top">unsigned long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4e601d4adc84085481782d5ab71a7d0">getStrtDelay</a> ()</td></tr>
-<tr class="memdesc:ad4e601d4adc84085481782d5ab71a7d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current value of the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag.  <br /></td></tr>
+<tr class="memdesc:ad4e601d4adc84085481782d5ab71a7d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current value of strtDelay attribute.  <br /></td></tr>
 <tr class="separator:ad4e601d4adc84085481782d5ab71a7d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3da781ff0ad5ec1064d62570fd005a3a" id="r_a3da781ff0ad5ec1064d62570fd005a3a"><td class="memItemLeft" align="right" valign="top">const TaskHandle_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3da781ff0ad5ec1064d62570fd005a3a">getTaskToNotify</a> () const</td></tr>
 <tr class="memdesc:a3da781ff0ad5ec1064d62570fd005a3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the task to be notified by the object when its output flags changes.  <br /></td></tr>
@@ -283,10 +283,14 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
     <tr><td class="paramname">mpbttnPin</td><td>Pin id number of the input signal pin </td></tr>
     <tr><td class="paramname">pulledUp</td><td>(Optional) boolean, indicates if the input pin must be configured as INPUT_PULLUP (true, default value), or INPUT_PULLDOWN (false), to calculate correctly the expected voltage level in the input pin. The pin is configured by the constructor so no previous programming is needed. The pin must be free to be used as a digital input, and must be a pin with an internal pull-up circuit, as not every GPIO pin has the option. </td></tr>
     <tr><td class="paramname">typeNO</td><td>(Optional) boolean, indicates if the MPB is a Normally Open (NO) switch (true, default value), or Normally Closed (NC) (false), to calculate correctly the expected level of voltage indicating the MPB is pressed. </td></tr>
-    <tr><td class="paramname">dbncTimeOrigSett</td><td>(Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests. </td></tr>
+    <tr><td class="paramname">dbncTimeOrigSett</td><td>(Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>The <b>mpbttnpin</b> parameter valid values is MCU dependant, as each one of the MCUs have a specific number of GPIO pins values available for use. The Arduino development environment have a minimum and maximum values constants set for each MCU it supports. The valid range for the <b>mpbttnpin</b> in an Espressif ESP32 mcu family then is <b>GPIO_NUM_0 &lt;= mpbttnpin &lt; GPIO_NUM_MAX</b> <br  />
+</dd>
+<dd>
+The Arduino development environment has defined a constant to indicate a <b>non connected to a GPIO pin</b> identified as <b>GPIO_NUM_NC</b>. </dd></dl>
 
 </div>
 </div>
@@ -714,16 +718,7 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the current value of the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag. </p>
-<p>Returns the current value of the attribute flag that triggers the execution of the taskToNotify() task if there have been outputs value changes since last MPB update</p>
-<dl class="retval"><dt>Return values</dt><dd>
-  <table class="retval">
-    <tr><td class="paramname">true</td><td>There have been changes since last update, the taskToNotify() task will be unblocked to execute. </td></tr>
-    <tr><td class="paramname">false</td><td>Otherwise</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>Returns the current value of strtDelay attribute.</p>
+<p>Returns the current value of strtDelay attribute. </p>
 <p>Returns the current value of time used by the object to rise the isOn flag, after the debouncing process ends, in milliseconds. If the MPB is released before completing the debounce <b>and</b> the strtDelay time, no press will be detected by the object, and the isOn flag will not be affected. The original value for the delay process used at instantiation time might be changed with the <b>setStrtDelay()</b> method, so this method is provided to get the current value in use.</p>
 <dl class="section return"><dt>Returns</dt><dd>The current strtDelay time in milliseconds.</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>The strtDelay attribute is forced to a 0 ms value at instantiation of <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> class objects, and no setter mechanism is provided in this class. The inherited <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn</a> class objects (and all it's subclasses) constructor includes a parameter to initialize the strtDelay value, and a method to set that attribute to a new value. This implementation is needed to keep backwards compatibility to old versions of the library. </dd></dl>

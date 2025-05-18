@@ -88,7 +88,7 @@ The **Debounced Momentary Button** keeps the ON state since the moment the signa
 |Method | Parameters|
 |---|---|
 |**_DbncdMPBttn_** |None|
-|**_DbncdMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**)))|
+|**_DbncdMPBttn_** |int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**)))|
 |**begin()**|(unsigned long int **pollDelayMs**)|
 |**clrStatus()**|(bool **clrIsOn**)|
 |**disable()**|None|
@@ -105,7 +105,7 @@ The **Debounced Momentary Button** keeps the ON state since the moment the signa
 |**getStrtDelay()**|None|
 |**getTaskToNotify()**|None|
 |**getTaskWhileOn()**|None|
-|**init()** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**)))|
+|**init()** |int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**)))|
 |**pause()**|None|
 |**resetDbncTime()**|None|
 |**resetFda()**|None|
@@ -135,8 +135,8 @@ The **Debounced Delayed Momentary Button**, keeps the ON state since the moment 
 |Method | Parameters|
 |---|---|
 |**_DbncdDlydMPBttn_** |None|
-|**_DbncdDlydMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
-|**init** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**_DbncdDlydMPBttn_** |int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**init** |int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 |**setStrtDelay()**|(unsigned long int **newStrtDelay**)|
   
 ---  
@@ -188,7 +188,7 @@ The **Toggle switch**  keeps the ON state since the moment the signal is stable 
 ## Added or Modified Methods for LtchMPBttn class  
 |Method | Parameters|
 |---|---|
-|**_TgglLtchMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**_TgglLtchMPBttn_** |int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 
 ---  
 ## Methods definition and use description
@@ -205,7 +205,7 @@ The **Time latched** or **Timer Switch** keeps the ON state **since the moment t
 ## Added or Modified Methods for TmLtchMPBttn class  
 |Method | Parameters|
 |---|---|
-|**_TmLtchMPBttn_** |uint8_t **mpbttnPin**, unsigned long int **actTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**_TmLtchMPBttn_** |int8_t **mpbttnPin**, unsigned long int **actTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 |**getSrvcTime()**|None|
 |**setSrvcTime()**|unsigned long int **newSvcTime**|
 |**setTmerRstbl()**|bool **newIsRstbl**|
@@ -226,7 +226,7 @@ The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state 
 
 |Method | Parameters|
 |---|---|
-|**_HntdTmLtchMPBttn_** |uint8_t **mpbttnPin**, unsigned long int **actTime**(, unsigned int **wrnngPrctg**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))))|  
+|**_HntdTmLtchMPBttn_** |int8_t **mpbttnPin**, unsigned long int **actTime**(, unsigned int **wrnngPrctg**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))))|  
 |**getFnWhnTrnOffPilot()**|None|
 |**getFnWhnTrnOffWrnng()**|None|
 |**getFnWhnTrnOnPilot()**|None|
@@ -256,8 +256,8 @@ The **External released toggle** (a.k.a. Emergency latched), keeps the On state 
 
 |Method | Parameters|
 |---|---|
-|**_XtrnUnLtchMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
-|**_XtrnUnLtchMPBttn_** |uint8_t **mpbttnPin**, DbncDlydMPBttn* **unltchBttn**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|  
+|**_XtrnUnLtchMPBttn_** |int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**_XtrnUnLtchMPBttn_** |int8_t **mpbttnPin**, DbncDlydMPBttn* **unltchBttn**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|  
 
 ---  
 ## Methods definition and use description  
@@ -329,7 +329,7 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
  ## Added or Modified Methods for DDlydDALtchMPBttn class  
 |Method | Parameters|
 |---|---|
-|**DDlydDALtchMPBttn()**|uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**DDlydDALtchMPBttn()**|int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 ---  
 ## Methods definition and use description  
 ---  
@@ -360,7 +360,7 @@ SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. off/
  ## Added or Modified Methods for SldrDALtchMPBttn class  
 |Method | Parameters|
 |---|---|
-|**SldrDALtchMPBttn()**|uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**(,  uint16_t initVal)))))|
+|**SldrDALtchMPBttn()**|int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**(,  uint16_t initVal)))))|
 |**getOtptCurVal()**|None|
 |**getOtptCurValIsMax()**|None|
 |**getOtptCurValIsMin()**|None|
@@ -434,7 +434,7 @@ The **Time Voidable Momentary Button**, keeps the ON state since the moment the 
 # Added Methods for TmVdblMPBttn class  
 |Method | Parameters|
 |---|---|
-|**_TmVdblMPBttn_** |uint8_t **mpbttnPin**, unsigned long int **voidTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**(, bool **isOnDisabled**)))))|
+|**_TmVdblMPBttn_** |int8_t **mpbttnPin**, unsigned long int **voidTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**(, bool **isOnDisabled**)))))|
 |**getVoidTime()**|None|
 |**setVoidTime()**|None|
 
@@ -463,7 +463,7 @@ The **Time Voidable Momentary Button**, keeps the ON state since the moment the 
 # Added Methods for TmVdblMPBttn class  
 |Method | Parameters|
 |---|---|
-|**_TmVdblMPBttn_** |uint8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
+|**_TmVdblMPBttn_** |int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))|
 
 ## Methods definition and use description  
 ---  
