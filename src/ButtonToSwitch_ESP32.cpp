@@ -3168,6 +3168,21 @@ bool SnglSrvcVdblMPBttn::updVoidStatus(){
 
 //=========================================================================> Class methods delimiter
 
+MltClckMPBttn::MltClckMPBttn()
+{
+}
+MltClckMPBttn::MltClckMPBttn(const int8_t &mpbttnPin, uint8_t maxMltClcks, unsigned long int lngClckTime, unsigned long int mltClcksGap, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _maxMltClcks{maxMltClcks}, _lngClckTime{lngClckTime}, _mltClcksGap{mltClcksGap}
+{
+}
+
+MltClckMPBttn::~MltClckMPBttn()
+{
+}
+
+
+//=========================================================================> Class methods delimiter
+
 /**
  * @brief Unpackages a 32-bit value into a DbncdMPBttn object status
  * 

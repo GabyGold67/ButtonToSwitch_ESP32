@@ -1781,5 +1781,123 @@ public:
 };
 
 //==========================================================>>
+class MltClckMPBttn: public DbncdDlydMPBttn{
+private:
+	uint8_t _maxMltClcks{0};
+	unsigned long int _lngClckTime{0};
+	unsigned long int _mltClcksGap{0};
+
+	int8_t _clcksCnt{0};
+	bool _isLngClck{false};
+	bool _isMltClck{false};
+	bool _SnglClck{false};
+	unsigned long int _mltClcksTmr{0};
+	unsigned long int _mltClcksTmrStrt{0};
+	
+protected:
+	enum fdaMCmpbStts{
+ 		stUnclckdNotVPP,	//!< MPB is unclicked and not valid press pending of processing
+ 		stUnclckdVPP,	//!< MPB is unclicked and a valid press is pending of processing
+ 		stClckdNVRP,	//!< MPB is clicked and not valid release pending of processing
+		//--------
+ 		stClckdVRP,		//!< MPB is clicked and a valid release is pending of processing
+		stUnclckdEP,	//!< MPB is unclicked and event is pending of evaluation
+		stLngClkdOk,	//!< MPB recognized a long click
+		stClckdOkMCGP,	//!< MPB recognized a click, and a multi click gap is pending of processing
+		stClckdOkMCGV,	//!< MPB recognized a click, and a multi click gap is voided
+		stClckCyclEnd,	//!< MPB recognized a click, and the click cycle is ended
+		//--------
+		stDisabled	//!< MPB is disabled
+ 	};
+ 	fdaMCmpbStts _mpbFdaState {stUnclckdNotVPP};
+	static void mpbPollCallback(TimerHandle_t mpbTmrCb);
+	void (*_fnWhnLngClck)() {nullptr};
+	void (*_fnWhnMltClck)() {nullptr};
+	void (*_fnWhnSnglClck)() {nullptr};
+
+public:
+	/**
+	 * @brief Default constructor
+	 */
+	MltClckMPBttn();
+	/**
+	 * @brief Class constructor
+	 *
+	 * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+	 */
+	MltClckMPBttn(const int8_t &mpbttnPin, uint8_t maxMltClcks = 2, unsigned long int lngClckTime = 1000, unsigned long int mltClcksGap = 400, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
+	 * @brief Class virtual destructor
+	 */
+	virtual ~MltClckMPBttn();
+	/**
+	 * @brief See DbncdMPBttn::begin(const unsigned long int)
+	 * 
+	 * @param pollDelayMs 
+	 * @return true 
+	 * @return false 
+	 */
+	bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+	/**
+	 * @brief See DbncdMPBttn::clrStatus(bool)
+	 */
+	void clrStatus(bool clrIsOn = true);
+	/**
+	 * @brief Returns the value of the **Long Click Time** attribute
+	 *
+	 * The **Long Click Time** attribute is the time in milliseconds that the MPB must be pressed to be considered a long click.
+	 *
+	 * @return The current value of the **Long Click Time** attribute
+	 */
+	unsigned long int getLngClkTime();
+	/**
+	 * @brief Returns the value of the **Multi Click Time** attribute
+	 *
+	 * The **Multi Click Time** attribute is the time in milliseconds that the MPB must be pressed to be considered a multi click.
+	 *
+	 * @return The current value of the **Multi Click Time** attribute
+	 */
+	uint8_t getMaxMltClcks();
+	/**
+	 * @brief Returns the time gap between clicks
+	 * 
+	 * @return The time gap between clicks in milliseconds
+	 */
+	unsigned long int getMltClcksGap();
+	/**
+	 * @brief Sets the value of the **Long Click Time** attribute
+	 *
+	 * The **Long Click Time** attribute is the time in milliseconds that the MPB must be pressed to be considered a long click.
+	 *
+	 * @param newVal The new value for the **Long Click Time** attribute
+	 *
+	 * @return The success in the value change
+	 * @retval true The new value was within valid range, the Long Click Time attribute change was made.
+	 * @retval false The new value was outside valid range, the change was not made.
+	 */
+	bool setLngClkTime(unsigned long int newVal);
+	/**
+	 * @brief Sets the maximum number of clicks allowed to be registered
+	 * 
+	 * @param newVal The new value for the maximum number of clicks allowed to be registered
+	 * 
+	 * @return The success in the value change. For the change to be successful the new value must be larger than 0. A value of 1 means the MPB will accept only single clicks and long clicks.
+	 * @retval true The new value was within valid range, the maximum number of clicks allowed to be registered change was made.
+	 * @retval false The new value was outside valid range, the change was not made.
+	 */
+	bool setMaxMltClcks(uint8_t newVal);
+	/**
+	 * @brief Sets the value of the **Multi Click Time** attribute
+	 *
+	 * The **Multi Click Time** attribute is the time in milliseconds that the MPB must be pressed to be considered a multi click.
+	 *
+	 * @param newVal The new value for the **Multi Click Time** attribute
+	 *
+	 * @return The success in the value change
+	 * @retval true The new value was within valid range, the Multi Click Time attribute change was made.
+	 * @retval false The new value was outside valid range, the change was not made.
+	 */
+	bool setMltClckGap(unsigned long int newVal);
+};
 
 #endif	/*_BUTTONTOSWITCH_ESP32_H_*/

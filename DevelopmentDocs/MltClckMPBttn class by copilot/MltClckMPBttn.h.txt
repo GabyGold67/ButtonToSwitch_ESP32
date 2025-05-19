@@ -1,0 +1,31 @@
+#pragma once
+#include "DbncdDlydMPBttn.h"
+
+// Mouse-type button with multi-click and long click detection
+class MltClckMPBttn : public DbncdDlydMPBttn {
+public:
+    explicit MltClckMPBttn(uint8_t mpbPin);
+
+    // Returns:
+    // -1 = no click
+    //  0 = long click
+    //  1 = single click
+    //  2 = double click
+    //  3 = triple click
+    //  4 = quadruple click
+    int getClickType();
+
+protected:
+    bool isLongClick();
+    int getClicks();
+
+private:
+    unsigned long _lastDebounceTime = 0;
+    unsigned long _buttonDownTime = 0;
+    unsigned long _lastUpTime = 0;
+    int _lastButtonState = HIGH;
+    int _clickCount = 0;
+    bool _waitingForMulti = false;
+    bool _longClickDetected = false;
+    int _lastClickType = -1;
+};
