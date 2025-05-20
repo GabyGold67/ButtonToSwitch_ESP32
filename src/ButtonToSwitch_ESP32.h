@@ -56,6 +56,7 @@
 
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
+#define _MinClckGapTime 400
 #define _MinSrvcTime 100
 #define _InvalidPinNum GPIO_NUM_NC  //Not Connected pin number (in this hardware platform -1), so a signed numeric type must be used! Value to give as "yet to be defined pin"
 #define _maxValidPinNum GPIO_NUM_MAX-1
@@ -427,7 +428,6 @@ public:
 	 *
 	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
-//	void setFnWhnTrnOffPtr(void(*newFnWhnTrnOff)());
 	void setFnWhnTrnOffPtr(fncPtrType newFnWhnTrnOff);
 
 	/**
@@ -1791,18 +1791,21 @@ private:
 	bool _isLngClck{false};
 	bool _isMltClck{false};
 	bool _SnglClck{false};
-	unsigned long int _mltClcksTmr{0};
+	unsigned long int _mltClcksTmrEnd{0};
+	unsigned long int _mltClcksTmrLngth{0};
 	unsigned long int _mltClcksTmrStrt{0};
 	
 protected:
 	enum fdaMCmpbStts{
  		stUnclckdNotVPP,	//!< MPB is unclicked and not valid press pending of processing
  		stUnclckdVPP,	//!< MPB is unclicked and a valid press is pending of processing
- 		stClckdNVRP,	//!< MPB is clicked and not valid release pending of processing
-		//--------
+ 		stClckdNotVRP,	//!< MPB is clicked and not valid release pending of processing
  		stClckdVRP,		//!< MPB is clicked and a valid release is pending of processing
-		stUnclckdEP,	//!< MPB is unclicked and event is pending of evaluation
+		stUnclckdEvl,	//!< MPB is unclicked and event is pending of evaluation
+		//--------
 		stLngClkdOk,	//!< MPB recognized a long click
+		stShrtClckdOk,	//!< MPB recognized a short click
+		//--------
 		stClckdOkMCGP,	//!< MPB recognized a click, and a multi click gap is pending of processing
 		stClckdOkMCGV,	//!< MPB recognized a click, and a multi click gap is voided
 		stClckCyclEnd,	//!< MPB recognized a click, and the click cycle is ended
@@ -1814,6 +1817,7 @@ protected:
 	void (*_fnWhnLngClck)() {nullptr};
 	void (*_fnWhnMltClck)() {nullptr};
 	void (*_fnWhnSnglClck)() {nullptr};
+	virtual void updFdaState();
 
 public:
 	/**
@@ -1843,6 +1847,39 @@ public:
 	 */
 	void clrStatus(bool clrIsOn = true);
 	/**
+	 * @brief Returns the function that is set to execute every time the object generates a **Long Click event**.
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnLngClckPtr()** method.
+	 *
+	 * @return A function pointer to the function set to execute every time the object generates a **Long Click event**.
+	 * @retval nullptr if there is no function set to execute when the object generates a **Long Click event**.
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it generates the **Long Click event**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnLngClck();
+	/**
+	 * @brief Returns the function that is set to execute every time the object generates a **Multi Click event**.
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnMltClckPtr()** method.
+	 *
+	 * @return A function pointer to the function set to execute every time the object generates a **Multi Click event**.  
+	 * @retval nullptr if there is no function set to execute when the object generates a **Multi Click event**.  
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it generates the **Long Click event**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnMltClck();
+	/**
+	 * @brief Returns the function that is set to execute every time the object generates a **Single Click event**.
+	 *
+	 * The function to be executed is an attribute that might be modified by the **setFnWhnSnglClckPtr()** method.
+	 *
+	 * @return A function pointer to the function set to execute every time the object generates a **Single Click event**.  
+	 * @retval nullptr if there is no function set to execute when the object generates a **Single Click event**.  
+	 *
+	 * @warning The function code execution will become part of the list of procedures the object executes when it generates the **Single Click event**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 */
+	fncPtrType getFnWhnSnglClck();	
+	/**
 	 * @brief Returns the value of the **Long Click Time** attribute
 	 *
 	 * The **Long Click Time** attribute is the time in milliseconds that the MPB must be pressed to be considered a long click.
@@ -1865,6 +1902,24 @@ public:
 	 */
 	unsigned long int getMltClcksGap();
 	/**
+	 * @brief Sets the function that will be called to execute every time the object recognizes a long click
+	 *
+	 * @return A function pointer to the function set to execute every time the object recognizes a long click
+	 */
+	void setFnWhnLngClckPtr(void(*newFnWhnLngClck)());
+	/**
+	 * @brief Sets the function that will be called to execute every time the object recognizes a multi click
+	 *
+	 * @return A function pointer to the function set to execute every time the object recognizes a multi click
+	 */
+	void setFnWhnMltClckPtr(void(*newFnWhnMltClck)());
+	/**
+	 * @brief Sets the function that will be called to execute every time the object recognizes a single click
+	 *
+	 * @return A function pointer to the function set to execute every time the object recognizes a single click
+	 */	
+	void setFnWhnSnglClckPtr(void(*newFnWhnSnglClck)());
+	/**
 	 * @brief Sets the value of the **Long Click Time** attribute
 	 *
 	 * The **Long Click Time** attribute is the time in milliseconds that the MPB must be pressed to be considered a long click.
@@ -1875,7 +1930,7 @@ public:
 	 * @retval true The new value was within valid range, the Long Click Time attribute change was made.
 	 * @retval false The new value was outside valid range, the change was not made.
 	 */
-	bool setLngClkTime(unsigned long int newVal);
+	bool setLngClkTime(unsigned long int &newVal);
 	/**
 	 * @brief Sets the maximum number of clicks allowed to be registered
 	 * 
@@ -1885,7 +1940,7 @@ public:
 	 * @retval true The new value was within valid range, the maximum number of clicks allowed to be registered change was made.
 	 * @retval false The new value was outside valid range, the change was not made.
 	 */
-	bool setMaxMltClcks(uint8_t newVal);
+	bool setMaxMltClcks(uint8_t &newVal);
 	/**
 	 * @brief Sets the value of the **Multi Click Time** attribute
 	 *
@@ -1897,7 +1952,8 @@ public:
 	 * @retval true The new value was within valid range, the Multi Click Time attribute change was made.
 	 * @retval false The new value was outside valid range, the change was not made.
 	 */
-	bool setMltClckGap(unsigned long int newVal);
+	bool setMltClckGap(unsigned long int &newVal);
+
 };
 
 #endif	/*_BUTTONTOSWITCH_ESP32_H_*/

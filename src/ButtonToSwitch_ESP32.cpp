@@ -3171,6 +3171,7 @@ bool SnglSrvcVdblMPBttn::updVoidStatus(){
 MltClckMPBttn::MltClckMPBttn()
 {
 }
+
 MltClckMPBttn::MltClckMPBttn(const int8_t &mpbttnPin, uint8_t maxMltClcks, unsigned long int lngClckTime, unsigned long int mltClcksGap, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _maxMltClcks{maxMltClcks}, _lngClckTime{lngClckTime}, _mltClcksGap{mltClcksGap}
 {
@@ -3180,7 +3181,221 @@ MltClckMPBttn::~MltClckMPBttn()
 {
 }
 
+fncPtrType MltClckMPBttn::getFnWhnLngClck()
+{
 
+   return _fnWhnLngClck;
+}
+
+fncPtrType MltClckMPBttn::getFnWhnMltClck()
+{
+
+	return _fnWhnMltClck;
+}
+
+fncPtrType MltClckMPBttn::getFnWhnSnglClck()
+{
+
+	return _fnWhnSnglClck;
+}
+
+unsigned long int MltClckMPBttn::getLngClkTime()
+{
+
+   return _lngClckTime;
+}
+
+unsigned long int MltClckMPBttn::getMltClcksGap()
+{
+
+	return _mltClcksGap;
+}
+
+uint8_t MltClckMPBttn::getMaxMltClcks()
+{
+
+	return _maxMltClcks;
+}
+
+void MltClckMPBttn::setFnWhnLngClckPtr(void (*newFnWhnLngClck)())
+{
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnWhnLngClck != newFnWhnLngClck)
+		_fnWhnLngClck = newFnWhnLngClck;
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void MltClckMPBttn::setFnWhnMltClckPtr(void (*newFnWhnMltClck)())
+{
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnWhnMltClck != newFnWhnMltClck)
+		_fnWhnMltClck = newFnWhnMltClck;
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void MltClckMPBttn::setFnWhnSnglClckPtr(void (*newFnWhnSnglClck)())
+{
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnWhnSnglClck != newFnWhnSnglClck)
+		_fnWhnSnglClck = newFnWhnSnglClck;
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+bool MltClckMPBttn::setLngClkTime(unsigned long int &newLngClkTime){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+	bool result{true};
+
+	taskENTER_CRITICAL(&mux);
+	if(newLngClkTime != _lngClckTime){
+		if(newLngClkTime >= _MinClckGapTime)	//FFDR change this value to a more suitable one
+			_lngClckTime = newLngClkTime;
+		else
+			result = false;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return result;
+}
+
+bool MltClckMPBttn::setMaxMltClcks(uint8_t &newMaxMltClcks){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+	bool result{true};
+
+	taskENTER_CRITICAL(&mux);
+	if(newMaxMltClcks != _maxMltClcks){
+		if(newMaxMltClcks >= 1)
+			_maxMltClcks = newMaxMltClcks;
+		else
+			result = false;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return result;
+}
+
+bool MltClckMPBttn::setMltClckGap(unsigned long int &newMltClcksGap){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+	bool result{true};
+
+	taskENTER_CRITICAL(&mux);
+	if(newMltClcksGap != _mltClcksGap){
+		if(newMltClcksGap >= _MinClckGapTime)	//FFDR change this value to a more suitable one
+			_mltClcksGap = newMltClcksGap;
+		else
+			result = false;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return result;
+}
+
+void MltClckMPBttn::updFdaState(){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	switch(_mpbFdaState){
+		case stUnclckdNotVPP:
+			// In: >>---------------------------------->>
+			if(_sttChng){
+				clrSttChng();
+			}	// Execute this code only ONCE, when entering this state
+			// Do: >>---------------------------------->>
+			if(_validPressPend){
+				_mpbFdaState = stUnclckdVPP;
+				setSttChng();
+			}
+			if(_validDisablePend){
+				_mpbFdaState = stDisabled;	// The MPB has been disabled
+				setSttChng();
+			}
+			// Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stUnclckdVPP:
+			// In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			// Do: >>---------------------------------->>
+			_mltClcksTmrStrt = xTaskGetTickCount() / portTICK_RATE_MS;
+			_validPressPend = false;
+			_mpbFdaState = stClckdNotVRP;
+			setSttChng();
+			// Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stClckdNotVRP:
+			// In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			// Do: >>---------------------------------->>
+			if(_validReleasePend){
+				_mpbFdaState = stClckdVRP;
+				setSttChng();
+			}
+			// Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+
+		case stClckdVRP:
+			// In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			// Do: >>---------------------------------->>
+			_validReleasePend = false;
+			_mltClcksTmrEnd = xTaskGetTickCount() / portTICK_RATE_MS;
+			_mltClcksTmrLngth = _mltClcksTmrEnd - _mltClcksTmrStrt;
+			_mpbFdaState = stUnclckdEvl;
+			setSttChng();
+			// Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+		case stUnclckdEvl:
+			// In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			// Do: >>---------------------------------->>
+			if(_mltClcksTmrLngth >= _lngClckTime){
+					_mpbFdaState = stLngClkdOk;
+			}
+			else{
+				_clcksCnt++;
+				_mpbFdaState = stShrtClckdOk;
+				_mltClcksTmrStrt = xTaskGetTickCount() / portTICK_RATE_MS;
+				_mltClcksTmrEnd = 0;
+				_mltClcksTmrLngth = 0;
+				_mpbFdaState = stShrtClckdOk;
+			}
+			setSttChng();
+			// Out: >>---------------------------------->>
+			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+			break;
+		case stShrtClckdOk:
+			// In: >>---------------------------------->>
+			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+			// Do: >>---------------------------------->>
+			
+			// Here we can check if the time between clicks is longer than the _mltClcksGap
+			// If it is we conclude the click counting and go out
+
+			
+
+		
+		
+		default:
+			break;
+	}			
+}
 //=========================================================================> Class methods delimiter
 
 /**
@@ -3197,15 +3412,15 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
 /*
 +--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--+
 |31|30|29|28|27|26|25|24||23|22|21|20|19|18|17|16||15|14|13|12|11|10|09|08||07|06|05|04|03|02|01|00|
- ------------------------------------------------                                 -- -- -- -- -- --
-                                                |                                  |  |  |  |  |  |
-                                                |                                  |  |  |  |  |  isOn
-                                                |                                  |  |  |  |  isEnabled
-                                                |                                  |  |  |  pilotOn
-                                                |                                  |  |   wrnngOn
-                                                |                                  |  isVoided
-                                                |                                  isOnScndry
-                                                otptCurVal (16 bits)
+ ------------------------------------------------                           ----- -- -- -- -- -- --
+                                                |                             |    |  |  |  |  |  |
+                                                |                             |    |  |  |  |  |  isOn
+                                                |                             |    |  |  |  |  isEnabled
+                                                |                             |    |  |  |  pilotOn
+                                                |                             |    |  |   wrnngOn
+                                                |                             |    |  isVoided
+                                                |                             |    isOnScndry
+                                                otptCurVal (16 bits)          clcksCnt (0: long, 1~3: short clicks count)
 */
 	if(pkgOtpts & (((uint32_t)1) << IsOnBitPos))
 		mpbCurSttsDcdd.isOn = true;
