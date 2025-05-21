@@ -1564,6 +1564,7 @@ protected:
 	void _turnOnVdd();
 	virtual void updFdaState();
 	virtual bool updVoidStatus() = 0;
+	
 public:
 	/**
 	 * @brief Default constructor
@@ -1790,14 +1791,14 @@ private:
 	int8_t _clcksCnt{0};
 	bool _isLngClck{false};
 	bool _isMltClck{false};
-	bool _SnglClck{false};
+	bool _isClckd{false};
 	unsigned long int _mltClcksTmrEnd{0};
 	unsigned long int _mltClcksTmrLngth{0};
 	unsigned long int _mltClcksTmrStrt{0};
 	
 protected:
 	enum fdaMCmpbStts{
- 		stUnclckdNotVPP,	//!< MPB is unclicked and not valid press pending of processing
+ 		stUnclckdNotVPP,	//!< MPB is unclicked and there's not valid press pending of processing
  		stUnclckdVPP,	//!< MPB is unclicked and a valid press is pending of processing
  		stClckdNotVRP,	//!< MPB is clicked and not valid release pending of processing
  		stClckdVRP,		//!< MPB is clicked and a valid release is pending of processing
@@ -1812,12 +1813,19 @@ protected:
 		//--------
 		stDisabled	//!< MPB is disabled
  	};
- 	fdaMCmpbStts _mpbFdaState {stUnclckdNotVPP};
-	static void mpbPollCallback(TimerHandle_t mpbTmrCb);
+
 	void (*_fnWhnLngClck)() {nullptr};
 	void (*_fnWhnMltClck)() {nullptr};
 	void (*_fnWhnSnglClck)() {nullptr};
-	virtual void updFdaState();
+ 	fdaMCmpbStts _mpbFdaState {stUnclckdNotVPP};
+	
+	static void mpbPollCallback(TimerHandle_t mpbTmrCb);
+	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
+	void stDisabled_In(){};
+	void stDisabled_Out(){};
+	void _turnOffClckd();
+	void _turnOnClckd();
+virtual void updFdaState();
 
 public:
 	/**
