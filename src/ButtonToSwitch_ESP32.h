@@ -68,6 +68,8 @@ const uint8_t PilotOnBitPos{2};
 const uint8_t WrnngOnBitPos{3};
 const uint8_t IsVoidedBitPos{4};
 const uint8_t IsOnScndryBitPos{5};
+const uint8_t IsClckdBitPos{6};
+const uint8_t ClcksCntBitPos{7};
 const uint8_t OtptCurValBitPos{16};
 
 #ifndef MPBOTPTS_T
@@ -85,6 +87,8 @@ const uint8_t OtptCurValBitPos{16};
 		bool wrnngOn;
 		bool isVoided;
 		bool isOnScndry;
+		bool isClckd;
+		uint8_t clcksCnt;
 		uint16_t otptCurVal;
 	};
 #endif
@@ -1782,16 +1786,43 @@ public:
 };
 
 //==========================================================>>
+
+/**
+ * @class MltClckMPBttn
+ * 
+ * @brief The class models a Multi Click DD-MPB, a.k.a. single, multiple & long clicks button.  
+ * 
+ * The multi click DD-MPB (MCDD-MPB) -or Mouse button-, is a mpb that can return a variety of resulting values depending of the time the mpb has been kept pressed, and the times the button is pressed and released before a preset time elapses. Several long and short presses might be modeled to return different results, making it a good choice to replace several mpbs with a single one. The universal popularity of mouse and touchpads buttons makes the use of this kind of button intuitive, nearly second nature, for menu choices selections and other uses.  
+ * 
+ * This class models a MCDD-MPB that generates a number of basic events, so that a single MPB might be used for multiple purposes acording to the presses-releases sequence and timmings. The attributes that will be used to return the result of the "clickings" are the following:  
+ * - _isClckCmplt: Attribute flag indicating a clicking event has concluded. As soon as the conditions to consider a click event as concluded are achieved this attribute will be set.  
+ * - _isOn: The _isOn in this class mimics the _isClckCmplt attribute flag state. As established in the **ButtonToSwitch** library description, **ALL** the classes in this library keeps the _isOn attribute flag updated. As in the case of the **SnglSrvcVdblMPBttn** the _isOn = true state is merely transient, but the resources associated and activated when the _isOn is set are executed: function execution and task unblocking included. 
+ * - _isLngClck: Attribute flag indicating the click event completed was a long click type.  
+ * - _isMltClck: Attribute flag indicating the click event completed was a short multi-clicks type.  
+ * - _clcksCnt: Attribute indicating the number of clicks counted for a multi-clicks event when is completed. The attribute will have a 0 value in the case of a long click event. The attribute will have a value in the range 1 <= _clcksCnt <= _maxMltClcks for multi-clicks events.  
+ * 
+ * @note Is clear for this class implementation the redundancy of the existence of two complementary attribute flags, _isLngClck and _isMltClck, when one becomes true the other becomes false and vice versa. The two flags are kept to allow the development of subclasses with other enabling sequences fast and easy, classes whith combinations of long and short clicks, or a number of short clicks with the long click indicating the end of the sequence or whatever comes to the developer's mind.  
+ * 
+ * The different type of events are defined by the following conditions: 
+ * 
+ * - Long click (or long press): the MPB is pressed, held and released **after** _lngClckTime, or more, milliseconds. This event will set the object in the isOn state, with the _isClckCmplt attribute flag set, _isLngClck attribute flag set, the _isMltClck attribute flag reset, and _clcksCnt = 0. The the isOn state will be set for a very short period but will execute all the associated actions related to the turning on event. 
+ * 
+ * - Normal clicks (or short presses): the MPB is pressed, held and released **before** _lngClckTime milliseconds. When the mpb is release before _lngClckTime milliseconds the object will consider it a regular click and increment the _clcksCnt attribute by one. After the counter increment the object will check the maximum number of clicks accepted by the instantiated object (_maxMltClcks attribute). If that number of clicks have been reached the clicking sequence will be considered completed and the attribute flags and conditions will reflect the outcome, if that number is not reached the object will keep waiting for the first of two conditions to happen: 
+ * - The time gap between multiple clicks (_mltClcksGap attribute that holds a time in milliseconds) is reached without new presses detected, the event is considered completed, will set the object in the isOn state, with the _isClckCmplt attribute flag set, the _isMltClck attribute flag set, _isLngClck attribute flag reset, and _clcksCnt will return the number of clicks counted. 
+ * - A button press is detected before the timer reaching the time gap between multiple clicks point, a new click will be considered to be taking place like for the first one, but these next clicks will all be considered normal clicks independently of the time the button is kept pressed. 
+ * - The clicks counting will go on until the clicks counter reaches the maximum number of clicks accepted, or the time since the last button release is longer than the time gap between multiple clicks setting. 
+ * 
+ */
 class MltClckMPBttn: public DbncdDlydMPBttn{
 private:
 	uint8_t _maxMltClcks{0};
 	unsigned long int _lngClckTime{0};
 	unsigned long int _mltClcksGap{0};
 
-	int8_t _clcksCnt{0};
-	bool _isLngClck{false};
-	bool _isMltClck{false};
-	bool _isClckd{false};
+	int8_t _clcksCnt{0};	//!< Multiclicks short clicks count, 0 <= _clcksCnt <= _maxMltClcks
+	bool _isLngClck{false};	//!< Long click detected. The long click migh happen only in the first click if _mltClcksTmrLngth >= _lngClckTime
+	bool _isMltClck{false};	//!< One or more standard clicks have been detected, the number of clicks is held in the _clcksCnt attribute
+	bool _isClckCmplt{false};	//!< A valid clicking event has been completed, the _isLngClck, the _isMltClck and the _clcksCnt attributes must be considered to evaluate the "clicking type"
 	unsigned long int _mltClcksTmrEnd{0};
 	unsigned long int _mltClcksTmrLngth{0};
 	unsigned long int _mltClcksTmrStrt{0};
@@ -1807,8 +1838,8 @@ protected:
 		stLngClkdOk,	//!< MPB recognized a long click
 		stShrtClckdOk,	//!< MPB recognized a short click
 		//--------
-		stClckdOkMCGP,	//!< MPB recognized a click, and a multi click gap is pending of processing
-		stClckdOkMCGV,	//!< MPB recognized a click, and a multi click gap is voided
+		stClckdOkMCGP,	//!< MPB recognized a click, and the multi click gap is pending of processing
+		stClckdOkMCGV,	//!< MPB recognized a click, and the multi click gap is voided
 		stClckCyclEnd,	//!< MPB recognized a click, and the click cycle is ended
 		//--------
 		stDisabled	//!< MPB is disabled
@@ -1816,7 +1847,9 @@ protected:
 
 	void (*_fnWhnLngClck)() {nullptr};
 	void (*_fnWhnMltClck)() {nullptr};
-	void (*_fnWhnSnglClck)() {nullptr};
+	void (*_fnWhnTrnOffClck)() {nullptr};
+	void (*_fnWhnTrnOnClck)() {nullptr};
+
  	fdaMCmpbStts _mpbFdaState {stUnclckdNotVPP};
 	
 	static void mpbPollCallback(TimerHandle_t mpbTmrCb);
@@ -1825,7 +1858,7 @@ protected:
 	void stDisabled_Out(){};
 	void _turnOffClckd();
 	void _turnOnClckd();
-virtual void updFdaState();
+	virtual void updFdaState();
 
 public:
 	/**
@@ -1834,8 +1867,14 @@ public:
 	MltClckMPBttn();
 	/**
 	 * @brief Class constructor
-	 *
-	 * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+	 * 
+	 * Instantiates a Multi Click DD-MPB object
+	 * 
+	 * @param maxMltClcks Maximum quantity of clicks (short clicks) the object will support. If this number or short clicks is reached the object will consider the clicks input concluded and return a isOn/_isClckCmplt = true. 
+	 * @param lngClckTime Minimum time the mpb must be kept pressed to consider it a **long click**. Presses shorter than this time setting are considered short clicks.  
+	 * @param mltClcksGap Time limit to wait after a short click event for a new press to consider a new click in a multiclick event. After a short click is detected if no new presses are detected up to mltClcksGap milliseconds the event will be considered completed and the event closure actions will take effect. 
+	 * 
+	 * @note For the remaining parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
 	 */
 	MltClckMPBttn(const int8_t &mpbttnPin, uint8_t maxMltClcks = 2, unsigned long int lngClckTime = 1000, unsigned long int mltClcksGap = 400, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
 	/**
@@ -1845,9 +1884,11 @@ public:
 	/**
 	 * @brief See DbncdMPBttn::begin(const unsigned long int)
 	 * 
-	 * @param pollDelayMs 
-	 * @return true 
-	 * @return false 
+	 * @param pollDelayMs (Optional) unsigned long integer (ulong), the time between polls of the mpb state in milliseconds.
+	 * 
+	 * @return The success in the activations and resources configuration required to start the MCDD-MPB. 
+	 * @retval true The complete set of activations and resources configuration could be completed without failures.
+	 * @retval false One or more of the activations and resources configuration failed.
 	 */
 	bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
 	/**
@@ -1877,34 +1918,26 @@ public:
 	 */
 	fncPtrType getFnWhnMltClck();
 	/**
-	 * @brief Returns the function that is set to execute every time the object generates a **Single Click event**.
-	 *
-	 * The function to be executed is an attribute that might be modified by the **setFnWhnSnglClckPtr()** method.
-	 *
-	 * @return A function pointer to the function set to execute every time the object generates a **Single Click event**.  
-	 * @retval nullptr if there is no function set to execute when the object generates a **Single Click event**.  
-	 *
-	 * @warning The function code execution will become part of the list of procedures the object executes when it generates the **Single Click event**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
-	 */
-	fncPtrType getFnWhnSnglClck();	
-	/**
 	 * @brief Returns the value of the **Long Click Time** attribute
 	 *
-	 * The **Long Click Time** attribute is the time in milliseconds that the MPB must be pressed to be considered a long click.
+	 * The **Long Click Time** attribute is the time in milliseconds that the MPB must be pressed to be considered a long click. If the mpb is released before this time setting it will be considered a short click (regular click). 
 	 *
 	 * @return The current value of the **Long Click Time** attribute
 	 */
 	unsigned long int getLngClkTime();
 	/**
-	 * @brief Returns the value of the **Multi Click Time** attribute
+	 * @brief Returns the maximum quantity of clicks the object will accept for a multi click event
 	 *
-	 * The **Multi Click Time** attribute is the time in milliseconds that the MPB must be pressed to be considered a multi click.
+	 * If the maximum multiclicks number is reached in a clicking sequence, the sequence will end in a normal fashion, but not expecting nor allowing more clicks to be added. 
 	 *
-	 * @return The current value of the **Multi Click Time** attribute
+	 * @return The current value of the **_maxMltClcks** attribute
 	 */
 	uint8_t getMaxMltClcks();
+	//FFDR keep checking from this point on! Many copilot errors to correct
 	/**
 	 * @brief Returns the time gap between clicks
+	 * 
+	 * 
 	 * 
 	 * @return The time gap between clicks in milliseconds
 	 */

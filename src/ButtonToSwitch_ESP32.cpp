@@ -3184,7 +3184,7 @@ void MltClckMPBttn::clrStatus(bool clrIsOn){
 	_clcksCnt = 0;
 	_isLngClck = false;
 	_isMltClck = false;
-	_isClckd = false;
+	_isClckCmplt = false;
 	_mltClcksTmrEnd = 0;
 	_mltClcksTmrLngth = 0;
 	_mltClcksTmrStrt = 0;
@@ -3261,7 +3261,7 @@ void MltClckMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	return;
 }
 
-uint32_t _otptsSttsPkg(uint32_t prevVal){
+uint32_t MltClckMPBttn::_otptsSttsPkg(uint32_t prevVal){
 	prevVal = DbncdMPBttn::_otptsSttsPkg(prevVal);
 
 	if(_isLngClck)
@@ -3300,18 +3300,6 @@ void MltClckMPBttn::setFnWhnMltClckPtr(void (*newFnWhnMltClck)())
 
 	return;
 }
-
-/*void MltClckMPBttn::setFnWhnSnglClckPtr(void (*newFnWhnSnglClck)())
-{
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnWhnSnglClck != newFnWhnSnglClck)
-		_fnWhnSnglClck = newFnWhnSnglClck;
-	taskEXIT_CRITICAL(&mux);
-
-	return;
-}*/
 
 bool MltClckMPBttn::setLngClkTime(unsigned long int &newLngClkTime){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
@@ -3364,14 +3352,14 @@ bool MltClckMPBttn::setMltClckGap(unsigned long int &newMltClcksGap){
 void MltClckMPBttn::_turnOffClckd(){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	if(_isVoided){
+	if(_isClckCmplt){
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOffVdd != nullptr)
-			_fnWhnTrnOffVdd();
+		if(_fnWhnTrnOffClck != nullptr)
+			_fnWhnTrnOffClck();
 	//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
-		_isVoided = false;
-		setOutputsChange(true);
+		_isClckCmplt = false;
+		setOutputsChange(true);	//FFDR Check for the outputs composition
 		taskEXIT_CRITICAL(&mux);
 	}
 
@@ -3382,14 +3370,14 @@ void MltClckMPBttn::_turnOnClckd()
 {
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	if(!_isVoided){
+	if(!_isClckCmplt){
 		//---------------->> Functions related actions
-		if(_fnWhnTrnOnVdd != nullptr)
-			_fnWhnTrnOnVdd();
+		if(_fnWhnTrnOnClck != nullptr)
+			_fnWhnTrnOnClck();
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
-		_isVoided = true;
-		setOutputsChange(true);
+		_isClckCmplt = true;
+		setOutputsChange(true);	//FFDR Check for the outputs composition
 		taskEXIT_CRITICAL(&mux);
 	}
 
@@ -3406,7 +3394,7 @@ void MltClckMPBttn::updFdaState()
 		case stUnclckdNotVPP:
 			// In: >>---------------------------------->>
 			if(_sttChng){
-				if(_isClckd)
+				if(_isClckCmplt)
 					_turnOffClckd();
 				clrStatus(true);
 				clrSttChng();
@@ -3592,7 +3580,12 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
 		mpbCurSttsDcdd.isOnScndry = true;
 	else
 		mpbCurSttsDcdd.isOnScndry = false;
+	if(pkgOtpts & (((uint32_t)1) << IsClckdBitPos))
+		mpbCurSttsDcdd.isClckd = true;
+	else
+		mpbCurSttsDcdd.isClckd = false;
 
+	mpbCurSttsDcdd.clcksCnt = (pkgOtpts & (((uint32_t)0b011) << ClcksCntBitPos))>> ClcksCntBitPos;
 	mpbCurSttsDcdd.otptCurVal = (pkgOtpts & 0xffff0000) >> OtptCurValBitPos;
 
 	return mpbCurSttsDcdd;
