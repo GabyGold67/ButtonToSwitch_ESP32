@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['vdblmpbttn_20class_0',['VdblMPBttn class',['../C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/README.md#autotoc_md-vdblmpbttn-class--',1,'# VdblMPBttn class'],['../C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/README.md#added-or-modified-methods-for-vdblmpbttn-class',1,'Added or Modified Methods for VdblMPBttn class']]],
+  ['vdblmpbttn_20subclasses_20common_20members_20documentation_20click_20here_1',['&lt;a href=&quot;https://gabygold67.github.io/ButtonToSwitch_ESP32/class_vdbl_m_p_bttn-members.html&quot;&gt;For VdblMPBttn Subclasses Common Members Documentation Click Here!&lt;/a&gt;',['../C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/README.md#for-vdblmpbttn-subclasses-common-members-documentation-click-herehttpsgabygold67githubiobuttontoswitch_esp32class_vdbl_m_p_bttn-membershtml',1,'']]],
+  ['voltage_2',['- &lt;em&gt;Stop checking the input pin voltage.&lt;/em&gt;',['../C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/README.md#autotoc_md--_stop-checking-the-input-pin-voltage_',1,'']]]
+];

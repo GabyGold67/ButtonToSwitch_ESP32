@@ -466,10 +466,6 @@ void DbncdMPBttn::setOutputsChange(bool newOutputsChange){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	/*
-	if(_outputsChange != newOutputsChange)
-   	_outputsChange = newOutputsChange;
-	*/
 	if(newOutputsChange)
 		++_outputsChangeCnt;
 	else
@@ -2803,8 +2799,8 @@ void VdblMPBttn::updFdaState(){
 		case stOffNotVPP:
 			// In: >>---------------------------------->>
 			if(_sttChng){
-				stOffNotVPP_In();
-				_turnOffVdd();		// This should be part of stOffNotVPP_In(), refactoring needed
+				stOffNotVPP_In();	// FFDR NOT implemented, this must include the conditional execution of _turnOffVdd() if _isOn = true  or _isVoided = true
+				_turnOffVdd();		
 				clrSttChng();
 			}	// Execute this code only ONCE, when entering this state
 			// Do: >>---------------------------------->>
@@ -3168,6 +3164,7 @@ bool SnglSrvcVdblMPBttn::updVoidStatus(){
 
 //=========================================================================> Class methods delimiter
 
+
 /**
  * @brief Unpackages a 32-bit value into a DbncdMPBttn object status
  * 
@@ -3182,15 +3179,16 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
 /*
 +--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--++--+--+--+--+--+--+--+--+
 |31|30|29|28|27|26|25|24||23|22|21|20|19|18|17|16||15|14|13|12|11|10|09|08||07|06|05|04|03|02|01|00|
- ------------------------------------------------                                 -- -- -- -- -- --
-                                                |                                  |  |  |  |  |  |
-                                                |                                  |  |  |  |  |  isOn
-                                                |                                  |  |  |  |  isEnabled
-                                                |                                  |  |  |  pilotOn
-                                                |                                  |  |   wrnngOn
-                                                |                                  |  isVoided
-                                                |                                  isOnScndry
-                                                otptCurVal (16 bits)
+ ------------------------------------------------                       ------ -- -- -- -- -- -- --
+                                                |                          |    |  |  |  |  |  |  |
+                                                |                          |    |  |  |  |  |  |  isOn
+                                                |                          |    |  |  |  |  |  isEnabled
+                                                |                          |    |  |  |  |  pilotOn
+                                                |                          |    |  |  |   wrnngOn
+                                                |                          |    |  |  isVoided
+                                                |                          |    |  isOnScndry
+                                                otptCurVal (16 bits)       |    isClckd
+                                                                           clcksCnt (0: long, 1~3: short clicks count)																
 */
 	if(pkgOtpts & (((uint32_t)1) << IsOnBitPos))
 		mpbCurSttsDcdd.isOn = true;
@@ -3222,7 +3220,12 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
 		mpbCurSttsDcdd.isOnScndry = true;
 	else
 		mpbCurSttsDcdd.isOnScndry = false;
+	if(pkgOtpts & (((uint32_t)1) << IsClckdBitPos))
+		mpbCurSttsDcdd.isClckd = true;
+	else
+		mpbCurSttsDcdd.isClckd = false;
 
+	mpbCurSttsDcdd.clcksCnt = (pkgOtpts & (((uint32_t)0b011) << ClcksCntBitPos))>> ClcksCntBitPos;
 	mpbCurSttsDcdd.otptCurVal = (pkgOtpts & 0xffff0000) >> OtptCurValBitPos;
 
 	return mpbCurSttsDcdd;

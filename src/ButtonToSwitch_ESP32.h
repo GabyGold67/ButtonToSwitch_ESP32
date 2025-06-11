@@ -56,6 +56,7 @@
 
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
+#define _MinClckGapTime 400
 #define _MinSrvcTime 100
 #define _InvalidPinNum GPIO_NUM_NC  //Not Connected pin number (in this hardware platform -1), so a signed numeric type must be used! Value to give as "yet to be defined pin"
 #define _maxValidPinNum GPIO_NUM_MAX-1
@@ -67,6 +68,8 @@ const uint8_t PilotOnBitPos{2};
 const uint8_t WrnngOnBitPos{3};
 const uint8_t IsVoidedBitPos{4};
 const uint8_t IsOnScndryBitPos{5};
+const uint8_t IsClckdBitPos{6};
+const uint8_t ClcksCntBitPos{7};
 const uint8_t OtptCurValBitPos{16};
 
 #ifndef MPBOTPTS_T
@@ -84,6 +87,8 @@ const uint8_t OtptCurValBitPos{16};
 		bool wrnngOn;
 		bool isVoided;
 		bool isOnScndry;
+		bool isClckd;
+		uint8_t clcksCnt;
 		uint16_t otptCurVal;
 	};
 #endif
@@ -182,6 +187,9 @@ public:
 	 * @param typeNO (Optional) boolean, indicates if the MPB is a Normally Open (NO) switch (true, default value), or Normally Closed (NC) (false), to calculate correctly the expected level of voltage indicating the MPB is pressed.
 	 * @param dbncTimeOrigSett (Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.
 	 *
+	 * @note The **mpbttnpin** parameter valid values is MCU dependant, as each one of the MCUs have a specific number of GPIO pins values available for use. The Arduino development environment have a minimum and maximum values constants set for each MCU it supports. The  valid range for the **mpbttnpin** in an Espressif ESP32 mcu family then is **GPIO_NUM_0 <= mpbttnpin < GPIO_NUM_MAX**  
+	 * 
+	 * @note The Arduino development environment has defined a constant to indicate a **non connected to a GPIO pin** identified as **GPIO_NUM_NC**.  
 	 */
 	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
 	/**
@@ -321,15 +329,6 @@ public:
     * @retval false: no object's behavior flags have changed value since last time **outputsChange** flag was reseted.
 	 */
 	const bool getOutputsChange() const;
-	/**
-	 * @brief Returns the current value of the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag
-	 * 
-	 * Returns the current value of the attribute flag that triggers the execution of the taskToNotify() task if there have been outputs value changes since last MPB update
-	 * 
-	 * @retval true There have been changes since last update, the taskToNotify() task will be unblocked to execute.
-	 * @retval false Otherwise
-	 */
-	// const bool getOutputsChngTskTrggr() const;
    /**
     * @brief Returns the current value of strtDelay attribute.
     *
@@ -433,7 +432,6 @@ public:
 	 *
 	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
-//	void setFnWhnTrnOffPtr(void(*newFnWhnTrnOff)());
 	void setFnWhnTrnOffPtr(fncPtrType newFnWhnTrnOff);
 
 	/**
@@ -1570,6 +1568,7 @@ protected:
 	void _turnOnVdd();
 	virtual void updFdaState();
 	virtual bool updVoidStatus() = 0;
+	
 public:
 	/**
 	 * @brief Default constructor
@@ -1787,5 +1786,6 @@ public:
 };
 
 //==========================================================>>
+
 
 #endif	/*_BUTTONTOSWITCH_ESP32_H_*/
