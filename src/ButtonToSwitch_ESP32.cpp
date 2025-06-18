@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.4.1
+  * @version v4.4.2
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   15/05/2025 16:10 (GMT+0200) DST  
+  *       Last update:   18/06/2025 20:30 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -74,6 +74,10 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 		_typeNO = true;
 		_dbncTimeOrigSett = 0;
 	}
+	
+	_isOnMutex = xSemaphoreCreateMutex();
+	_strtDelayMutex = xSemaphoreCreateMutex();
+	_updFdaMutex = xSemaphoreCreateMutex();
 }
 
 DbncdMPBttn::~DbncdMPBttn(){
@@ -537,158 +541,155 @@ void DbncdMPBttn::setTaskWhileOn(const TaskHandle_t &newTaskHandle){
 }
 
 void DbncdMPBttn::_turnOff(){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	if(_isOn){
-		//---------------->> Tasks related actions
-		if(_taskWhileOnHndl != NULL){
-			eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
-			if (taskWhileOnStts != eSuspended)
-				if(taskWhileOnStts != eDeleted)
-					vTaskSuspend(_taskWhileOnHndl);
+	if(xSemaphoreTake(_isOnMutex, portMAX_DELAY) == pdTRUE){
+		if(_isOn){
+			//---------------->> Tasks related actions
+			if(_taskWhileOnHndl != NULL){
+				eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
+				if (taskWhileOnStts != eSuspended)
+					if(taskWhileOnStts != eDeleted)
+						vTaskSuspend(_taskWhileOnHndl);
+			}
+			//---------------->> Functions related actions
+			if(_fnWhnTrnOff != nullptr){
+				_fnWhnTrnOff();
+			}
+		//---------------->> Flags related actions
+			_isOn = false;
+			setOutputsChange(true);
 		}
-		//---------------->> Functions related actions
-		if(_fnWhnTrnOff != nullptr){
-			_fnWhnTrnOff();
-		}
-	//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
-		_isOn = false;
-		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		xSemaphoreGive(_isOnMutex);
 	}
 
 	return;
 }
 
 void DbncdMPBttn::_turnOn(){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	if(!_isOn){
-		//---------------->> Tasks related actions
-		if(_taskWhileOnHndl != NULL){
-			eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
-			if(taskWhileOnStts != eDeleted)
-				if (taskWhileOnStts == eSuspended)
-					vTaskResume(_taskWhileOnHndl);
+	if(xSemaphoreTake(_isOnMutex, portMAX_DELAY) == pdTRUE){
+		if(!_isOn){
+			//---------------->> Tasks related actions
+			if(_taskWhileOnHndl != NULL){
+				eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
+				if(taskWhileOnStts != eDeleted)
+					if (taskWhileOnStts == eSuspended)
+						vTaskResume(_taskWhileOnHndl);
+			}
+			//---------------->> Functions related actions
+			if(_fnWhnTrnOn != nullptr){
+				_fnWhnTrnOn();
+			}
+		//---------------->> Flags related actions
+			_isOn = true;
+			setOutputsChange(true);
 		}
-		//---------------->> Functions related actions
-		if(_fnWhnTrnOn != nullptr){
-			_fnWhnTrnOn();
-		}
-	//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
-		_isOn = true;
-		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		xSemaphoreGive(_isOnMutex);
 	}
 
 	return;
 }
 
 void DbncdMPBttn::updFdaState(){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	switch(_mpbFdaState){
-		case stOffNotVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validPressPend){
-				_mpbFdaState = stOffVPP;
-				setSttChng();	//Set flag to execute exiting OUT code
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;
-				setSttChng();	//Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOffVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(!_isOn)
-				_turnOn();
-			_validPressPend = false;
-			_mpbFdaState = stOn;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!			break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOn:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validReleasePend){
-				_mpbFdaState = stOnVRP;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;
-				setSttChng();	//Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOnVRP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_isOn)
-				_turnOff();
-			_validReleasePend = false;
-			_mpbFdaState = stOffNotVPP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stDisabled:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				if(_isOn != _isOnDisabled){
-					if(_isOn)
-						_turnOff();
-					else
-						_turnOn();
+	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
+		switch(_mpbFdaState){
+			case stOffNotVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validPressPend){
+					_mpbFdaState = stOffVPP;
+					setSttChng();	//Set flag to execute exiting OUT code
 				}
-				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
-				_isEnabled = false;
-				setOutputsChange(true);
-				_validDisablePend = false;
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validEnablePend){
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;
+					setSttChng();	//Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOffVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(!_isOn)
+					_turnOn();
+				_validPressPend = false;
+				_mpbFdaState = stOn;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!			break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stOn:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validReleasePend){
+					_mpbFdaState = stOnVRP;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;
+					setSttChng();	//Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOnVRP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
 				if(_isOn)
 					_turnOff();
-				_isEnabled = true;
-				_validEnablePend = false;
-				setOutputsChange(true);
-			}
-			if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+				_validReleasePend = false;
 				_mpbFdaState = stOffNotVPP;
 				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-			}	// Execute this code only ONCE, when exiting this state
-			break;
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-	default:
-		break;
-	}
-	taskEXIT_CRITICAL(&mux);
+			case stDisabled:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					if(_isOn != _isOnDisabled){
+						if(_isOn)
+							_turnOff();
+						else
+							_turnOn();
+					}
+					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
+					_isEnabled = false;
+					setOutputsChange(true);
+					_validDisablePend = false;
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validEnablePend){
+					if(_isOn)
+						_turnOff();
+					_isEnabled = true;
+					_validEnablePend = false;
+					setOutputsChange(true);
+				}
+				if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+					_mpbFdaState = stOffNotVPP;
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+				}	// Execute this code only ONCE, when exiting this state
+				break;
+
+		default:
+			break;
+		}
+		xSemaphoreGive(_updFdaMutex);
+	}	
 
 	return;
 }
@@ -792,12 +793,11 @@ bool DbncdDlydMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const 
 }
 
 void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-   if(_strtDelay != newStrtDelay)
-      _strtDelay = newStrtDelay;
-   taskEXIT_CRITICAL(&mux);
+	if(xSemaphoreTake(_strtDelayMutex, portMAX_DELAY) == pdTRUE){
+		if(_strtDelay != newStrtDelay)
+			_strtDelay = newStrtDelay;
+		xSemaphoreGive(_strtDelayMutex);
+	}
 
    return;
 }
@@ -959,193 +959,192 @@ bool LtchMPBttn::unlatch(){
 }
 
 void LtchMPBttn::updFdaState(){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
+		switch(_mpbFdaState){
+			case stOffNotVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+					stOffNotVPP_In();
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validPressPend){
+					_mpbFdaState = stOffVPP;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;	// For this stDisabled entry, the only flags that might be affected are _ validPressPend and (unlikely) _validReleasePend
+					setSttChng();	//Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					stOffNotVPP_Out();
+				}	// Execute this code only ONCE, when exiting this state
+				break;
 
-	taskENTER_CRITICAL(&mux);
-	switch(_mpbFdaState){
-		case stOffNotVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-				stOffNotVPP_In();
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validPressPend){
-				_mpbFdaState = stOffVPP;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;	// For this stDisabled entry, the only flags that might be affected are _ validPressPend and (unlikely) _validReleasePend
-				setSttChng();	//Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				stOffNotVPP_Out();
-			}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOffVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(!_isOn)
-				_turnOn();
-			_validPressPend = false;
-			_mpbFdaState = stOnNVRP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				stOffVPP_Out();	// This function starts the latch timer here... to be considered if the MPB release must be the starting point Gaby
-			}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOnNVRP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			stOnNVRP_Do();
-			if(_validReleasePend){
-				_mpbFdaState = stOnVRP;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;
-				setSttChng();	// Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOnVRP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_validReleasePend = false;
-			if(!_isLatched)
-				_isLatched = true;
-			_mpbFdaState = stLtchNVUP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stLtchNVUP:	// From this state on different unlatch sources might make sense
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			stLtchNVUP_Do();
-			if(_validUnlatchPend){
-				_mpbFdaState = stLtchdVUP;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;
-				setSttChng();	// Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stLtchdVUP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_trnOffASAP){
-				if(_isOn)
-					_turnOff();
-			}
-			_mpbFdaState = stOffVUP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOffVUP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_validUnlatchPend = false;	// This is a placeholder for updValidUnlatchStatus() implemented in each subclass
-			_mpbFdaState = stOffNVURP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOffNVURP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validUnlatchRlsPend){
-				_mpbFdaState = stOffVURP;
-				setSttChng();
-			}
-			stOffNVURP_Do();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOffVURP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_validUnlatchRlsPend = false;
-			if(_isOn)
-				_turnOff();
-			if(_isLatched)
-				_isLatched = false;
-			if(_validPressPend)
+			case stOffVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(!_isOn)
+					_turnOn();
 				_validPressPend = false;
-			if(_validReleasePend)
-				_validReleasePend = false;
-			_mpbFdaState = stOffNotVPP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				stOffVURP_Out();
-			}	// Execute this code only ONCE, when exiting this state
-			break;
+				_mpbFdaState = stOnNVRP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					stOffVPP_Out();	// This function starts the latch timer here... to be considered if the MPB release must be the starting point Gaby
+				}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
-		case stDisabled:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				if(_isOn != _isOnDisabled){
+			case stOnNVRP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				stOnNVRP_Do();
+				if(_validReleasePend){
+					_mpbFdaState = stOnVRP;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;
+					setSttChng();	// Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOnVRP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_validReleasePend = false;
+				if(!_isLatched)
+					_isLatched = true;
+				_mpbFdaState = stLtchNVUP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stLtchNVUP:	// From this state on different unlatch sources might make sense
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				stLtchNVUP_Do();
+				if(_validUnlatchPend){
+					_mpbFdaState = stLtchdVUP;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;
+					setSttChng();	// Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stLtchdVUP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_trnOffASAP){
 					if(_isOn)
 						_turnOff();
-					else
-						_turnOn();
 				}
-				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
-				stDisabled_In();
-				_validDisablePend = false;
-				_isEnabled = false;
-				setOutputsChange(true);
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validEnablePend){
+				_mpbFdaState = stOffVUP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stOffVUP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_validUnlatchPend = false;	// This is a placeholder for updValidUnlatchStatus() implemented in each subclass
+				_mpbFdaState = stOffNVURP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stOffNVURP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validUnlatchRlsPend){
+					_mpbFdaState = stOffVURP;
+					setSttChng();
+				}
+				stOffNVURP_Do();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOffVURP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_validUnlatchRlsPend = false;
 				if(_isOn)
 					_turnOff();
-				_isEnabled = true;
-				_validEnablePend = false;
-				setOutputsChange(true);
-			}
-			if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+				if(_isLatched)
+					_isLatched = false;
+				if(_validPressPend)
+					_validPressPend = false;
+				if(_validReleasePend)
+					_validReleasePend = false;
 				_mpbFdaState = stOffNotVPP;
 				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-				stDisabled_Out();
-			}	// Execute this code only ONCE, when exiting this state
-			break;
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					stOffVURP_Out();
+				}	// Execute this code only ONCE, when exiting this state
+				break;
 
-	default:
-		break;
+			case stDisabled:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					if(_isOn != _isOnDisabled){
+						if(_isOn)
+							_turnOff();
+						else
+							_turnOn();
+					}
+					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
+					stDisabled_In();
+					_validDisablePend = false;
+					_isEnabled = false;
+					setOutputsChange(true);
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validEnablePend){
+					if(_isOn)
+						_turnOff();
+					_isEnabled = true;
+					_validEnablePend = false;
+					setOutputsChange(true);
+				}
+				if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+					_mpbFdaState = stOffNotVPP;
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+					stDisabled_Out();
+				}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			default:
+				break;
+		}
+		xSemaphoreGive(_updFdaMutex);
 	}
-	taskEXIT_CRITICAL(&mux);
-
+	
 	return;
 }
 
@@ -2019,174 +2018,173 @@ void DblActnLtchMPBttn::_turnOnScndry(){
 }
 
 void DblActnLtchMPBttn::updFdaState(){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
+		switch(_mpbFdaState){
+			case stOffNotVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validPressPend || _validScndModPend){
+					_mpbFdaState = stOffVPP;	// Start pressing timer
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;	// The MPB has been disabled
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-	taskENTER_CRITICAL(&mux);
-	switch(_mpbFdaState){
-		case stOffNotVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validPressPend || _validScndModPend){
-				_mpbFdaState = stOffVPP;	// Start pressing timer
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;	// The MPB has been disabled
-				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+			case stOffVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(!_isOn){
+					_turnOn();
+				}
+				if(_validScndModPend){
+					_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);	//>Gaby is this needed after separating this class from the sldr... class? Better do a subclass function!
+					_mpbFdaState = stOnStrtScndMod;
+					setSttChng();
+				}
+				else if(_validPressPend && _validReleasePend){
+					_validPressPend = false;
+					_validReleasePend = false;
+					_mpbFdaState = stOnMPBRlsd;
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-		case stOffVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(!_isOn){
-				_turnOn();
-			}
-			if(_validScndModPend){
-				_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);	//>Gaby is this needed after separating this class from the sldr... class? Better do a subclass function!
-				_mpbFdaState = stOnStrtScndMod;
+			case stOnStrtScndMod:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					stOnStrtScndMod_In();
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOnScndMod;
 				setSttChng();
-			}
-			else if(_validPressPend && _validReleasePend){
-				_validPressPend = false;
-				_validReleasePend = false;
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stOnScndMod:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(!_validReleasePend){
+					//Operating in Second Mode
+					stOnScndMod_Do();
+				}
+				else{
+					// MPB released, close Slider mode, move on to next state
+					_mpbFdaState = stOnEndScndMod;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;	// The MPB has been disabled
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOnEndScndMod:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_scndModTmrStrt = 0;
+				_validScndModPend = false;
 				_mpbFdaState = stOnMPBRlsd;
 				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					stOnEndScndMod_Out();
+				}
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
-		case stOnStrtScndMod:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				stOnStrtScndMod_In();
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_mpbFdaState = stOnScndMod;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+			case stOnMPBRlsd:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validScndModPend){
+					_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);
+					_mpbFdaState = stOnStrtScndMod;
+					setSttChng();
+				}
+				else if(_validPressPend && _validReleasePend){
+					_validPressPend = false;
+					_validReleasePend = false;
+					_mpbFdaState = stOnTurnOff;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;	// The MPB has been disabled
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-		case stOnScndMod:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(!_validReleasePend){
-				//Operating in Second Mode
-				stOnScndMod_Do();
-			}
-			else{
-				// MPB released, close Slider mode, move on to next state
-				_mpbFdaState = stOnEndScndMod;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;	// The MPB has been disabled
-				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOnEndScndMod:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_scndModTmrStrt = 0;
-			_validScndModPend = false;
-			_mpbFdaState = stOnMPBRlsd;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				stOnEndScndMod_Out();
-			}
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOnMPBRlsd:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validScndModPend){
-				_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);
-				_mpbFdaState = stOnStrtScndMod;
-				setSttChng();
-			}
-			else if(_validPressPend && _validReleasePend){
-				_validPressPend = false;
-				_validReleasePend = false;
-				_mpbFdaState = stOnTurnOff;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;	// The MPB has been disabled
-				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOnTurnOff:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_turnOff();
-			_mpbFdaState = stOffNotVPP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stDisabled:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				stDisabled_In();
-				if(_isOn != _isOnDisabled)
-					if(_isOn)
-						_turnOff();
-					else
-						_turnOn();
-				if(_isOnScndry != _isOnDisabled)
-					if(_isOnScndry)
-						_turnOffScndry();
-					else
-						_turnOnScndry();
-				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
-				_isEnabled = false;
-				_validDisablePend = false;
-				setOutputsChange(true);
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validEnablePend){
-				if(_isOnScndry)
-					_turnOffScndry();
-				if(_isOn)
-					_turnOff();
-				_isEnabled = true;
-				_validEnablePend = false;
-				setOutputsChange(true);
-			}
-			if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+			case stOnTurnOff:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_turnOff();
 				_mpbFdaState = stOffNotVPP;
 				setSttChng();
-			}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-			}	// Execute this code only ONCE, when exiting this state
+			case stDisabled:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					stDisabled_In();
+					if(_isOn != _isOnDisabled)
+						if(_isOn)
+							_turnOff();
+						else
+							_turnOn();
+					if(_isOnScndry != _isOnDisabled)
+						if(_isOnScndry)
+							_turnOffScndry();
+						else
+							_turnOnScndry();
+					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
+					_isEnabled = false;
+					_validDisablePend = false;
+					setOutputsChange(true);
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validEnablePend){
+					if(_isOnScndry)
+						_turnOffScndry();
+					if(_isOn)
+						_turnOff();
+					_isEnabled = true;
+					_validEnablePend = false;
+					setOutputsChange(true);
+				}
+				if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+					_mpbFdaState = stOffNotVPP;
+					setSttChng();
+				}
+
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+				}	// Execute this code only ONCE, when exiting this state
+				break;
+		default:
 			break;
-	default:
-		break;
+		}
+		xSemaphoreGive(_updFdaMutex);
 	}
-	taskEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -2792,10 +2790,8 @@ void VdblMPBttn::_turnOnVdd(){
 }
 
 void VdblMPBttn::updFdaState(){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	switch(_mpbFdaState){
+	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
+		switch(_mpbFdaState){
 		case stOffNotVPP:
 			// In: >>---------------------------------->>
 			if(_sttChng){
@@ -2973,7 +2969,8 @@ void VdblMPBttn::updFdaState(){
 	default:
 		break;
 	}
-	taskEXIT_CRITICAL(&mux);
+	xSemaphoreGive(_updFdaMutex);
+	} 
 
 	return;
 }

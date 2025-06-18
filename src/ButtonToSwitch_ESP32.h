@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.4.1
+  * @version v4.4.2
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   15/05/2025 16:10 (GMT+0200) DST  
+  *       Last update:   18/06/2025 20:30 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -158,6 +158,10 @@ protected:
 	volatile bool _validEnablePend{false};
 	volatile bool _validPressPend{false};
 	volatile bool _validReleasePend{false};
+
+	SemaphoreHandle_t _isOnMutex; // Mutex to protect the _isOn attribute flag value from concurrent access
+	SemaphoreHandle_t _strtDelayMutex; // Mutex to protect the _strtDelay attribute value from concurrent access
+	SemaphoreHandle_t _updFdaMutex; // Mutex to protect the updFdsState state updating automaton from concurrent access
 
    void clrSttChng();
 	const bool getIsPressed() const;
@@ -433,7 +437,6 @@ public:
 	 * @param newFnWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
 	void setFnWhnTrnOffPtr(fncPtrType newFnWhnTrnOff);
-
 	/**
 	 * @brief Sets the function that will be called to execute every time the object **enters** the **On State**.
 	 *
@@ -441,7 +444,6 @@ public:
 	 *
 	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
-	// void setFnWhnTrnOnPtr(void (*newFnWhnTrnOn)());
 	void setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn);
    /**
 	 * @brief Sets the value of the **isOnDisabled** attribute flag.
