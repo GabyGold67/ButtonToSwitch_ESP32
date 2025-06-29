@@ -80,9 +80,47 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 	_updFdaMutex = xSemaphoreCreateMutex();
 }
 
+DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn& other)
+: _mpbttnPin{other._mpbttnPin}, _pulledUp{other._pulledUp},	_typeNO{other._typeNO},	_dbncTimeOrigSett{other._dbncTimeOrigSett}
+{
+		_mpbPollTmrName = other._mpbPollTmrName;	//FFDR A new timer name must be created based on the  constructor implemented mechanism
+		_dbncTimeTempSett = other._dbncTimeTempSett;
+		_isOn = other._isOn;
+		_isEnabled = other._isEnabled;
+		_isOnDisabled = other._isOnDisabled;
+		_isPressed = other._isPressed;
+		_outputsChange = other._outputsChange;
+		_outputsChangeCnt = other._outputsChangeCnt;
+		_outputsChngTskTrggr = other._outputsChngTskTrggr;
+		_taskToNotifyHndl = other._taskToNotifyHndl;	//FFDR The logic dictates that the task to notify must be different for each object, remove this line and document the need to set the task to notify after the object is created
+		_taskWhileOnHndl = other._taskWhileOnHndl;	//FFDR The logic dictates that the task to notify must be different for each object, remove this line and document the need to set the task to notify after the object is created
+		_fnWhnTrnOn = other._fnWhnTrnOn;		//FFDR The logic dictates that the function to execute must be different for each object, remove this line and document the need to set the function to call after the object is created
+		_fnWhnTrnOff = other._fnWhnTrnOff;	//FFDR The logic dictates that the function to execute must be different for each object, remove this line and document the need to set the function to call after the object is created
+		_beginDisabled = other._beginDisabled;
+		_validDisablePend = other._validDisablePend;
+		_validEnablePend = other._validEnablePend;
+		_validPressPend = other._validPressPend;
+		_validReleasePend = other._validReleasePend;
+		_dbncTimerStrt = other._dbncTimerStrt;
+		_dbncRlsTimerStrt = other._dbncRlsTimerStrt;
+		_dbncRlsTimeTempSett = other._dbncRlsTimeTempSett;
+		_prssRlsCcl = other._prssRlsCcl;
+		_mpbFdaState = other._mpbFdaState;
+		_sttChng = other._sttChng;
+		_strtDelay = other._strtDelay;
+
+		// Mutexes must be created anew, not copied
+		_isOnMutex = xSemaphoreCreateMutex();
+		_strtDelayMutex = xSemaphoreCreateMutex();
+		_updFdaMutex = xSemaphoreCreateMutex();
+
+		// Timer handle should not be copied (timers are not duplicated)
+		_mpbPollTmrHndl = nullptr;	//FFDR create a new timer handle with the same name as the original object, so the timer can be started and stopped independently of the original object
+}
+
 DbncdMPBttn::~DbncdMPBttn(){
     
-    end();  // Stops the software timer associated to the object, deletes it's entry and nullyfies the handle to it before destructing the object
+	end();  // Stops the software timer associated to the object, deletes it's entry and nullyfies the handle to it before destructing the object
 }
 
 bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
@@ -694,7 +732,17 @@ void DbncdMPBttn::updFdaState(){
 	return;
 }
 
-bool DbncdMPBttn::updIsPressed(){
+bool DbncdMPBttn::updIsPressed(){	//FFDR - Future Feature Development Request
+	/*	
+	This method will be changed to accomodate different sources of detection signals. 
+	The current MPB state will come from a PressSignalGenerator class that might include subclasses for:
+	- McuInpPin: For MCU input pins, like the current implementation.
+	- ExpInpPin: For external inputs, like a I2C GPIO expander, SPI GPIO expander.
+	- SRGXInpPin: For shift register inputs, like a 74HC165 or similar.
+	- WiFiInpPin: For WiFi inputs, like a web server or a MQTT client.
+	- BLEInpPin: For BLE inputs, like a BLE server or a BLE client.
+	*/
+
 	/*To be 'pressed' the conditions are:
 	1) For NO == true
 		a)  _pulledUp == false ==> digitalRead == HIGH
@@ -782,6 +830,20 @@ DbncdDlydMPBttn::DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, 
 	_strtDelay = strtDelay;
 }
 
+DbncdDlydMPBttn::DbncdDlydMPBttn(const DbncdDlydMPBttn& other)
+: DbncdMPBttn(other) // Call base class copy constructor
+{
+	this->_strtDelay = other._strtDelay;		// Copy the strtDelay attribute
+}
+
+DbncdDlydMPBttn::~DbncdDlydMPBttn()
+{
+	if(_strtDelayMutex != NULL){
+		vSemaphoreDelete(_strtDelayMutex);
+		_strtDelayMutex = NULL;
+	}
+}
+
 bool DbncdDlydMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
 	bool result {false};
 
@@ -812,6 +874,27 @@ LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool
 :DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 }
+
+/*LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	//FFDR Check new code implemented and uncomment
+: DbncdDlydMPBttn(other) // Call base class copy constructor
+{
+	_mpbPollTmrName = other._mpbPollTmrName;
+	_isLatched = other._isLatched;
+	_validUnlatchPend = other._validUnlatchPend;
+	_validUnlatchRlsPend = other._validUnlatchRlsPend;
+	_trnOffASAP = other._trnOffASAP;
+	_mpbFdaState = other._mpbFdaState;
+	_sttChng = other._sttChng;
+
+	// Mutexes must be created anew, not copied
+	_isLatchedMutex = xSemaphoreCreateMutex();
+	_validUnlatchPendMutex = xSemaphoreCreateMutex();
+	_validUnlatchRlsPendMutex = xSemaphoreCreateMutex();
+	_updFdaMutex = xSemaphoreCreateMutex();
+
+	// Timer handle should not be copied (timers are not duplicated)
+	_mpbPollTmrHndl = nullptr;
+}*/
 
 bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
    bool result {false};

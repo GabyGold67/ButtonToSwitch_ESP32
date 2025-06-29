@@ -172,7 +172,7 @@ protected:
 	void _turnOff();
 	void _turnOn();
 	virtual void updFdaState();
-	bool updIsPressed();
+	bool updIsPressed();	//FFDR This method must be modified to accomodate different signal sources
 	virtual bool updValidPressesStatus();
 	const bool getOutputsChngTskTrggr() const;
 	void resetOutputsChngTskTrggr();
@@ -196,6 +196,12 @@ public:
 	 * @note The Arduino development environment has defined a constant to indicate a **non connected to a GPIO pin** identified as **GPIO_NUM_NC**.  
 	 */
 	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
+	 /**
+     * @brief Copy constructor
+	  * 
+	  * @param other DbncdMPBttn object to copy
+     */
+    DbncdMPBttn(const DbncdMPBttn& other);
 	/**
  * @brief Default virtual destructor
  *
@@ -520,6 +526,16 @@ public:
      * @note If the **delay** attribute is set to 0, the resulting object is equivalent in functionality to a **DbncdMPBttn** class object.
      */
 	DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	 /**
+     * @brief Copy constructor
+	  * 
+	  * @param other Reference to an existing DbncdDlydMPBttn object to be copied.
+     */
+    DbncdDlydMPBttn(const DbncdDlydMPBttn& other);
+	 /**
+	  * @brief Class destructor
+	  */
+	 virtual ~DbncdDlydMPBttn();
     /**
      *
      * @brief see DbncdMPBttn::init(const int8_t, const bool, const bool, const unsigned long int)
@@ -603,7 +619,13 @@ public:
     * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
 	LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-   /**
+	 /**
+     * @brief Copy constructor
+	  * 
+	  * @param other Reference to an existing LtchMPBttn object to be copied.
+     */
+	/*LtchMPBttn(const LtchMPBttn& other);*/	//FFDR Check new code implemented and uncomment
+	/**
 	 * @brief See DbncdMPBttn::begin(const unsigned long int)
     */
 	virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
