@@ -592,6 +592,9 @@ void DbncdMPBttn::_turnOff(){
 			if(_fnWhnTrnOff != nullptr){
 				_fnWhnTrnOff();
 			}
+			if(_fnVdPtrPrmWhnTrnOff != nullptr){
+				_fnVdPtrPrmWhnTrnOff(_fnVdPtrPrmWhnTrnOffArgPtr);
+			}
 		//---------------->> Flags related actions
 			_isOn = false;
 			setOutputsChange(true);
@@ -615,6 +618,9 @@ void DbncdMPBttn::_turnOn(){
 			//---------------->> Functions related actions
 			if(_fnWhnTrnOn != nullptr){
 				_fnWhnTrnOn();
+			}
+			if(_fnVdPtrPrmWhnTrnOn != nullptr){
+				_fnVdPtrPrmWhnTrnOn(_fnVdPtrPrmWhnTrnOnArgPtr);
 			}
 		//---------------->> Flags related actions
 			_isOn = true;
@@ -815,6 +821,79 @@ bool DbncdMPBttn::updValidPressesStatus(){
 	}
 
 	return (_validPressPend||_validReleasePend);
+}
+
+//==================================================>>
+
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOff(){
+   
+	return _fnVdPtrPrmWhnTrnOff;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOffArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffArgPtr;
+}
+
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOn(){
+
+   return _fnVdPtrPrmWhnTrnOn;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOnArgPtr(){
+
+	return _fnVdPtrPrmWhnTrnOnArgPtr;
+}
+
+
+void DbncdMPBttn::setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOff != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOff = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr){
+   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffArgPtr != newFVPPWhnTrnOffArgPtr){
+		_fnVdPtrPrmWhnTrnOffArgPtr = newFVPPWhnTrnOffArgPtr;	
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOn != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOn = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnArgPtr = argPtr;	//FFDR The argument pointer is set to the function pointer, so it can be used when the function is called
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnArgPtr != newFVPPWhnTrnOnArgPtr){
+		_fnVdPtrPrmWhnTrnOnArgPtr = newFVPPWhnTrnOnArgPtr;	
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
 }
 
 //=========================================================================> Class methods delimiter

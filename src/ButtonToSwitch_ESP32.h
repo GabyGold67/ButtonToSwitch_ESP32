@@ -94,9 +94,18 @@ const uint8_t OtptCurValBitPos{16};
 #endif
 /*---------------- xTaskNotify() mechanism related constants, argument structs, information packing and unpacking END -------*/
 
-// Definition workaround to let a function/method return value to be a function pointer
+/* Definition workaround to let a function/method return value to be a function pointer
+ to a function that receives no arguments and returns no values: void (funcName*)() .
+ The resulting **fncPtrType** type then defines a pointer to a function of the described properties */
 typedef void (*fncPtrType)();
 typedef  fncPtrType (*ptrToTrnFnc)();
+
+/* Definition workaround to let a function/method return value to be a function pointer
+ to a function that receives a void* argument and returns no values: void (funcName*)(void*) 
+ The resulting **fncVdPtrPrmPtrType** type then defines a pointer to a function of the described properties*/
+typedef void (*fncVdPtrPrmPtrType)(void*);
+typedef fncVdPtrPrmPtrType (*ptrToTrnFncVdPtr)(void*);
+
 
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
@@ -139,6 +148,13 @@ protected:
 	unsigned long int _dbncTimeTempSett{0};
 	fncPtrType _fnWhnTrnOff{nullptr};
 	fncPtrType _fnWhnTrnOn{nullptr};
+	
+	//FTPO Implementation of a more generic function implementation to allow for passing a void* argument to the function to be called when the MPB is turned off or on
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOff{nullptr};	// _fVPPWhnTrnOff
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOn{nullptr};	// _fVPPWhnTrnOom
+	void* _fnVdPtrPrmWhnTrnOffArgPtr{nullptr};	// _fVPPWhnTrnOffArgPtr
+	void* _fnVdPtrPrmWhnTrnOnArgPtr{nullptr};	// _fVPPWhnTrnOnArgPtr
+
 	bool _isEnabled{true};
 	volatile bool _isOn{false};
 	bool _isOnDisabled{false};
@@ -451,7 +467,8 @@ public:
 	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
 	void setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn);
-   /**
+  	
+	/**
 	 * @brief Sets the value of the **isOnDisabled** attribute flag.
 	 *
 	 * When instantiated the class, the object is created in **Enabled state**. That might be changed as needed.
@@ -496,6 +513,19 @@ public:
     * @warning Take special consideration about the implications of the execution **priority** of the task to be executed while the MPB is in **On state** and its relation to the priority of the calling task, as it might affect the normal execution of the application.
 	 */    
 	virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
+
+//==========================================================>>
+
+	fncVdPtrPrmPtrType getFVPPWhnTrnOff();	
+	void* getFVPPWhnTrnOffArgPtr();
+	fncVdPtrPrmPtrType getFVPPWhnTrnOn();
+	void* getFVPPWhnTrnOnArgPtr();
+
+	void setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+	void setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr);
+	void setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	void setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr);
+
 };
 
 //==========================================================>>
