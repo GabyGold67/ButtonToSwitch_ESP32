@@ -622,7 +622,7 @@ void DbncdMPBttn::_turnOn(){
 			if(_fnVdPtrPrmWhnTrnOn != nullptr){
 				_fnVdPtrPrmWhnTrnOn(_fnVdPtrPrmWhnTrnOnArgPtr);
 			}
-		//---------------->> Flags related actions
+			//---------------->> Flags related actions
 			_isOn = true;
 			setOutputsChange(true);
 		}
@@ -1745,6 +1745,9 @@ void HntdTmLtchMPBttn::_turnOffPilot(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffPilot != nullptr)
 			_fnWhnTrnOffPilot();
+		if(_fnVdPtrPrmWhnTrnOffPilot != nullptr){
+			_fnVdPtrPrmWhnTrnOffPilot(_fnVdPtrPrmWhnTrnOffPilotArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_pilotOn = false;
@@ -1762,6 +1765,9 @@ void HntdTmLtchMPBttn::_turnOffWrnng(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffWrnng != nullptr)
 			_fnWhnTrnOffWrnng();
+		if(_fnVdPtrPrmWhnTrnOffWrnng != nullptr){
+			_fnVdPtrPrmWhnTrnOffWrnng(_fnVdPtrPrmWhnTrnOffWrnngArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_wrnngOn = false;
@@ -1779,6 +1785,9 @@ void HntdTmLtchMPBttn::_turnOnPilot(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnPilot != nullptr)
 			_fnWhnTrnOnPilot();
+		if(_fnVdPtrPrmWhnTrnOnPilot != nullptr){
+			_fnVdPtrPrmWhnTrnOnPilot(_fnVdPtrPrmWhnTrnOnPilotArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_pilotOn = true;
@@ -1796,6 +1805,9 @@ void HntdTmLtchMPBttn::_turnOnWrnng(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnWrnng != nullptr)
 			_fnWhnTrnOnWrnng();
+		if(_fnVdPtrPrmWhnTrnOnWrnng != nullptr){
+			_fnVdPtrPrmWhnTrnOnWrnng(_fnVdPtrPrmWhnTrnOnWrnngArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_wrnngOn = true;

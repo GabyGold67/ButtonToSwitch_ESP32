@@ -102,10 +102,9 @@ typedef  fncPtrType (*ptrToTrnFnc)();
 
 /* Definition workaround to let a function/method return value to be a function pointer
  to a function that receives a void* argument and returns no values: void (funcName*)(void*) 
- The resulting **fncVdPtrPrmPtrType** type then defines a pointer to a function of the described properties*/
+ The resulting **fncVdPtrPrmPtrType** type then defines a pointer to a function of the described properties and signature*/
 typedef void (*fncVdPtrPrmPtrType)(void*);
 typedef fncVdPtrPrmPtrType (*ptrToTrnFncVdPtr)(void*);
-
 
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
@@ -149,11 +148,14 @@ protected:
 	fncPtrType _fnWhnTrnOff{nullptr};
 	fncPtrType _fnWhnTrnOn{nullptr};
 	
-	//FTPO Implementation of a more generic function implementation to allow for passing a void* argument to the function to be called when the MPB is turned off or on
+
+	//FTPO Add 
+	//FTPO Implementation of a more generic function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function to be called when the MPB is turned Off and On
 	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOff{nullptr};	// _fVPPWhnTrnOff
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOn{nullptr};	// _fVPPWhnTrnOom
 	void* _fnVdPtrPrmWhnTrnOffArgPtr{nullptr};	// _fVPPWhnTrnOffArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOn{nullptr};	// _fVPPWhnTrnOn
 	void* _fnVdPtrPrmWhnTrnOnArgPtr{nullptr};	// _fVPPWhnTrnOnArgPtr
+
 
 	bool _isEnabled{true};
 	volatile bool _isOn{false};
@@ -285,9 +287,11 @@ public:
 	 */
 	const unsigned long int getCurDbncTime() const;
 	/**
-	 * @brief Returns the function that is set to execute every time the object **enters** the **Off State**.
+	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Off State**.
 	 *
 	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOffPtr()** method.
+	 * 
+	 * The function to be executed has a signature of void (funcName)(), that is, it receives no parameters and returns no values.
 	 *
 	 * @return A function pointer to the function set to execute every time the object enters the **Off State**.
 	 * @retval nullptr if there is no function set to execute when the object enters the **Off State**.
@@ -296,14 +300,16 @@ public:
 	 */
 	fncPtrType getFnWhnTrnOff();
 	/**
-	 * @brief Returns the function that is set to execute every time the object **enters** the **On State**.
+	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **On State**.
 	 *
 	 * The function to be executed is an attribute that might be modified by the **setFnWhnTrnOnPtr()** method.
-	 *
+	 * 
+	 * The function to be executed has a signature of void (funcName)(), that is, it receives no parameters and returns no values.
+	 *  
 	 * @return A function pointer to the function set to execute every time the object enters the **On State**.
 	 * @retval nullptr if there is no function set to execute when the object enters the **On State**.
 	 *
-	 * 	 * @warning The function code execution will become part of the list of procedures the object executes when it entering the **On State**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
+	 * @warning The function code execution will become part of the list of procedures the object executes when it entering the **On State**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOn();
    /**
@@ -466,8 +472,7 @@ public:
 	 *
 	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
-	void setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn);
-  	
+	void setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn);  	
 	/**
 	 * @brief Sets the value of the **isOnDisabled** attribute flag.
 	 *
@@ -515,15 +520,72 @@ public:
 	virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
 
 //==========================================================>>
-
+//FTPO Add
+	/**
+	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Off State**.
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the **Off State**.
+	 * @retval nullptr if there is no function with the described signature set to execute when the object enters the **Off State**.
+	 */
 	fncVdPtrPrmPtrType getFVPPWhnTrnOff();	
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object **enters** the **Off State**.
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the **Off State**.
+	 */
 	void* getFVPPWhnTrnOffArgPtr();
+	/**
+	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **On State**.
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the **On State**.
+	 * @retval nullptr if there is no function with the described signature set to execute when the object enters the **On State**.
+	 */
 	fncVdPtrPrmPtrType getFVPPWhnTrnOn();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object **enters** the **On State**.
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the **On State**.
+	 */
 	void* getFVPPWhnTrnOnArgPtr();
 
+//FTPO Add
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **Off State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOff)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
 	void setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Off State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **Off State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Off State**.
+	 */
 	void setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr);
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **On State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOn)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOn Function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
 	void setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **On State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **On State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **On State**.
+	 */
 	void setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr);
 
 };
@@ -860,6 +922,27 @@ protected:
 	bool _validPilotSetPend{false};
 	bool _validPilotResetPend{false};
 
+	//FTPO Add
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffPilot{nullptr};	// _fVPPWhnTrnOffPilot
+	void* _fnVdPtrPrmWhnTrnOffPilotArgPtr{nullptr};	// _fVPPWhnTrnOffPilotArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnPilot{nullptr};	// _fVPPWhnTrnOnPilot
+	void* _fnVdPtrPrmWhnTrnOnPilotArgPtr{nullptr};	// _fVPPWhnTrnOnPilotArgPtr
+
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffPilot{nullptr};	// _fVPPWhnTrnOffPilot
+	void* _fnVdPtrPrmWhnTrnOffPilotArgPtr{nullptr};	// _fVPPWhnTrnOffPilotArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnPilot{nullptr};	// _fVPPWhnTrnOnPilot
+	void* _fnVdPtrPrmWhnTrnOnPilotArgPtr{nullptr};	// _fVPPWhnTrnOnPilotArgPtr
+
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffWrnng{nullptr};	// _fVPPWhnTrnOffWrnng
+	void* _fnVdPtrPrmWhnTrnOffWrnngArgPtr{nullptr};	// _fVPPWhnTrnOffWrnngArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnWrnng{nullptr};	// _fVPPWhnTrnOnWrnng
+	void* _fnVdPtrPrmWhnTrnOnWrnngArgPtr{nullptr};	// _fVPPWhnTrnOnWrnngArgPtr
+
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffWrnng{nullptr};	// _fVPPWhnTrnOffWrnng
+	void* _fnVdPtrPrmWhnTrnOffWrnngArgPtr{nullptr};	// _fVPPWhnTrnOffWrnngArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnWrnng{nullptr};	// _fVPPWhnTrnOnWrnng
+	void* _fnVdPtrPrmWhnTrnOnWrnngArgPtr{nullptr};	// _fVPPWhnTrnOnWrnngArgPtr
+
 	static void mpbPollCallback(TimerHandle_t mpbTmrCbArg);
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	virtual void stDisabled_In();
@@ -1017,6 +1100,146 @@ public:
 	 * @retval false the value was outside range, the value change was dismissed.
 	 */
 	bool setWrnngPrctg (const unsigned int &newWrnngPrctg);
+
+//==========================================================>>
+//FTPO Add
+	/**
+	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Off State**.
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the **Off State**.
+	 * @retval nullptr if there is no function with the described signature set to execute when the object enters the **Off State**.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOffPilot();	
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object **enters** the **Off State**.
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the **Off State**.
+	 */
+	void* getFVPPWhnTrnOffPilotArgPtr();
+	/**
+	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **On State**.
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the **On State**.
+	 * @retval nullptr if there is no function with the described signature set to execute when the object enters the **On State**.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOnPilot();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object **enters** the **On State**.
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the **On State**.
+	 */
+	void* getFVPPWhnTrnOnPilotArgPtr();
+
+//FTPO Add
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **Off State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOff)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
+	void setFVPPWhnTrnOffPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Off State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **Off State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Off State**.
+	 */
+	void setFVPPWhnTrnOffPilotArgPtr(void* newFVPPWhnTrnOffArgPtr);
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **On State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOn)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOn Function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
+	void setFVPPWhnTrnOnPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **On State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **On State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **On State**.
+	 */
+	void setFVPPWhnTrnOnPilotArgPtr(void* newFVPPWhnTrnOnArgPtr);
+
+//FTPO Add
+	/**
+	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Off State**.
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the **Off State**.
+	 * @retval nullptr if there is no function with the described signature set to execute when the object enters the **Off State**.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOffWrnng();	
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object **enters** the **Off State**.
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the **Off State**.
+	 */
+	void* getFVPPWhnTrnOffWrnngArgPtr();
+	/**
+	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **On State**.
+	 * 
+	 * The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function.  
+	 * 
+	 * @return fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the **On State**.
+	 * @retval nullptr if there is no function with the described signature set to execute when the object enters the **On State**.
+	 */
+	fncVdPtrPrmPtrType getFVPPWhnTrnOnWrnng();
+	/**
+	 * @brief Returns a pointer to the argument to be passed to the function set to execute every time the object **enters** the **On State**.
+	 * 
+	 * @return void* Pointer to the argument to be passed to the function set to execute every time the object enters the **On State**.
+	 */
+	void* getFVPPWhnTrnOnWrnngArgPtr();
+
+//FTPO Add
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **Off State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOff)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOff Function pointer to the function intended to be called when the object **enters** the **Off State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
+	void setFVPPWhnTrnOffWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **Off State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **Off State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOffArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **Off State**.
+	 */
+	void setFVPPWhnTrnOffWrnngArgPtr(void* newFVPPWhnTrnOffArgPtr);
+	/**
+	 * @brief Sets a function to be executed every time the object **enters** the **On State**.
+	 *
+	 * The function to be executed must be of the form **void (*newFVPPWhnTrnOn)(void*)**, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to **nullptr**.
+	 *
+	 * @param newFVPPWhnTrnOn Function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
+	 * @param argPtr void pointer to an argument to be passed to the function when it is called.
+	 */
+	void setFVPPWhnTrnOnWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr);
+	/**
+	 * @brief Sets a pointer to an argument to be passed to the function set to execute every time the object **enters** the **On State**.
+	 *
+	 * The argument pointer is passed to the function set to execute when the object enters the **On State**. The pointer is set to **nullptr** when the object is instantiated.
+	 *
+	 * @param newFVPPWhnTrnOnArgPtr Pointer to an argument to be passed to the function set to execute every time the object enters the **On State**.
+	 */
+	void setFVPPWhnTrnOnPilotWrnng(void* newFVPPWhnTrnOnArgPtr);
+
+
+
 };
 
 //==========================================================>>
@@ -1127,6 +1350,13 @@ protected:
 	void (*_fnWhnTrnOffScndry)() {nullptr};
 	void (*_fnWhnTrnOnScndry)() {nullptr};
 	TaskHandle_t _taskWhileOnScndryHndl{NULL};
+
+
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffScndry{nullptr};	// _fVPPWhnTrnOffScndry
+	void* _fnVdPtrPrmWhnTrnOffScndryArgPtr{nullptr};	// _fVPPWhnTrnOffScndryArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnScndry{nullptr};	// _fVPPWhnTrnOnScndry
+	void* _fnVdPtrPrmWhnTrnOnScndryArgPtr{nullptr};	// _fVPPWhnTrnOnScndryArgPtr
+
 
 	static void mpbPollCallback(TimerHandle_t mpbTmrCbArg);
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
