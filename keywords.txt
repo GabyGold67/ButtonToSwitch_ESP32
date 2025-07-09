@@ -113,17 +113,28 @@ setFVPPWhnTrnOnWrnngArgPtr KEYWORD2
 setKeepPilot    KEYWORD2
 setWrnngPrctg  KEYWORD2
 ##################
-#DDlydDALtchMPBttn
+#DblActnLtchMPBttn
 ##################
 getFnWhnTrnOffScndry KEYWORD2
 getFnWhnTrnOnScndry  KEYWORD2
+getFVPPWhnTrnOffScndry  KEYWORD2
+getFVPPWhnTrnOffScndryArgPtr  KEYWORD2
+getFVPPWhnTrnOnScndry   KEYWORD2
+getFVPPWhnTrnOnScndryArgPtr   KEYWORD2
 getIsOnScndry  KEYWORD2
 getScndModActvDly KEYWORD2
 getTaskWhileOnScndry KEYWORD2
 setFnWhnTrnOffScndryPtr KEYWORD2
 setFnWhnTrnOnScndryPtr  KEYWORD2
+setFVPPWhnTrnOffScndry  KEYWORD2
+setFVPPWhnTrnOffScndryArgPtr  KEYWORD2
+setFVPPWhnTrnOnScndry   KEYWORD2
+setFVPPWhnTrnOnScndryArgPtr   KEYWORD2
 setScndModActvDly KEYWORD2
 setTaskWhileOnScndry KEYWORD2
+##################
+#DDlydDALtchMPBttn
+##################
 #################
 #SldrDALtchMPBttn
 #################
@@ -145,20 +156,32 @@ setSldrDirUp   KEYWORD2
 setSwpDirOnEnd KEYWORD2
 setSwpDirOnPrss   KEYWORD2
 swapSldrDir KEYWORD2
-###########
-#TmVdblMPBttn
-###########
+#############
+#VdblMPBttn
+#############
 getFnWhnTrnOffVdd KEYWORD2
 getFnWhnTrnOnVdd  KEYWORD2
 getFrcOtptLvlWhnVdd KEYWORD2
+getFVPPWhnTrnOffVdd  KEYWORD2
+getFVPPWhnTrnOffVddArgPtr  KEYWORD2
+getFVPPWhnTrnOnVdd   KEYWORD2
+getFVPPWhnTrnOnVddArgPtr   KEYWORD2
 getIsVoided KEYWORD2
 getStOnWhnOtpFrcd KEYWORD2
-getVoidTime KEYWORD2
+setFVPPWhnTrnOffVdd  KEYWORD2
+setFVPPWhnTrnOffVddArgPtr  KEYWORD2
+setFVPPWhnTrnOnVdd   KEYWORD2
+setFVPPWhnTrnOnVddArgPtr   KEYWORD2
 setFnWhnTrnOffVddPtr KEYWORD2
 setFnWhnTrnOnVddtPtr KEYWORD2
 setIsNotVoided KEYWORD2
 setIsVoided KEYWORD2
+#############
+#TmVdblMPBttn
+#############
+getVoidTime KEYWORD2
 setVoidTime KEYWORD2
+
 ###############################################
 # Constants (LITERAL1)
 ###############################################

@@ -2578,7 +2578,7 @@ void* DblActnLtchMPBttn::getFVPPWhnTrnOnScndryArgPtr(){
 	return _fnVdPtrPrmWhnTrnOnScndryArgPtr;
 }
 
-void DblActnLtchMPBttn::setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr = nullptr){
+void DblActnLtchMPBttn::setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
@@ -2603,7 +2603,7 @@ void DblActnLtchMPBttn::setFVPPWhnTrnOffScndryArgPtr(void* argPtr){
 	return;	
 }
 
-void DblActnLtchMPBttn::setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr = nullptr){
+void DblActnLtchMPBttn::setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
@@ -3156,6 +3156,8 @@ void VdblMPBttn::_turnOffVdd(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffVdd != nullptr)
 			_fnWhnTrnOffVdd();
+		if(_fnVdPtrPrmWhnTrnOffVdd != nullptr)
+			_fnVdPtrPrmWhnTrnOffVdd(_fnVdPtrPrmWhnTrnOffVddArgPtr);
 	//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_isVoided = false;
@@ -3173,6 +3175,8 @@ void VdblMPBttn::_turnOnVdd(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnVdd != nullptr)
 			_fnWhnTrnOnVdd();
+		if(_fnVdPtrPrmWhnTrnOnVdd != nullptr)
+			_fnVdPtrPrmWhnTrnOnVdd(_fnVdPtrPrmWhnTrnOnVddArgPtr);
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_isVoided = true;
@@ -3365,6 +3369,78 @@ void VdblMPBttn::updFdaState(){
 	}
 	xSemaphoreGive(_updFdaMutex);
 	} 
+
+	return;
+}
+
+//==================================================>>
+
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOffVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOffVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOffVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffVddArgPtr;
+}
+
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOnVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOnVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOnVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnVddArgPtr;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffVdd != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffVdd = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void VdblMPBttn::setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffVddArgPtr != newFVPPWhnTrnOffArgPtr){
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = newFVPPWhnTrnOffArgPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnVdd != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnVdd = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVddArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnVddArgPtr != newFVPPWhnTrnOnArgPtr){
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = newFVPPWhnTrnOnArgPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
 
 	return;
 }

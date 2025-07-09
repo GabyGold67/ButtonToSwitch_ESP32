@@ -1544,7 +1544,6 @@ public:
 	 */
 	void setFVPPWhnTrnOnScndryArgPtr(void* newFVPPWhnTrnOnArgPtr);
 
-
 };
 
 //==========================================================>>
@@ -2026,7 +2025,7 @@ public:
 	bool setIsVoided();
 
 	//==========================================================>>
-//FTPO Add
+//FTPO Sort
 	/**
 	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Voided Off State** a.k.a. **Not Voided State**.
 	 * 
@@ -2058,7 +2057,7 @@ public:
 	 */
 	void* getFVPPWhnTrnOnVddArgPtr();
 
-//FTPO Add
+//FTPO Sort
 	/**
 	 * @brief Sets a function to be executed every time the object **enters** the **Voided Off State** a.k.a. **Not Voided State**.
 	 *
@@ -2207,6 +2206,5 @@ public:
 };
 
 //==========================================================>>
-
 
 #endif	/*_BUTTONTOSWITCH_ESP32_H_*/
