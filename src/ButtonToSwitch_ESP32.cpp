@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.4.1
+  * @version v4.5.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   15/05/2025 16:10 (GMT+0200) DST  
+  *       Last update:   09/07/2025 19:10 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -74,11 +74,53 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 		_typeNO = true;
 		_dbncTimeOrigSett = 0;
 	}
+	
+	_isOnMutex = xSemaphoreCreateMutex();
+	_strtDelayMutex = xSemaphoreCreateMutex();
+	_updFdaMutex = xSemaphoreCreateMutex();
+}
+
+DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn& other)
+: _mpbttnPin{other._mpbttnPin}, _pulledUp{other._pulledUp},	_typeNO{other._typeNO},	_dbncTimeOrigSett{other._dbncTimeOrigSett}
+{
+		_mpbPollTmrName = other._mpbPollTmrName;	//FFDR A new timer name must be created based on the  constructor implemented mechanism
+		_dbncTimeTempSett = other._dbncTimeTempSett;
+		_isOn = other._isOn;
+		_isEnabled = other._isEnabled;
+		_isOnDisabled = other._isOnDisabled;
+		_isPressed = other._isPressed;
+		_outputsChange = other._outputsChange;
+		_outputsChangeCnt = other._outputsChangeCnt;
+		_outputsChngTskTrggr = other._outputsChngTskTrggr;
+		_taskToNotifyHndl = other._taskToNotifyHndl;	//FFDR The logic dictates that the task to notify must be different for each object, remove this line and document the need to set the task to notify after the object is created
+		_taskWhileOnHndl = other._taskWhileOnHndl;	//FFDR The logic dictates that the task to notify must be different for each object, remove this line and document the need to set the task to notify after the object is created
+		_fnWhnTrnOn = other._fnWhnTrnOn;		//FFDR The logic dictates that the function to execute must be different for each object, remove this line and document the need to set the function to call after the object is created
+		_fnWhnTrnOff = other._fnWhnTrnOff;	//FFDR The logic dictates that the function to execute must be different for each object, remove this line and document the need to set the function to call after the object is created
+		_beginDisabled = other._beginDisabled;
+		_validDisablePend = other._validDisablePend;
+		_validEnablePend = other._validEnablePend;
+		_validPressPend = other._validPressPend;
+		_validReleasePend = other._validReleasePend;
+		_dbncTimerStrt = other._dbncTimerStrt;
+		_dbncRlsTimerStrt = other._dbncRlsTimerStrt;
+		_dbncRlsTimeTempSett = other._dbncRlsTimeTempSett;
+		_prssRlsCcl = other._prssRlsCcl;
+		_mpbFdaState = other._mpbFdaState;
+		_sttChng = other._sttChng;
+		_strtDelay = other._strtDelay;
+
+		// Mutexes must be created anew, not copied
+		_isOnMutex = xSemaphoreCreateMutex();
+		_strtDelayMutex = xSemaphoreCreateMutex();
+		_updFdaMutex = xSemaphoreCreateMutex();
+
+		// Timer handle should not be copied (timers are not duplicated)
+		_mpbPollTmrHndl = nullptr;	//FFDR create a new timer handle with the same name as the original object, so the timer can be started and stopped independently of the original object
 }
 
 DbncdMPBttn::~DbncdMPBttn(){
     
-    end();  // Stops the software timer associated to the object, deletes it's entry and nullyfies the handle to it before destructing the object
+	end();  // Stops the software timer associated to the object, deletes it's entry and nullyfies the handle to it before destructing the object
 }
 
 bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
@@ -180,6 +222,26 @@ fncPtrType DbncdMPBttn::getFnWhnTrnOff(){
 fncPtrType DbncdMPBttn::getFnWhnTrnOn(){
 
 	return _fnWhnTrnOn;
+}
+
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOff(){
+   
+	return _fnVdPtrPrmWhnTrnOff;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOffArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffArgPtr;
+}
+
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOn(){
+
+   return _fnVdPtrPrmWhnTrnOn;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOnArgPtr(){
+
+	return _fnVdPtrPrmWhnTrnOnArgPtr;
 }
 
 const bool DbncdMPBttn::getIsEnabled() const{
@@ -421,6 +483,56 @@ void DbncdMPBttn::setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn){
 	return;
 }
 
+void DbncdMPBttn::setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOff != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOff = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr){
+   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffArgPtr != newFVPPWhnTrnOffArgPtr){
+		_fnVdPtrPrmWhnTrnOffArgPtr = newFVPPWhnTrnOffArgPtr;	
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOn != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOn = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnArgPtr = argPtr;	//FFDR The argument pointer is set to the function pointer, so it can be used when the function is called
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnArgPtr != newFVPPWhnTrnOnArgPtr){
+		_fnVdPtrPrmWhnTrnOnArgPtr = newFVPPWhnTrnOnArgPtr;	
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
 void DbncdMPBttn::_setIsEnabled(const bool &newEnabledValue){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
@@ -537,163 +649,176 @@ void DbncdMPBttn::setTaskWhileOn(const TaskHandle_t &newTaskHandle){
 }
 
 void DbncdMPBttn::_turnOff(){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	if(_isOn){
-		//---------------->> Tasks related actions
-		if(_taskWhileOnHndl != NULL){
-			eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
-			if (taskWhileOnStts != eSuspended)
-				if(taskWhileOnStts != eDeleted)
-					vTaskSuspend(_taskWhileOnHndl);
+	if(xSemaphoreTake(_isOnMutex, portMAX_DELAY) == pdTRUE){
+		if(_isOn){
+			//---------------->> Tasks related actions
+			if(_taskWhileOnHndl != NULL){
+				eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
+				if (taskWhileOnStts != eSuspended)
+					if(taskWhileOnStts != eDeleted)
+						vTaskSuspend(_taskWhileOnHndl);
+			}
+			//---------------->> Functions related actions
+			if(_fnWhnTrnOff != nullptr){
+				_fnWhnTrnOff();
+			}
+			if(_fnVdPtrPrmWhnTrnOff != nullptr){
+				_fnVdPtrPrmWhnTrnOff(_fnVdPtrPrmWhnTrnOffArgPtr);
+			}
+		//---------------->> Flags related actions
+			_isOn = false;
+			setOutputsChange(true);
 		}
-		//---------------->> Functions related actions
-		if(_fnWhnTrnOff != nullptr){
-			_fnWhnTrnOff();
-		}
-	//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
-		_isOn = false;
-		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		xSemaphoreGive(_isOnMutex);
 	}
 
 	return;
 }
 
 void DbncdMPBttn::_turnOn(){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	if(!_isOn){
-		//---------------->> Tasks related actions
-		if(_taskWhileOnHndl != NULL){
-			eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
-			if(taskWhileOnStts != eDeleted)
-				if (taskWhileOnStts == eSuspended)
-					vTaskResume(_taskWhileOnHndl);
+	if(xSemaphoreTake(_isOnMutex, portMAX_DELAY) == pdTRUE){
+		if(!_isOn){
+			//---------------->> Tasks related actions
+			if(_taskWhileOnHndl != NULL){
+				eTaskState taskWhileOnStts{eTaskGetState(_taskWhileOnHndl)};
+				if(taskWhileOnStts != eDeleted)
+					if (taskWhileOnStts == eSuspended)
+						vTaskResume(_taskWhileOnHndl);
+			}
+			//---------------->> Functions related actions
+			if(_fnWhnTrnOn != nullptr){
+				_fnWhnTrnOn();
+			}
+			if(_fnVdPtrPrmWhnTrnOn != nullptr){
+				_fnVdPtrPrmWhnTrnOn(_fnVdPtrPrmWhnTrnOnArgPtr);
+			}
+			//---------------->> Flags related actions
+			_isOn = true;
+			setOutputsChange(true);
 		}
-		//---------------->> Functions related actions
-		if(_fnWhnTrnOn != nullptr){
-			_fnWhnTrnOn();
-		}
-	//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
-		_isOn = true;
-		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		xSemaphoreGive(_isOnMutex);
 	}
 
 	return;
 }
 
 void DbncdMPBttn::updFdaState(){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	switch(_mpbFdaState){
-		case stOffNotVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validPressPend){
-				_mpbFdaState = stOffVPP;
-				setSttChng();	//Set flag to execute exiting OUT code
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;
-				setSttChng();	//Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOffVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(!_isOn)
-				_turnOn();
-			_validPressPend = false;
-			_mpbFdaState = stOn;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!			break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOn:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validReleasePend){
-				_mpbFdaState = stOnVRP;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;
-				setSttChng();	//Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOnVRP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_isOn)
-				_turnOff();
-			_validReleasePend = false;
-			_mpbFdaState = stOffNotVPP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stDisabled:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				if(_isOn != _isOnDisabled){
-					if(_isOn)
-						_turnOff();
-					else
-						_turnOn();
+	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
+		switch(_mpbFdaState){
+			case stOffNotVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validPressPend){
+					_mpbFdaState = stOffVPP;
+					setSttChng();	//Set flag to execute exiting OUT code
 				}
-				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
-				_isEnabled = false;
-				setOutputsChange(true);
-				_validDisablePend = false;
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validEnablePend){
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;
+					setSttChng();	//Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOffVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(!_isOn)
+					_turnOn();
+				_validPressPend = false;
+				_mpbFdaState = stOn;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!			break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stOn:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validReleasePend){
+					_mpbFdaState = stOnVRP;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;
+					setSttChng();	//Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOnVRP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
 				if(_isOn)
 					_turnOff();
-				_isEnabled = true;
-				_validEnablePend = false;
-				setOutputsChange(true);
-			}
-			if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+				_validReleasePend = false;
 				_mpbFdaState = stOffNotVPP;
 				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-			}	// Execute this code only ONCE, when exiting this state
-			break;
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-	default:
-		break;
-	}
-	taskEXIT_CRITICAL(&mux);
+			case stDisabled:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					if(_isOn != _isOnDisabled){
+						if(_isOn)
+							_turnOff();
+						else
+							_turnOn();
+					}
+					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
+					_isEnabled = false;
+					setOutputsChange(true);
+					_validDisablePend = false;
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validEnablePend){
+					if(_isOn)
+						_turnOff();
+					_isEnabled = true;
+					_validEnablePend = false;
+					setOutputsChange(true);
+				}
+				if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+					_mpbFdaState = stOffNotVPP;
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+				}	// Execute this code only ONCE, when exiting this state
+				break;
+
+		default:
+			break;
+		}
+		xSemaphoreGive(_updFdaMutex);
+	}	
 
 	return;
 }
 
-bool DbncdMPBttn::updIsPressed(){
+bool DbncdMPBttn::updIsPressed(){	//FFDR - Future Feature Development Request
+	/*	
+	This method will be changed to accomodate different sources of detection signals. 
+	The current MPB state will come from a PressSignalGenerator class that might include subclasses for:
+	- McuInpPin: For MCU input pins, like the current implementation.
+	- ExpInpPin: For external inputs, like a I2C GPIO expander, SPI GPIO expander.
+	- SRGXInpPin: For shift register inputs, like a 74HC165 or similar.
+	- WiFiInpPin: For WiFi inputs, like a web server or a MQTT client.
+	- BLEInpPin: For BLE inputs, like a BLE server or a BLE client.
+	*/
+
 	/*To be 'pressed' the conditions are:
 	1) For NO == true
 		a)  _pulledUp == false ==> digitalRead == HIGH
@@ -781,6 +906,20 @@ DbncdDlydMPBttn::DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, 
 	_strtDelay = strtDelay;
 }
 
+DbncdDlydMPBttn::DbncdDlydMPBttn(const DbncdDlydMPBttn& other)
+: DbncdMPBttn(other) // Call base class copy constructor
+{
+	this->_strtDelay = other._strtDelay;		// Copy the strtDelay attribute
+}
+
+DbncdDlydMPBttn::~DbncdDlydMPBttn()
+{
+	if(_strtDelayMutex != NULL){
+		vSemaphoreDelete(_strtDelayMutex);
+		_strtDelayMutex = NULL;
+	}
+}
+
 bool DbncdDlydMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
 	bool result {false};
 
@@ -792,12 +931,11 @@ bool DbncdDlydMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const 
 }
 
 void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-   if(_strtDelay != newStrtDelay)
-      _strtDelay = newStrtDelay;
-   taskEXIT_CRITICAL(&mux);
+	if(xSemaphoreTake(_strtDelayMutex, portMAX_DELAY) == pdTRUE){
+		if(_strtDelay != newStrtDelay)
+			_strtDelay = newStrtDelay;
+		xSemaphoreGive(_strtDelayMutex);
+	}
 
    return;
 }
@@ -812,6 +950,27 @@ LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool
 :DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 }
+
+/*LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	//FFDR Check new code implemented and uncomment
+: DbncdDlydMPBttn(other) // Call base class copy constructor
+{
+	_mpbPollTmrName = other._mpbPollTmrName;
+	_isLatched = other._isLatched;
+	_validUnlatchPend = other._validUnlatchPend;
+	_validUnlatchRlsPend = other._validUnlatchRlsPend;
+	_trnOffASAP = other._trnOffASAP;
+	_mpbFdaState = other._mpbFdaState;
+	_sttChng = other._sttChng;
+
+	// Mutexes must be created anew, not copied
+	_isLatchedMutex = xSemaphoreCreateMutex();
+	_validUnlatchPendMutex = xSemaphoreCreateMutex();
+	_validUnlatchRlsPendMutex = xSemaphoreCreateMutex();
+	_updFdaMutex = xSemaphoreCreateMutex();
+
+	// Timer handle should not be copied (timers are not duplicated)
+	_mpbPollTmrHndl = nullptr;
+}*/
 
 bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
    bool result {false};
@@ -959,193 +1118,192 @@ bool LtchMPBttn::unlatch(){
 }
 
 void LtchMPBttn::updFdaState(){
-   portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
+		switch(_mpbFdaState){
+			case stOffNotVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+					stOffNotVPP_In();
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validPressPend){
+					_mpbFdaState = stOffVPP;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;	// For this stDisabled entry, the only flags that might be affected are _ validPressPend and (unlikely) _validReleasePend
+					setSttChng();	//Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					stOffNotVPP_Out();
+				}	// Execute this code only ONCE, when exiting this state
+				break;
 
-	taskENTER_CRITICAL(&mux);
-	switch(_mpbFdaState){
-		case stOffNotVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-				stOffNotVPP_In();
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validPressPend){
-				_mpbFdaState = stOffVPP;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;	// For this stDisabled entry, the only flags that might be affected are _ validPressPend and (unlikely) _validReleasePend
-				setSttChng();	//Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				stOffNotVPP_Out();
-			}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOffVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(!_isOn)
-				_turnOn();
-			_validPressPend = false;
-			_mpbFdaState = stOnNVRP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				stOffVPP_Out();	// This function starts the latch timer here... to be considered if the MPB release must be the starting point Gaby
-			}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOnNVRP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			stOnNVRP_Do();
-			if(_validReleasePend){
-				_mpbFdaState = stOnVRP;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;
-				setSttChng();	// Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOnVRP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_validReleasePend = false;
-			if(!_isLatched)
-				_isLatched = true;
-			_mpbFdaState = stLtchNVUP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stLtchNVUP:	// From this state on different unlatch sources might make sense
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			stLtchNVUP_Do();
-			if(_validUnlatchPend){
-				_mpbFdaState = stLtchdVUP;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;
-				setSttChng();	// Set flag to execute exiting OUT code
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stLtchdVUP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_trnOffASAP){
-				if(_isOn)
-					_turnOff();
-			}
-			_mpbFdaState = stOffVUP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOffVUP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_validUnlatchPend = false;	// This is a placeholder for updValidUnlatchStatus() implemented in each subclass
-			_mpbFdaState = stOffNVURP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOffNVURP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validUnlatchRlsPend){
-				_mpbFdaState = stOffVURP;
-				setSttChng();
-			}
-			stOffNVURP_Do();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOffVURP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_validUnlatchRlsPend = false;
-			if(_isOn)
-				_turnOff();
-			if(_isLatched)
-				_isLatched = false;
-			if(_validPressPend)
+			case stOffVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(!_isOn)
+					_turnOn();
 				_validPressPend = false;
-			if(_validReleasePend)
-				_validReleasePend = false;
-			_mpbFdaState = stOffNotVPP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				stOffVURP_Out();
-			}	// Execute this code only ONCE, when exiting this state
-			break;
+				_mpbFdaState = stOnNVRP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					stOffVPP_Out();	// This function starts the latch timer here... to be considered if the MPB release must be the starting point Gaby
+				}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
-		case stDisabled:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				if(_isOn != _isOnDisabled){
+			case stOnNVRP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				stOnNVRP_Do();
+				if(_validReleasePend){
+					_mpbFdaState = stOnVRP;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;
+					setSttChng();	// Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOnVRP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_validReleasePend = false;
+				if(!_isLatched)
+					_isLatched = true;
+				_mpbFdaState = stLtchNVUP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stLtchNVUP:	// From this state on different unlatch sources might make sense
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				stLtchNVUP_Do();
+				if(_validUnlatchPend){
+					_mpbFdaState = stLtchdVUP;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;
+					setSttChng();	// Set flag to execute exiting OUT code
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stLtchdVUP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_trnOffASAP){
 					if(_isOn)
 						_turnOff();
-					else
-						_turnOn();
 				}
-				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
-				stDisabled_In();
-				_validDisablePend = false;
-				_isEnabled = false;
-				setOutputsChange(true);
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validEnablePend){
+				_mpbFdaState = stOffVUP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stOffVUP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_validUnlatchPend = false;	// This is a placeholder for updValidUnlatchStatus() implemented in each subclass
+				_mpbFdaState = stOffNVURP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stOffNVURP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validUnlatchRlsPend){
+					_mpbFdaState = stOffVURP;
+					setSttChng();
+				}
+				stOffNVURP_Do();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOffVURP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_validUnlatchRlsPend = false;
 				if(_isOn)
 					_turnOff();
-				_isEnabled = true;
-				_validEnablePend = false;
-				setOutputsChange(true);
-			}
-			if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+				if(_isLatched)
+					_isLatched = false;
+				if(_validPressPend)
+					_validPressPend = false;
+				if(_validReleasePend)
+					_validReleasePend = false;
 				_mpbFdaState = stOffNotVPP;
 				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-				stDisabled_Out();
-			}	// Execute this code only ONCE, when exiting this state
-			break;
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					stOffVURP_Out();
+				}	// Execute this code only ONCE, when exiting this state
+				break;
 
-	default:
-		break;
+			case stDisabled:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					if(_isOn != _isOnDisabled){
+						if(_isOn)
+							_turnOff();
+						else
+							_turnOn();
+					}
+					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
+					stDisabled_In();
+					_validDisablePend = false;
+					_isEnabled = false;
+					setOutputsChange(true);
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validEnablePend){
+					if(_isOn)
+						_turnOff();
+					_isEnabled = true;
+					_validEnablePend = false;
+					setOutputsChange(true);
+				}
+				if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+					_mpbFdaState = stOffNotVPP;
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+					stDisabled_Out();
+				}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			default:
+				break;
+		}
+		xSemaphoreGive(_updFdaMutex);
 	}
-	taskEXIT_CRITICAL(&mux);
-
+	
 	return;
 }
 
@@ -1359,6 +1517,46 @@ fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOnWrnng(){
 	return _fnWhnTrnOnWrnng;
 }
 
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOffPilot(){
+	
+   return _fnVdPtrPrmWhnTrnOffPilot;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOffPilotArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffPilotArgPtr;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOnPilot(){
+	
+	return _fnVdPtrPrmWhnTrnOnPilot;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOnPilotArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnPilotArgPtr;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOffWrnng(){
+	
+	return _fnVdPtrPrmWhnTrnOffWrnng;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOffWrnngArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffWrnngArgPtr;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOnWrnng(){
+	
+	return _fnVdPtrPrmWhnTrnOnWrnng;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOnWrnngArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnWrnngArgPtr;
+}
+
 const bool HntdTmLtchMPBttn::getPilotOn() const{
 
 	return _pilotOn;
@@ -1458,6 +1656,106 @@ void HntdTmLtchMPBttn::setFnWhnTrnOnWrnngPtr(void(*newFnWhnTrnOn)()){
 	taskEXIT_CRITICAL(&mux);
 
 	return;
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffPilot != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffPilot = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilotArgPtr(void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffPilotArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnPilot != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnPilot = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilotArgPtr(void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnPilotArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffWrnng != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffWrnng = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnngArgPtr(void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffWrnngArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnWrnng != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnWrnng = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnngArgPtr(void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnWrnngArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
 }
 
 void HntdTmLtchMPBttn::setKeepPilot(const bool &newKeepPilot){
@@ -1584,6 +1882,9 @@ void HntdTmLtchMPBttn::_turnOffPilot(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffPilot != nullptr)
 			_fnWhnTrnOffPilot();
+		if(_fnVdPtrPrmWhnTrnOffPilot != nullptr){
+			_fnVdPtrPrmWhnTrnOffPilot(_fnVdPtrPrmWhnTrnOffPilotArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_pilotOn = false;
@@ -1601,6 +1902,9 @@ void HntdTmLtchMPBttn::_turnOffWrnng(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffWrnng != nullptr)
 			_fnWhnTrnOffWrnng();
+		if(_fnVdPtrPrmWhnTrnOffWrnng != nullptr){
+			_fnVdPtrPrmWhnTrnOffWrnng(_fnVdPtrPrmWhnTrnOffWrnngArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_wrnngOn = false;
@@ -1618,6 +1922,9 @@ void HntdTmLtchMPBttn::_turnOnPilot(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnPilot != nullptr)
 			_fnWhnTrnOnPilot();
+		if(_fnVdPtrPrmWhnTrnOnPilot != nullptr){
+			_fnVdPtrPrmWhnTrnOnPilot(_fnVdPtrPrmWhnTrnOnPilotArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_pilotOn = true;
@@ -1635,6 +1942,9 @@ void HntdTmLtchMPBttn::_turnOnWrnng(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnWrnng != nullptr)
 			_fnWhnTrnOnWrnng();
+		if(_fnVdPtrPrmWhnTrnOnWrnng != nullptr){
+			_fnVdPtrPrmWhnTrnOnWrnng(_fnVdPtrPrmWhnTrnOnWrnngArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_wrnngOn = true;
@@ -1855,6 +2165,26 @@ fncPtrType DblActnLtchMPBttn::getFnWhnTrnOnScndry(){
 	return _fnWhnTrnOnScndry;
 }
 
+fncVdPtrPrmPtrType DblActnLtchMPBttn::getFVPPWhnTrnOffScndry(){
+	
+	return _fnVdPtrPrmWhnTrnOffScndry;
+}
+
+void* DblActnLtchMPBttn::getFVPPWhnTrnOffScndryArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffScndryArgPtr;
+}
+
+fncVdPtrPrmPtrType DblActnLtchMPBttn::getFVPPWhnTrnOnScndry(){
+	
+	return _fnVdPtrPrmWhnTrnOnScndry;
+}
+
+void* DblActnLtchMPBttn::getFVPPWhnTrnOnScndryArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnScndryArgPtr;
+}
+
 bool DblActnLtchMPBttn::getIsOnScndry(){
 
 	return _isOnScndry;
@@ -1931,6 +2261,56 @@ void DblActnLtchMPBttn::setFnWhnTrnOnScndryPtr(void (*newFnWhnTrnOn)()){
 	return;
 }
 
+void DblActnLtchMPBttn::setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffScndry != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffScndry = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOffScndryArgPtr(void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffScndryArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnScndry != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnScndry = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOnScndryArgPtr(void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnScndryArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
 bool DblActnLtchMPBttn::setScndModActvDly(const unsigned long &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result {true};
@@ -1984,6 +2364,9 @@ void DblActnLtchMPBttn::_turnOffScndry(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffScndry != nullptr)
 			_fnWhnTrnOffScndry();
+		if(_fnVdPtrPrmWhnTrnOffScndry != nullptr){
+			_fnVdPtrPrmWhnTrnOffScndry(_fnVdPtrPrmWhnTrnOffScndryArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_isOnScndry = false;
@@ -2008,6 +2391,9 @@ void DblActnLtchMPBttn::_turnOnScndry(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnScndry != nullptr)
 			_fnWhnTrnOnScndry();
+		if(_fnVdPtrPrmWhnTrnOnScndry != nullptr){
+			_fnVdPtrPrmWhnTrnOnScndry(_fnVdPtrPrmWhnTrnOnScndryArgPtr);
+		}
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_isOnScndry = true;
@@ -2019,174 +2405,173 @@ void DblActnLtchMPBttn::_turnOnScndry(){
 }
 
 void DblActnLtchMPBttn::updFdaState(){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
+		switch(_mpbFdaState){
+			case stOffNotVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validPressPend || _validScndModPend){
+					_mpbFdaState = stOffVPP;	// Start pressing timer
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;	// The MPB has been disabled
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-	taskENTER_CRITICAL(&mux);
-	switch(_mpbFdaState){
-		case stOffNotVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validPressPend || _validScndModPend){
-				_mpbFdaState = stOffVPP;	// Start pressing timer
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;	// The MPB has been disabled
-				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+			case stOffVPP:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(!_isOn){
+					_turnOn();
+				}
+				if(_validScndModPend){
+					_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);	//>Gaby is this needed after separating this class from the sldr... class? Better do a subclass function!
+					_mpbFdaState = stOnStrtScndMod;
+					setSttChng();
+				}
+				else if(_validPressPend && _validReleasePend){
+					_validPressPend = false;
+					_validReleasePend = false;
+					_mpbFdaState = stOnMPBRlsd;
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-		case stOffVPP:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(!_isOn){
-				_turnOn();
-			}
-			if(_validScndModPend){
-				_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);	//>Gaby is this needed after separating this class from the sldr... class? Better do a subclass function!
-				_mpbFdaState = stOnStrtScndMod;
+			case stOnStrtScndMod:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					stOnStrtScndMod_In();
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOnScndMod;
 				setSttChng();
-			}
-			else if(_validPressPend && _validReleasePend){
-				_validPressPend = false;
-				_validReleasePend = false;
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stOnScndMod:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(!_validReleasePend){
+					//Operating in Second Mode
+					stOnScndMod_Do();
+				}
+				else{
+					// MPB released, close Slider mode, move on to next state
+					_mpbFdaState = stOnEndScndMod;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;	// The MPB has been disabled
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
+
+			case stOnEndScndMod:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_scndModTmrStrt = 0;
+				_validScndModPend = false;
 				_mpbFdaState = stOnMPBRlsd;
 				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					stOnEndScndMod_Out();
+				}
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
-		case stOnStrtScndMod:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				stOnStrtScndMod_In();
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_mpbFdaState = stOnScndMod;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+			case stOnMPBRlsd:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validScndModPend){
+					_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);
+					_mpbFdaState = stOnStrtScndMod;
+					setSttChng();
+				}
+				else if(_validPressPend && _validReleasePend){
+					_validPressPend = false;
+					_validReleasePend = false;
+					_mpbFdaState = stOnTurnOff;
+					setSttChng();
+				}
+				if(_validDisablePend){
+					_mpbFdaState = stDisabled;	// The MPB has been disabled
+					setSttChng();
+				}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-		case stOnScndMod:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(!_validReleasePend){
-				//Operating in Second Mode
-				stOnScndMod_Do();
-			}
-			else{
-				// MPB released, close Slider mode, move on to next state
-				_mpbFdaState = stOnEndScndMod;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;	// The MPB has been disabled
-				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOnEndScndMod:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_scndModTmrStrt = 0;
-			_validScndModPend = false;
-			_mpbFdaState = stOnMPBRlsd;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				stOnEndScndMod_Out();
-			}
-//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
-
-		case stOnMPBRlsd:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validScndModPend){
-				_scndModTmrStrt = (xTaskGetTickCount() / portTICK_RATE_MS);
-				_mpbFdaState = stOnStrtScndMod;
-				setSttChng();
-			}
-			else if(_validPressPend && _validReleasePend){
-				_validPressPend = false;
-				_validReleasePend = false;
-				_mpbFdaState = stOnTurnOff;
-				setSttChng();
-			}
-			if(_validDisablePend){
-				_mpbFdaState = stDisabled;	// The MPB has been disabled
-				setSttChng();
-			}
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stOnTurnOff:
-			// In: >>---------------------------------->>
-			if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			_turnOff();
-			_mpbFdaState = stOffNotVPP;
-			setSttChng();
-			// Out: >>---------------------------------->>
-			if(_sttChng){}	// Execute this code only ONCE, when exiting this state
-			break;
-
-		case stDisabled:
-			// In: >>---------------------------------->>
-			if(_sttChng){
-				stDisabled_In();
-				if(_isOn != _isOnDisabled)
-					if(_isOn)
-						_turnOff();
-					else
-						_turnOn();
-				if(_isOnScndry != _isOnDisabled)
-					if(_isOnScndry)
-						_turnOffScndry();
-					else
-						_turnOnScndry();
-				clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
-				_isEnabled = false;
-				_validDisablePend = false;
-				setOutputsChange(true);
-				clrSttChng();
-			}	// Execute this code only ONCE, when entering this state
-			// Do: >>---------------------------------->>
-			if(_validEnablePend){
-				if(_isOnScndry)
-					_turnOffScndry();
-				if(_isOn)
-					_turnOff();
-				_isEnabled = true;
-				_validEnablePend = false;
-				setOutputsChange(true);
-			}
-			if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+			case stOnTurnOff:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_turnOff();
 				_mpbFdaState = stOffNotVPP;
 				setSttChng();
-			}
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+				break;
 
-			// Out: >>---------------------------------->>
-			if(_sttChng){
-				clrStatus(true);
-			}	// Execute this code only ONCE, when exiting this state
+			case stDisabled:
+				// In: >>---------------------------------->>
+				if(_sttChng){
+					stDisabled_In();
+					if(_isOn != _isOnDisabled)
+						if(_isOn)
+							_turnOff();
+						else
+							_turnOn();
+					if(_isOnScndry != _isOnDisabled)
+						if(_isOnScndry)
+							_turnOffScndry();
+						else
+							_turnOnScndry();
+					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
+					_isEnabled = false;
+					_validDisablePend = false;
+					setOutputsChange(true);
+					clrSttChng();
+				}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				if(_validEnablePend){
+					if(_isOnScndry)
+						_turnOffScndry();
+					if(_isOn)
+						_turnOff();
+					_isEnabled = true;
+					_validEnablePend = false;
+					setOutputsChange(true);
+				}
+				if(_isEnabled && !updIsPressed()){	// The stDisabled status will be kept until the MPB is released for security reasons
+					_mpbFdaState = stOffNotVPP;
+					setSttChng();
+				}
+
+				// Out: >>---------------------------------->>
+				if(_sttChng){
+					clrStatus(true);
+				}	// Execute this code only ONCE, when exiting this state
+				break;
+		default:
 			break;
-	default:
-		break;
+		}
+		xSemaphoreGive(_updFdaMutex);
 	}
-	taskEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -2617,6 +3002,26 @@ bool VdblMPBttn::getFrcOtptLvlWhnVdd(){
 	return _frcOtptLvlWhnVdd;
 }
 
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOffVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOffVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOffVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffVddArgPtr;
+}
+
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOnVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOnVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOnVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnVddArgPtr;
+}
+
 const bool VdblMPBttn::getIsVoided() const{
 
 	return _isVoided;
@@ -2703,6 +3108,56 @@ void VdblMPBttn::setFrcdOtptWhnVdd(const bool &newVal){
 	return;
 }
 
+void VdblMPBttn::setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffVdd != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffVdd = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void VdblMPBttn::setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffVddArgPtr != newFVPPWhnTrnOffArgPtr){
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = newFVPPWhnTrnOffArgPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnVdd != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnVdd = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVddArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnVddArgPtr != newFVPPWhnTrnOnArgPtr){
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = newFVPPWhnTrnOnArgPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
 bool VdblMPBttn::setIsNotVoided(){
 
 	return setVoided(false);
@@ -2764,6 +3219,8 @@ void VdblMPBttn::_turnOffVdd(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOffVdd != nullptr)
 			_fnWhnTrnOffVdd();
+		if(_fnVdPtrPrmWhnTrnOffVdd != nullptr)
+			_fnVdPtrPrmWhnTrnOffVdd(_fnVdPtrPrmWhnTrnOffVddArgPtr);
 	//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_isVoided = false;
@@ -2781,6 +3238,8 @@ void VdblMPBttn::_turnOnVdd(){
 		//---------------->> Functions related actions
 		if(_fnWhnTrnOnVdd != nullptr)
 			_fnWhnTrnOnVdd();
+		if(_fnVdPtrPrmWhnTrnOnVdd != nullptr)
+			_fnVdPtrPrmWhnTrnOnVdd(_fnVdPtrPrmWhnTrnOnVddArgPtr);
 		//---------------->> Flags related actions
 		taskENTER_CRITICAL(&mux);
 		_isVoided = true;
@@ -2792,10 +3251,8 @@ void VdblMPBttn::_turnOnVdd(){
 }
 
 void VdblMPBttn::updFdaState(){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	switch(_mpbFdaState){
+	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
+		switch(_mpbFdaState){
 		case stOffNotVPP:
 			// In: >>---------------------------------->>
 			if(_sttChng){
@@ -2973,7 +3430,8 @@ void VdblMPBttn::updFdaState(){
 	default:
 		break;
 	}
-	taskEXIT_CRITICAL(&mux);
+	xSemaphoreGive(_updFdaMutex);
+	} 
 
 	return;
 }
