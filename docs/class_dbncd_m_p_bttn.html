@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.4.1</span>
+   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.5.0</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -138,6 +138,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a6b610f28298f925ce4672bf5891e843b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default class constructor. <br /></td></tr>
 <tr class="memitem:a4e512acf6547aad84d78bf95f8284177" id="r_a4e512acf6547aad84d78bf95f8284177"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e512acf6547aad84d78bf95f8284177">DbncdMPBttn</a> (const int8_t &amp;mpbttnPin, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0)</td></tr>
 <tr class="memdesc:a4e512acf6547aad84d78bf95f8284177"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:a4edb1d237123c0c4548aebb1402561e3" id="r_a4edb1d237123c0c4548aebb1402561e3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4edb1d237123c0c4548aebb1402561e3">DbncdMPBttn</a> (const <a class="el" href="class_dbncd_m_p_bttn.html">DbncdMPBttn</a> &amp;other)</td></tr>
+<tr class="memdesc:a4edb1d237123c0c4548aebb1402561e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="memitem:a3f0f4c1a3b122541031fecaf9bb93101" id="r_a3f0f4c1a3b122541031fecaf9bb93101"><td class="memItemLeft" align="right" valign="top"><a id="a3f0f4c1a3b122541031fecaf9bb93101" name="a3f0f4c1a3b122541031fecaf9bb93101"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> ()</td></tr>
 <tr class="memdesc:a3f0f4c1a3b122541031fecaf9bb93101"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor. <br /></td></tr>
@@ -154,9 +156,17 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memitem:a30e73bf45b359a26065ba4ceab6841ab" id="r_a30e73bf45b359a26065ba4ceab6841ab"><td class="memItemLeft" align="right" valign="top">const unsigned long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30e73bf45b359a26065ba4ceab6841ab">getCurDbncTime</a> () const</td></tr>
 <tr class="memdesc:a30e73bf45b359a26065ba4ceab6841ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current debounce period time set for the object.  <br /></td></tr>
 <tr class="memitem:ae90de3a636c2e9b4ae0939bdb06cc5b0" id="r_ae90de3a636c2e9b4ae0939bdb06cc5b0"><td class="memItemLeft" align="right" valign="top">fncPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae90de3a636c2e9b4ae0939bdb06cc5b0">getFnWhnTrnOff</a> ()</td></tr>
-<tr class="memdesc:ae90de3a636c2e9b4ae0939bdb06cc5b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
+<tr class="memdesc:ae90de3a636c2e9b4ae0939bdb06cc5b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
 <tr class="memitem:a1ac46dbf91e0a8ef1bb753e48d3f25c7" id="r_a1ac46dbf91e0a8ef1bb753e48d3f25c7"><td class="memItemLeft" align="right" valign="top">fncPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ac46dbf91e0a8ef1bb753e48d3f25c7">getFnWhnTrnOn</a> ()</td></tr>
-<tr class="memdesc:a1ac46dbf91e0a8ef1bb753e48d3f25c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the function that is set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
+<tr class="memdesc:a1ac46dbf91e0a8ef1bb753e48d3f25c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
+<tr class="memitem:a535d3c56365f6c3de035bfbc35937987" id="r_a535d3c56365f6c3de035bfbc35937987"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a535d3c56365f6c3de035bfbc35937987">getFVPPWhnTrnOff</a> ()</td></tr>
+<tr class="memdesc:a535d3c56365f6c3de035bfbc35937987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
+<tr class="memitem:ab3f18456d8f75dbdeaaca463fec8ee9a" id="r_ab3f18456d8f75dbdeaaca463fec8ee9a"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3f18456d8f75dbdeaaca463fec8ee9a">getFVPPWhnTrnOffArgPtr</a> ()</td></tr>
+<tr class="memdesc:ab3f18456d8f75dbdeaaca463fec8ee9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
+<tr class="memitem:a5ef5459cb174f58cb508b8e06dd92cea" id="r_a5ef5459cb174f58cb508b8e06dd92cea"><td class="memItemLeft" align="right" valign="top">fncVdPtrPrmPtrType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ef5459cb174f58cb508b8e06dd92cea">getFVPPWhnTrnOn</a> ()</td></tr>
+<tr class="memdesc:a5ef5459cb174f58cb508b8e06dd92cea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
+<tr class="memitem:a9d9a6762255010266632d1e6582bce78" id="r_a9d9a6762255010266632d1e6582bce78"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d9a6762255010266632d1e6582bce78">getFVPPWhnTrnOnArgPtr</a> ()</td></tr>
+<tr class="memdesc:a9d9a6762255010266632d1e6582bce78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the argument to be passed to the function set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
 <tr class="memitem:a96e20616b21b135293f8e5b0a2c0ab28" id="r_a96e20616b21b135293f8e5b0a2c0ab28"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96e20616b21b135293f8e5b0a2c0ab28">getIsEnabled</a> () const</td></tr>
 <tr class="memdesc:a96e20616b21b135293f8e5b0a2c0ab28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the isEnabled attribute flag, indicating the <b>Enabled</b> or <b>Disabled</b> status of the object.  <br /></td></tr>
 <tr class="memitem:ac78bb12cb1d9bdb43b4e4e593812b300" id="r_ac78bb12cb1d9bdb43b4e4e593812b300"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac78bb12cb1d9bdb43b4e4e593812b300">getIsOn</a> () const</td></tr>
@@ -191,6 +201,14 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memdesc:a17526110092f47a643b41199b0694256"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the function that will be called to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
 <tr class="memitem:ada6b4a1dad6e7c38133266dd3674237b" id="r_ada6b4a1dad6e7c38133266dd3674237b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada6b4a1dad6e7c38133266dd3674237b">setFnWhnTrnOnPtr</a> (fncPtrType newFnWhnTrnOn)</td></tr>
 <tr class="memdesc:ada6b4a1dad6e7c38133266dd3674237b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the function that will be called to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
+<tr class="memitem:a1b3fdd885524b23af0c3c84fdf9ba23c" id="r_a1b3fdd885524b23af0c3c84fdf9ba23c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b3fdd885524b23af0c3c84fdf9ba23c">setFVPPWhnTrnOff</a> (fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr=nullptr)</td></tr>
+<tr class="memdesc:a1b3fdd885524b23af0c3c84fdf9ba23c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function to be executed every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
+<tr class="memitem:acce842400fa2b9e312154418b31cc9e0" id="r_acce842400fa2b9e312154418b31cc9e0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acce842400fa2b9e312154418b31cc9e0">setFVPPWhnTrnOffArgPtr</a> (void *newFVPPWhnTrnOffArgPtr)</td></tr>
+<tr class="memdesc:acce842400fa2b9e312154418b31cc9e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to an argument to be passed to the function set to execute every time the object <b>enters</b> the <b>Off State</b>.  <br /></td></tr>
+<tr class="memitem:a5dec3ff8e7087a0da67a28e7a575e4a7" id="r_a5dec3ff8e7087a0da67a28e7a575e4a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5dec3ff8e7087a0da67a28e7a575e4a7">setFVPPWhnTrnOn</a> (fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr=nullptr)</td></tr>
+<tr class="memdesc:a5dec3ff8e7087a0da67a28e7a575e4a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a function to be executed every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
+<tr class="memitem:aa96302d0b96c6346455613ccd5c16096" id="r_aa96302d0b96c6346455613ccd5c16096"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa96302d0b96c6346455613ccd5c16096">setFVPPWhnTrnOnArgPtr</a> (void *newFVPPWhnTrnOnArgPtr)</td></tr>
+<tr class="memdesc:aa96302d0b96c6346455613ccd5c16096"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to an argument to be passed to the function set to execute every time the object <b>enters</b> the <b>On State</b>.  <br /></td></tr>
 <tr class="memitem:a55644500cc3b52282c439ca4541a2351" id="r_a55644500cc3b52282c439ca4541a2351"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55644500cc3b52282c439ca4541a2351">setIsOnDisabled</a> (const bool &amp;newIsOnDisabled)</td></tr>
 <tr class="memdesc:a55644500cc3b52282c439ca4541a2351"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the value of the <b>isOnDisabled</b> attribute flag.  <br /></td></tr>
 <tr class="memitem:af79e9d677c23bc8e387f7161b3294c30" id="r_af79e9d677c23bc8e387f7161b3294c30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af79e9d677c23bc8e387f7161b3294c30">setOutputsChange</a> (bool newOutputsChange)</td></tr>
@@ -206,7 +224,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <p>More physical switch situations can be emulated, like temporarily disconnecting it (isDisabled=true and isOnDisabled=false), short circuiting it (isDisabled=true and isOnDisabled=true) and others. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a4e512acf6547aad84d78bf95f8284177" name="a4e512acf6547aad84d78bf95f8284177"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e512acf6547aad84d78bf95f8284177">&#9670;&#160;</a></span>DbncdMPBttn()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e512acf6547aad84d78bf95f8284177">&#9670;&#160;</a></span>DbncdMPBttn() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -248,6 +266,41 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 </dd>
 <dd>
 The Arduino development environment has defined a constant to indicate a <b>non connected to a GPIO pin</b> identified as <b>GPIO_NUM_NC</b>. </dd></dl>
+
+</div>
+</div>
+<a id="a4edb1d237123c0c4548aebb1402561e3" name="a4edb1d237123c0c4548aebb1402561e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4edb1d237123c0c4548aebb1402561e3">&#9670;&#160;</a></span>DbncdMPBttn() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DbncdMPBttn::DbncdMPBttn </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_dbncd_m_p_bttn.html">DbncdMPBttn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td><a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> object to copy </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_dbncd_m_p_bttn_a4edb1d237123c0c4548aebb1402561e3_cgraph.png" border="0" usemap="#aclass_dbncd_m_p_bttn_a4edb1d237123c0c4548aebb1402561e3_cgraph" loading="lazy" alt=""/></div>
+<map name="aclass_dbncd_m_p_bttn_a4edb1d237123c0c4548aebb1402561e3_cgraph" id="aclass_dbncd_m_p_bttn_a4edb1d237123c0c4548aebb1402561e3_cgraph">
+<area shape="rect" title="Copy constructor." alt="" coords="5,5,199,32"/>
+<area shape="rect" href="class_dbncd_m_p_bttn.html#a6b610f28298f925ce4672bf5891e843b" title="Default class constructor." alt="" coords="247,5,440,32"/>
+<area shape="poly" title=" " alt="" coords="199,16,231,16,231,21,199,21"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -490,8 +543,9 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the function that is set to execute every time the object <b>enters</b> the <b>Off State</b>. </p>
+<p>Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>Off State</b>. </p>
 <p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#a17526110092f47a643b41199b0694256" title="Sets the function that will be called to execute every time the object enters the Off State.">setFnWhnTrnOffPtr()</a></b> method.</p>
+<p>The function to be executed has a signature of void (funcName)(), that is, it receives no parameters and returns no values.</p>
 <dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object enters the <b>Off State</b>. </dd></dl>
 <dl class="retval"><dt>Return values</dt><dd>
   <table class="retval">
@@ -518,16 +572,113 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the function that is set to execute every time the object <b>enters</b> the <b>On State</b>. </p>
+<p>Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>On State</b>. </p>
 <p>The function to be executed is an attribute that might be modified by the <b><a class="el" href="#ada6b4a1dad6e7c38133266dd3674237b" title="Sets the function that will be called to execute every time the object enters the On State.">setFnWhnTrnOnPtr()</a></b> method.</p>
+<p>The function to be executed has a signature of void (funcName)(), that is, it receives no parameters and returns no values.</p>
 <dl class="section return"><dt>Returns</dt><dd>A function pointer to the function set to execute every time the object enters the <b>On State</b>. </dd></dl>
 <dl class="retval"><dt>Return values</dt><dd>
   <table class="retval">
-    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object enters the <b>On State</b>. <pre class="fragment"> * @warning The function code execution will become part of the list of procedures the object executes when it entering the **On State**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
-</pre> </td></tr>
+    <tr><td class="paramname">nullptr</td><td>if there is no function set to execute when the object enters the <b>On State</b>.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section warning"><dt>Warning</dt><dd>The function code execution will become part of the list of procedures the object executes when it entering the <b>On State</b>, including the modification of affected attribute flags, suspending the execution of the task running while in <b>On State</b> and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again. </dd></dl>
+
+</div>
+</div>
+<a id="a535d3c56365f6c3de035bfbc35937987" name="a535d3c56365f6c3de035bfbc35937987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a535d3c56365f6c3de035bfbc35937987">&#9670;&#160;</a></span>getFVPPWhnTrnOff()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOff </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>Off State</b>. </p>
+<p>The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function. <br  />
+</p>
+<dl class="section return"><dt>Returns</dt><dd>fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the <b>Off State</b>. </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function with the described signature set to execute when the object enters the <b>Off State</b>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab3f18456d8f75dbdeaaca463fec8ee9a" name="ab3f18456d8f75dbdeaaca463fec8ee9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3f18456d8f75dbdeaaca463fec8ee9a">&#9670;&#160;</a></span>getFVPPWhnTrnOffArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * DbncdMPBttn::getFVPPWhnTrnOffArgPtr </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the argument to be passed to the function set to execute every time the object <b>enters</b> the <b>Off State</b>. </p>
+<dl class="section return"><dt>Returns</dt><dd>void* Pointer to the argument to be passed to the function set to execute every time the object enters the <b>Off State</b>. </dd></dl>
+
+</div>
+</div>
+<a id="a5ef5459cb174f58cb508b8e06dd92cea" name="a5ef5459cb174f58cb508b8e06dd92cea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ef5459cb174f58cb508b8e06dd92cea">&#9670;&#160;</a></span>getFVPPWhnTrnOn()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOn </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to a function that is set to execute every time the object <b>enters</b> the <b>On State</b>. </p>
+<p>The pointer is one to a function with the signature void (fncPtr*) (void*) to allow for passing a void* argument to the function. <br  />
+</p>
+<dl class="section return"><dt>Returns</dt><dd>fncVdPtrPrmPtrType The pointer to the function set to execute every time the object enters the <b>On State</b>. </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">nullptr</td><td>if there is no function with the described signature set to execute when the object enters the <b>On State</b>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9d9a6762255010266632d1e6582bce78" name="a9d9a6762255010266632d1e6582bce78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d9a6762255010266632d1e6582bce78">&#9670;&#160;</a></span>getFVPPWhnTrnOnArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void * DbncdMPBttn::getFVPPWhnTrnOnArgPtr </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the argument to be passed to the function set to execute every time the object <b>enters</b> the <b>On State</b>. </p>
+<dl class="section return"><dt>Returns</dt><dd>void* Pointer to the argument to be passed to the function set to execute every time the object enters the <b>On State</b>. </dd></dl>
 
 </div>
 </div>
@@ -1049,6 +1200,120 @@ Here is the caller graph for this function:</div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">newFnWhnTrnOn</td><td>function pointer to the function intended to be called when the object <b>enters</b> the <b>On State</b>. Passing <b>nullptr</b> as parameter deactivates the function execution mechanism. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1b3fdd885524b23af0c3c84fdf9ba23c" name="a1b3fdd885524b23af0c3c84fdf9ba23c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b3fdd885524b23af0c3c84fdf9ba23c">&#9670;&#160;</a></span>setFVPPWhnTrnOff()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DbncdMPBttn::setFVPPWhnTrnOff </td>
+          <td>(</td>
+          <td class="paramtype">fncVdPtrPrmPtrType</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOff</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>argPtr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function to be executed every time the object <b>enters</b> the <b>Off State</b>. </p>
+<p>The function to be executed must be of the form <b>void (<em>newFVPPWhnTrnOff)(void</em>)</b>, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to <b>nullptr</b>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOff</td><td>Function pointer to the function intended to be called when the object <b>enters</b> the <b>Off State</b>. Passing <b>nullptr</b> as parameter deactivates the function execution mechanism. </td></tr>
+    <tr><td class="paramname">argPtr</td><td>void pointer to an argument to be passed to the function when it is called. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="acce842400fa2b9e312154418b31cc9e0" name="acce842400fa2b9e312154418b31cc9e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acce842400fa2b9e312154418b31cc9e0">&#9670;&#160;</a></span>setFVPPWhnTrnOffArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DbncdMPBttn::setFVPPWhnTrnOffArgPtr </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOffArgPtr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a pointer to an argument to be passed to the function set to execute every time the object <b>enters</b> the <b>Off State</b>. </p>
+<p>The argument pointer is passed to the function set to execute when the object enters the <b>Off State</b>. The pointer is set to <b>nullptr</b> when the object is instantiated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOffArgPtr</td><td>Pointer to an argument to be passed to the function set to execute every time the object enters the <b>Off State</b>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5dec3ff8e7087a0da67a28e7a575e4a7" name="a5dec3ff8e7087a0da67a28e7a575e4a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5dec3ff8e7087a0da67a28e7a575e4a7">&#9670;&#160;</a></span>setFVPPWhnTrnOn()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DbncdMPBttn::setFVPPWhnTrnOn </td>
+          <td>(</td>
+          <td class="paramtype">fncVdPtrPrmPtrType</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOn</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>argPtr</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a function to be executed every time the object <b>enters</b> the <b>On State</b>. </p>
+<p>The function to be executed must be of the form <b>void (<em>newFVPPWhnTrnOn)(void</em>)</b>, meaning it must take a void pointer as argument and must return no value, it will be executed only once by the object (recursion must be handled with the usual precautions). When the object is instantiated the attribute value is set to <b>nullptr</b>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOn</td><td>Function pointer to the function intended to be called when the object <b>enters</b> the <b>On State</b>. Passing <b>nullptr</b> as parameter deactivates the function execution mechanism. </td></tr>
+    <tr><td class="paramname">argPtr</td><td>void pointer to an argument to be passed to the function when it is called. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa96302d0b96c6346455613ccd5c16096" name="aa96302d0b96c6346455613ccd5c16096"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa96302d0b96c6346455613ccd5c16096">&#9670;&#160;</a></span>setFVPPWhnTrnOnArgPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DbncdMPBttn::setFVPPWhnTrnOnArgPtr </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>newFVPPWhnTrnOnArgPtr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a pointer to an argument to be passed to the function set to execute every time the object <b>enters</b> the <b>On State</b>. </p>
+<p>The argument pointer is passed to the function set to execute when the object enters the <b>On State</b>. The pointer is set to <b>nullptr</b> when the object is instantiated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newFVPPWhnTrnOnArgPtr</td><td>Pointer to an argument to be passed to the function set to execute every time the object enters the <b>On State</b>. </td></tr>
   </table>
   </dd>
 </dl>

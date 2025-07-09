@@ -23,7 +23,7 @@
   * @version v4.5.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   08/09/2025 15:30 (GMT+0200) DST  
+  *       Last update:   09/07/2025 19:10 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -222,6 +222,26 @@ fncPtrType DbncdMPBttn::getFnWhnTrnOff(){
 fncPtrType DbncdMPBttn::getFnWhnTrnOn(){
 
 	return _fnWhnTrnOn;
+}
+
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOff(){
+   
+	return _fnVdPtrPrmWhnTrnOff;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOffArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffArgPtr;
+}
+
+fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOn(){
+
+   return _fnVdPtrPrmWhnTrnOn;
+}
+
+void* DbncdMPBttn::getFVPPWhnTrnOnArgPtr(){
+
+	return _fnVdPtrPrmWhnTrnOnArgPtr;
 }
 
 const bool DbncdMPBttn::getIsEnabled() const{
@@ -458,6 +478,56 @@ void DbncdMPBttn::setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn){
 	taskENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOn != newFnWhnTrnOn)
 		_fnWhnTrnOn = newFnWhnTrnOn;
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOff != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOff = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr){
+   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffArgPtr != newFVPPWhnTrnOffArgPtr){
+		_fnVdPtrPrmWhnTrnOffArgPtr = newFVPPWhnTrnOffArgPtr;	
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOn != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOn = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnArgPtr = argPtr;	//FFDR The argument pointer is set to the function pointer, so it can be used when the function is called
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnArgPtr != newFVPPWhnTrnOnArgPtr){
+		_fnVdPtrPrmWhnTrnOnArgPtr = newFVPPWhnTrnOnArgPtr;	
+	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -821,79 +891,6 @@ bool DbncdMPBttn::updValidPressesStatus(){
 	}
 
 	return (_validPressPend||_validReleasePend);
-}
-
-//==================================================>>
-
-fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOff(){
-   
-	return _fnVdPtrPrmWhnTrnOff;
-}
-
-void* DbncdMPBttn::getFVPPWhnTrnOffArgPtr(){
-
-   return _fnVdPtrPrmWhnTrnOffArgPtr;
-}
-
-fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOn(){
-
-   return _fnVdPtrPrmWhnTrnOn;
-}
-
-void* DbncdMPBttn::getFVPPWhnTrnOnArgPtr(){
-
-	return _fnVdPtrPrmWhnTrnOnArgPtr;
-}
-
-
-void DbncdMPBttn::setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
-   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOff != newFVPPWhnTrnOff){
-		_fnVdPtrPrmWhnTrnOff = newFVPPWhnTrnOff;
-		_fnVdPtrPrmWhnTrnOffArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;
-}
-
-void DbncdMPBttn::setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr){
-   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOffArgPtr != newFVPPWhnTrnOffArgPtr){
-		_fnVdPtrPrmWhnTrnOffArgPtr = newFVPPWhnTrnOffArgPtr;	
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;
-}
-
-void DbncdMPBttn::setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
-   portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOn != newFVPPWhnTrnOn){
-		_fnVdPtrPrmWhnTrnOn = newFVPPWhnTrnOn;
-		_fnVdPtrPrmWhnTrnOnArgPtr = argPtr;	//FFDR The argument pointer is set to the function pointer, so it can be used when the function is called
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;
-}
-
-void DbncdMPBttn::setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr){
-	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOnArgPtr != newFVPPWhnTrnOnArgPtr){
-		_fnVdPtrPrmWhnTrnOnArgPtr = newFVPPWhnTrnOnArgPtr;	
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;
 }
 
 //=========================================================================> Class methods delimiter
@@ -1520,6 +1517,46 @@ fncPtrType HntdTmLtchMPBttn::getFnWhnTrnOnWrnng(){
 	return _fnWhnTrnOnWrnng;
 }
 
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOffPilot(){
+	
+   return _fnVdPtrPrmWhnTrnOffPilot;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOffPilotArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffPilotArgPtr;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOnPilot(){
+	
+	return _fnVdPtrPrmWhnTrnOnPilot;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOnPilotArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnPilotArgPtr;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOffWrnng(){
+	
+	return _fnVdPtrPrmWhnTrnOffWrnng;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOffWrnngArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffWrnngArgPtr;
+}
+
+fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOnWrnng(){
+	
+	return _fnVdPtrPrmWhnTrnOnWrnng;
+}
+
+void* HntdTmLtchMPBttn::getFVPPWhnTrnOnWrnngArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnWrnngArgPtr;
+}
+
 const bool HntdTmLtchMPBttn::getPilotOn() const{
 
 	return _pilotOn;
@@ -1619,6 +1656,106 @@ void HntdTmLtchMPBttn::setFnWhnTrnOnWrnngPtr(void(*newFnWhnTrnOn)()){
 	taskEXIT_CRITICAL(&mux);
 
 	return;
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffPilot != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffPilot = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilotArgPtr(void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffPilotArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnPilot != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnPilot = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilotArgPtr(void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnPilotArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffWrnng != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffWrnng = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnngArgPtr(void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffWrnngArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnWrnng != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnWrnng = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnngArgPtr(void *argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnWrnngArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
 }
 
 void HntdTmLtchMPBttn::setKeepPilot(const bool &newKeepPilot){
@@ -1862,148 +1999,6 @@ bool HntdTmLtchMPBttn::updWrnngOn(){
 	return _wrnngOn;
 }
 
-//==================================================>>
-
-fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOffPilot(){
-	
-   return _fnVdPtrPrmWhnTrnOffPilot;
-}
-
-void* HntdTmLtchMPBttn::getFVPPWhnTrnOffPilotArgPtr(){
-	
-	return _fnVdPtrPrmWhnTrnOffPilotArgPtr;
-}
-
-fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOnPilot(){
-	
-	return _fnVdPtrPrmWhnTrnOnPilot;
-}
-
-void* HntdTmLtchMPBttn::getFVPPWhnTrnOnPilotArgPtr(){
-	
-	return _fnVdPtrPrmWhnTrnOnPilotArgPtr;
-}
-
-fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOffWrnng(){
-	
-	return _fnVdPtrPrmWhnTrnOffWrnng;
-}
-
-void* HntdTmLtchMPBttn::getFVPPWhnTrnOffWrnngArgPtr(){
-	
-	return _fnVdPtrPrmWhnTrnOffWrnngArgPtr;
-}
-
-fncVdPtrPrmPtrType HntdTmLtchMPBttn::getFVPPWhnTrnOnWrnng(){
-	
-	return _fnVdPtrPrmWhnTrnOnWrnng;
-}
-
-void* HntdTmLtchMPBttn::getFVPPWhnTrnOnWrnngArgPtr(){
-	
-	return _fnVdPtrPrmWhnTrnOnWrnngArgPtr;
-}
-
-void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOffPilot != newFVPPWhnTrnOff){
-		_fnVdPtrPrmWhnTrnOffPilot = newFVPPWhnTrnOff;
-		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilotArgPtr(void *argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOffPilotArgPtr != argPtr){
-		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOnPilot != newFVPPWhnTrnOn){
-		_fnVdPtrPrmWhnTrnOnPilot = newFVPPWhnTrnOn;
-		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilotArgPtr(void *argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOnPilotArgPtr != argPtr){
-		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOffWrnng != newFVPPWhnTrnOff){
-		_fnVdPtrPrmWhnTrnOffWrnng = newFVPPWhnTrnOff;
-		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnngArgPtr(void *argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOffWrnngArgPtr != argPtr){
-		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOnWrnng != newFVPPWhnTrnOn){
-		_fnVdPtrPrmWhnTrnOnWrnng = newFVPPWhnTrnOn;
-		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnngArgPtr(void *argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOnWrnngArgPtr != argPtr){
-		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
 //=========================================================================> Class methods delimiter
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn()
@@ -2170,6 +2165,26 @@ fncPtrType DblActnLtchMPBttn::getFnWhnTrnOnScndry(){
 	return _fnWhnTrnOnScndry;
 }
 
+fncVdPtrPrmPtrType DblActnLtchMPBttn::getFVPPWhnTrnOffScndry(){
+	
+	return _fnVdPtrPrmWhnTrnOffScndry;
+}
+
+void* DblActnLtchMPBttn::getFVPPWhnTrnOffScndryArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffScndryArgPtr;
+}
+
+fncVdPtrPrmPtrType DblActnLtchMPBttn::getFVPPWhnTrnOnScndry(){
+	
+	return _fnVdPtrPrmWhnTrnOnScndry;
+}
+
+void* DblActnLtchMPBttn::getFVPPWhnTrnOnScndryArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnScndryArgPtr;
+}
+
 bool DblActnLtchMPBttn::getIsOnScndry(){
 
 	return _isOnScndry;
@@ -2244,6 +2259,56 @@ void DblActnLtchMPBttn::setFnWhnTrnOnScndryPtr(void (*newFnWhnTrnOn)()){
 	taskEXIT_CRITICAL(&mux);
 
 	return;
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffScndry != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffScndry = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOffScndryArgPtr(void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffScndryArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnScndry != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnScndry = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void DblActnLtchMPBttn::setFVPPWhnTrnOnScndryArgPtr(void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnScndryArgPtr != argPtr){
+		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
 }
 
 bool DblActnLtchMPBttn::setScndModActvDly(const unsigned long &newVal){
@@ -2554,78 +2619,6 @@ void DblActnLtchMPBttn::updValidUnlatchStatus(){
 	_validUnlatchPend = true;
 
 	return;
-}
-
-//==================================================>>
-
-fncVdPtrPrmPtrType DblActnLtchMPBttn::getFVPPWhnTrnOffScndry(){
-	
-	return _fnVdPtrPrmWhnTrnOffScndry;
-}
-
-void* DblActnLtchMPBttn::getFVPPWhnTrnOffScndryArgPtr(){
-	
-	return _fnVdPtrPrmWhnTrnOffScndryArgPtr;
-}
-
-fncVdPtrPrmPtrType DblActnLtchMPBttn::getFVPPWhnTrnOnScndry(){
-	
-	return _fnVdPtrPrmWhnTrnOnScndry;
-}
-
-void* DblActnLtchMPBttn::getFVPPWhnTrnOnScndryArgPtr(){
-	
-	return _fnVdPtrPrmWhnTrnOnScndryArgPtr;
-}
-
-void DblActnLtchMPBttn::setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOffScndry != newFVPPWhnTrnOff){
-		_fnVdPtrPrmWhnTrnOffScndry = newFVPPWhnTrnOff;
-		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void DblActnLtchMPBttn::setFVPPWhnTrnOffScndryArgPtr(void* argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOffScndryArgPtr != argPtr){
-		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void DblActnLtchMPBttn::setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOnScndry != newFVPPWhnTrnOn){
-		_fnVdPtrPrmWhnTrnOnScndry = newFVPPWhnTrnOn;
-		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void DblActnLtchMPBttn::setFVPPWhnTrnOnScndryArgPtr(void* argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOnScndryArgPtr != argPtr){
-		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
 }
 
 //=========================================================================> Class methods delimiter
@@ -3009,6 +3002,26 @@ bool VdblMPBttn::getFrcOtptLvlWhnVdd(){
 	return _frcOtptLvlWhnVdd;
 }
 
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOffVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOffVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOffVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOffVddArgPtr;
+}
+
+fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOnVdd(){
+	
+	return _fnVdPtrPrmWhnTrnOnVdd;
+}
+
+void* VdblMPBttn::getFVPPWhnTrnOnVddArgPtr(){
+	
+	return _fnVdPtrPrmWhnTrnOnVddArgPtr;
+}
+
 const bool VdblMPBttn::getIsVoided() const{
 
 	return _isVoided;
@@ -3090,6 +3103,56 @@ void VdblMPBttn::setFrcdOtptWhnVdd(const bool &newVal){
 	taskENTER_CRITICAL(&mux);
 	if(_frcOtptLvlWhnVdd != newVal)
 		_frcOtptLvlWhnVdd = newVal;
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffVdd != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffVdd = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;	
+}
+
+void VdblMPBttn::setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOffVddArgPtr != newFVPPWhnTrnOffArgPtr){
+		_fnVdPtrPrmWhnTrnOffVddArgPtr = newFVPPWhnTrnOffArgPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnVdd != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnVdd = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = argPtr;
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void VdblMPBttn::setFVPPWhnTrnOnVddArgPtr(void* newFVPPWhnTrnOnArgPtr){
+	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if (_fnVdPtrPrmWhnTrnOnVddArgPtr != newFVPPWhnTrnOnArgPtr){
+		_fnVdPtrPrmWhnTrnOnVddArgPtr = newFVPPWhnTrnOnArgPtr;
+	}
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -3369,78 +3432,6 @@ void VdblMPBttn::updFdaState(){
 	}
 	xSemaphoreGive(_updFdaMutex);
 	} 
-
-	return;
-}
-
-//==================================================>>
-
-fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOffVdd(){
-	
-	return _fnVdPtrPrmWhnTrnOffVdd;
-}
-
-void* VdblMPBttn::getFVPPWhnTrnOffVddArgPtr(){
-	
-	return _fnVdPtrPrmWhnTrnOffVddArgPtr;
-}
-
-fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOnVdd(){
-	
-	return _fnVdPtrPrmWhnTrnOnVdd;
-}
-
-void* VdblMPBttn::getFVPPWhnTrnOnVddArgPtr(){
-	
-	return _fnVdPtrPrmWhnTrnOnVddArgPtr;
-}
-
-void VdblMPBttn::setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOffVdd != newFVPPWhnTrnOff){
-		_fnVdPtrPrmWhnTrnOffVdd = newFVPPWhnTrnOff;
-		_fnVdPtrPrmWhnTrnOffVddArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;	
-}
-
-void VdblMPBttn::setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOffVddArgPtr != newFVPPWhnTrnOffArgPtr){
-		_fnVdPtrPrmWhnTrnOffVddArgPtr = newFVPPWhnTrnOffArgPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;
-}
-
-void VdblMPBttn::setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOnVdd != newFVPPWhnTrnOn){
-		_fnVdPtrPrmWhnTrnOnVdd = newFVPPWhnTrnOn;
-		_fnVdPtrPrmWhnTrnOnVddArgPtr = argPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
-
-	return;
-}
-
-void VdblMPBttn::setFVPPWhnTrnOnVddArgPtr(void* newFVPPWhnTrnOnArgPtr){
-	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
-
-	taskENTER_CRITICAL(&mux);
-	if (_fnVdPtrPrmWhnTrnOnVddArgPtr != newFVPPWhnTrnOnArgPtr){
-		_fnVdPtrPrmWhnTrnOnVddArgPtr = newFVPPWhnTrnOnArgPtr;
-	}
-	taskEXIT_CRITICAL(&mux);
 
 	return;
 }
