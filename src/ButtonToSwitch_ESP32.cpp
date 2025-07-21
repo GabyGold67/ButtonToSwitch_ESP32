@@ -75,6 +75,7 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 		_dbncTimeOrigSett = 0;
 	}
 	
+	_mpbInstnc = this;
 	_isOnMutex = xSemaphoreCreateMutex();
 	_strtDelayMutex = xSemaphoreCreateMutex();
 	_updFdaMutex = xSemaphoreCreateMutex();
@@ -264,6 +265,11 @@ const bool DbncdMPBttn::getIsPressed() const {
 	return _isPressed;
 }
 
+const DbncdMPBttn* DbncdMPBttn::getMpbInstnc() const {
+
+	return _mpbInstnc;
+}
+
 const uint32_t DbncdMPBttn::getOtptsSttsPkgd(){
 
 	return _otptsSttsPkg();
@@ -361,7 +367,7 @@ void DbncdMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 			if (xReturned != pdPASS)
 				errorFlag = pdTRUE;
 		}
-		mpbObj->resetOutputsChngTskTrggr();
+		// mpbObj->resetOutputsChngTskTrggr();
 	}
 
 	return;
@@ -416,11 +422,11 @@ void DbncdMPBttn::resetFda(){
 	return;
 }
 
-void DbncdMPBttn::resetOutputsChngTskTrggr(){
-	_outputsChngTskTrggr = false;
+/* void DbncdMPBttn::resetOutputsChngTskTrggr(){
+ 	_outputsChngTskTrggr = false;
 
-	return;
-}
+ 	return;
+} */
 
 bool DbncdMPBttn::resume(){
    bool result {false};
@@ -951,26 +957,18 @@ LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool
 {
 }
 
-/*LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	//FFDR Check new code implemented and uncomment
+LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	//FFDR Check new code implemented and uncomment
 : DbncdDlydMPBttn(other) // Call base class copy constructor
 {
-	_mpbPollTmrName = other._mpbPollTmrName;
-	_isLatched = other._isLatched;
-	_validUnlatchPend = other._validUnlatchPend;
-	_validUnlatchRlsPend = other._validUnlatchRlsPend;
-	_trnOffASAP = other._trnOffASAP;
-	_mpbFdaState = other._mpbFdaState;
-	_sttChng = other._sttChng;
+	this->_isLatched = other._isLatched;
+	this->_trnOffASAP = other._trnOffASAP;
+	this->_validUnlatchPend = other._validUnlatchPend;
+	this->_validUnlatchRlsPend = other._validUnlatchRlsPend;
+}
 
-	// Mutexes must be created anew, not copied
-	_isLatchedMutex = xSemaphoreCreateMutex();
-	_validUnlatchPendMutex = xSemaphoreCreateMutex();
-	_validUnlatchRlsPendMutex = xSemaphoreCreateMutex();
-	_updFdaMutex = xSemaphoreCreateMutex();
-
-	// Timer handle should not be copied (timers are not duplicated)
-	_mpbPollTmrHndl = nullptr;
-}*/
+LtchMPBttn::~LtchMPBttn()
+{
+}
 
 bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
    bool result {false};
@@ -1063,7 +1061,7 @@ void LtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 			if (xReturned != pdPASS)
 				errorFlag = pdTRUE;
 		}
-		mpbObj->resetOutputsChngTskTrggr();
+		// mpbObj->resetOutputsChngTskTrggr();
 	}
 
 	return;
@@ -1318,6 +1316,15 @@ TgglLtchMPBttn::TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, co
 {
 }
 
+TgglLtchMPBttn::TgglLtchMPBttn(const TgglLtchMPBttn& other)
+: LtchMPBttn(other)
+{
+	// No additional members to initialize beyond base class constructor parameters
+}
+
+TgglLtchMPBttn::~TgglLtchMPBttn(){	
+}
+
 void TgglLtchMPBttn::stOffNVURP_Do(){
 	// This method is invoked exclusively from the updFdaState, no need to declare it critical section
 	if(_validDisablePend){
@@ -1361,6 +1368,17 @@ TmLtchMPBttn::TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &act
 	if(_srvcTime < _MinSrvcTime)    // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
 		_srvcTime = _MinSrvcTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 
+}
+
+TmLtchMPBttn::TmLtchMPBttn(const TmLtchMPBttn &other)
+: LtchMPBttn(other), _srvcTime{other._srvcTime}
+{
+	this->_srvcTimerStrt = other._srvcTimerStrt;
+	this->_tmRstbl = other._tmRstbl;
+}
+
+TmLtchMPBttn::~TmLtchMPBttn()
+{	
 }
 
 void TmLtchMPBttn::clrStatus(bool clrIsOn){
@@ -1445,6 +1463,27 @@ HntdTmLtchMPBttn::HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long 
 :TmLtchMPBttn(mpbttnPin, actTime, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
 {
 	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;   
+}
+
+HntdTmLtchMPBttn::HntdTmLtchMPBttn(const HntdTmLtchMPBttn &other)
+: TmLtchMPBttn(other), _wrnngPrctg{other._wrnngPrctg}
+{
+	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;
+	_fnWhnTrnOffPilot = other._fnWhnTrnOffPilot;
+	_fnWhnTrnOffWrnng = other._fnWhnTrnOffWrnng;
+	_fnWhnTrnOnPilot = other._fnWhnTrnOnPilot;
+	_fnWhnTrnOnWrnng = other._fnWhnTrnOnWrnng;
+	_keepPilot = other._keepPilot;
+	_pilotOn = other._pilotOn;
+	_wrnngOn = other._wrnngOn;
+	_validWrnngSetPend = other._validWrnngSetPend;
+	_validWrnngResetPend = other._validWrnngResetPend;
+	_validPilotSetPend = other._validPilotSetPend;
+	_validPilotResetPend = other._validPilotResetPend;
+}
+
+HntdTmLtchMPBttn::~HntdTmLtchMPBttn()
+{	
 }
 
 bool HntdTmLtchMPBttn::begin(const unsigned long int &pollDelayMs){
@@ -3678,12 +3717,7 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
 		mpbCurSttsDcdd.isOnScndry = true;
 	else
 		mpbCurSttsDcdd.isOnScndry = false;
-	if(pkgOtpts & (((uint32_t)1) << IsClckdBitPos))
-		mpbCurSttsDcdd.isClckd = true;
-	else
-		mpbCurSttsDcdd.isClckd = false;
 
-	mpbCurSttsDcdd.clcksCnt = (pkgOtpts & (((uint32_t)0b011) << ClcksCntBitPos))>> ClcksCntBitPos;
 	mpbCurSttsDcdd.otptCurVal = (pkgOtpts & 0xffff0000) >> OtptCurValBitPos;
 
 	return mpbCurSttsDcdd;
