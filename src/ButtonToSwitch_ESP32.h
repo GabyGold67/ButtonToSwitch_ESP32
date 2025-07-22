@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.5.0
+  * @version v4.6.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   09/07/2025 19:10 (GMT+0200) DST  
+  *       Last update:   22/07/2025 10:30 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -2187,7 +2187,8 @@ class VdblMPBttn: public DbncdDlydMPBttn{
 private:
    void setFrcdOtptWhnVdd(const bool &newVal);
    void setStOnWhnOtpFrcd(const bool &newVal);
-protected:
+
+	protected:
 	enum fdaVmpbStts{
  		stOffNotVPP,
  		stOffVPP,
