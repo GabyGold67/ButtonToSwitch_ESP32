@@ -8,8 +8,8 @@
       "type": "wokwi-pushbutton",
       "id": "btn1",
       "top": 92.6,
-      "left": -96,
-      "attrs": { "color": "green", "xray": "1", "key": "1" }
+      "left": -124.8,
+      "attrs": { "color": "green" }
     },
     {
       "type": "wokwi-led",
@@ -33,13 +33,6 @@
       "left": 115.2,
       "rotate": 270,
       "attrs": { "text": "On" }
-    },
-    {
-      "type": "wokwi-text",
-      "id": "text2",
-      "top": 144,
-      "left": -86.4,
-      "attrs": { "text": "(Key 1)" }
     }
   ],
   "connections": [

@@ -9,7 +9,7 @@
       "id": "btn1",
       "top": 92.6,
       "left": -96,
-      "attrs": { "color": "green", "xray": "1", "key": "1" }
+      "attrs": { "color": "green", "key": "1", "xray": "1" }
     },
     {
       "type": "wokwi-led",
@@ -27,6 +27,21 @@
       "attrs": { "value": "47" }
     },
     {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": -51.6,
+      "left": 138.2,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 14.4,
+      "left": 133.85,
+      "rotate": 90,
+      "attrs": { "value": "47" }
+    },
+    {
       "type": "wokwi-text",
       "id": "text1",
       "top": -76.8,
@@ -37,6 +52,14 @@
     {
       "type": "wokwi-text",
       "id": "text2",
+      "top": -96,
+      "left": 124.8,
+      "rotate": 270,
+      "attrs": { "text": "Disabled" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text3",
       "top": 144,
       "left": -86.4,
       "attrs": { "text": "(Key 1)" }
@@ -47,9 +70,12 @@
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
     [ "esp:25", "btn1:1.r", "green", [ "v0", "h-14.21", "v-38.4" ] ],
     [ "esp:GND.1", "btn1:2.r", "black", [ "h-23.81", "v-28.8", "h-38.6" ] ],
-    [ "esp:GND.2", "led1:C", "black", [ "v0", "h24.04" ] ],
     [ "r1:1", "led1:A", "green", [ "h0" ] ],
-    [ "esp:21", "r1:2", "green", [ "h33.64" ] ]
+    [ "esp:21", "r1:2", "green", [ "h33.64" ] ],
+    [ "r2:1", "led2:A", "red", [ "h0" ] ],
+    [ "esp:18", "r2:2", "red", [ "h62.44" ] ],
+    [ "esp:GND.3", "led1:C", "black", [ "h24.04" ] ],
+    [ "esp:GND.3", "led2:C", "black", [ "h52.84" ] ]
   ],
   "dependencies": {}
 }
