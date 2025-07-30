@@ -37,6 +37,7 @@ getFVPPWhnTrnOnArgPtr   KEYWORD2
 getIsEnabled   KEYWORD2
 getIsOn KEYWORD2
 getIsOnDisabled   KEYWORD2
+getMpbInstnc   KEYWORD2
 getOtptsSttsPkgd  KEYWORD2
 getOutputsChange  KEYWORD2
 getStrtDelay   KEYWORD2

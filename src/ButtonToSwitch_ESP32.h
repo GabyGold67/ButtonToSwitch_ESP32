@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.6.0
+  * @version v4.6.1
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   22/07/2025 10:30 (GMT+0200) DST  
+  *       Last update:   30/07/2025 17:30 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -181,7 +181,7 @@ protected:
 	void _turnOff();
 	void _turnOn();
 	virtual void updFdaState();
-	bool updIsPressed();	//FFDR This method must be modified to accomodate different signal sources
+	bool updIsPressed();	//FFDR Refactor to a Strategy Pattern design to accomodate different signal sources
 	virtual bool updValidPressesStatus();
 	const bool getOutputsChngTskTrggr() const;
 	// void resetOutputsChngTskTrggr();
@@ -363,9 +363,12 @@ public:
     * @retval false: the object is configured to be set to the **Off state** while it is in **Disabled state**.
     */
 	const bool getIsOnDisabled() const;
-   
-	const DbncdMPBttn* getMpbInstnc() const;
-	
+   /**
+    * @brief Returns a pointer to the present instanced object
+    * 
+    * @return DbncdMPBttn* Pointer to the object
+    */
+	const DbncdMPBttn* getMpbInstnc() const;	
 	/**
     * @brief Returns the relevant attribute flags values for the object state encoded as a 32 bits value, required to pass current state of the object to another thread/task managing the outputs
     *

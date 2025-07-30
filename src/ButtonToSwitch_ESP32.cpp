@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.5.0
+  * @version v4.6.1
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   22/07/2025 10:30 (GMT+0200) DST  
+  *       Last update:   30/07/2025 17:30 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -814,7 +814,7 @@ void DbncdMPBttn::updFdaState(){
 	return;
 }
 
-bool DbncdMPBttn::updIsPressed(){	//FFDR - Future Feature Development Request
+bool DbncdMPBttn::updIsPressed(){	//FFDR - Refactor to a Strategy Pattern design
 	/*	
 	This method will be changed to accomodate different sources of detection signals. 
 	The current MPB state will come from a PressSignalGenerator class that might include subclasses for:
@@ -3331,7 +3331,6 @@ void SldrDALtchMPBttn::_turnOnSldrMin(){
 	return;
 }
 
-
 //=========================================================================> Class methods delimiter
 
 VdblMPBttn::VdblMPBttn()
@@ -3994,7 +3993,6 @@ bool SnglSrvcVdblMPBttn::updVoidStatus(){
 }
 
 //=========================================================================> Class methods delimiter
-
 
 /**
  * @brief Unpackages a 32-bit value into a DbncdMPBttn object status
