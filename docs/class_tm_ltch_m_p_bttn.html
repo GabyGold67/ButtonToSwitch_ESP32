@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.5.0</span>
+   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.6.1</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -119,13 +119,14 @@ Collaboration diagram for TmLtchMPBttn:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_tm_ltch_m_p_bttn__coll__graph.png" border="0" usemap="#a_tm_ltch_m_p_bttn_coll__map" loading="lazy" alt="Collaboration graph"/></div>
 <map name="a_tm_ltch_m_p_bttn_coll__map" id="a_tm_ltch_m_p_bttn_coll__map">
-<area shape="rect" title="Models a Timer Latch DD&#45;MPB, a.k.a. Timer Switch (TiLDD&#45;MPB)." alt="" coords="16,229,125,256"/>
-<area shape="rect" href="class_ltch_m_p_bttn.html" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD&#45;MPB)." alt="" coords="25,155,116,181"/>
-<area shape="poly" title=" " alt="" coords="73,197,73,229,68,229,68,197"/>
-<area shape="rect" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="5,80,136,107"/>
-<area shape="poly" title=" " alt="" coords="73,122,73,154,68,154,68,122"/>
+<area shape="rect" title="Models a Timer Latch DD&#45;MPB, a.k.a. Timer Switch (TiLDD&#45;MPB)." alt="" coords="16,233,125,260"/>
+<area shape="rect" href="class_ltch_m_p_bttn.html" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD&#45;MPB)." alt="" coords="25,157,116,184"/>
+<area shape="poly" title=" " alt="" coords="73,199,73,233,68,233,68,199"/>
+<area shape="rect" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="5,81,136,108"/>
+<area shape="poly" title=" " alt="" coords="73,123,73,157,68,157,68,123"/>
 <area shape="rect" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D&#45;MPB)." alt="" coords="19,5,122,32"/>
-<area shape="poly" title=" " alt="" coords="73,48,73,80,68,80,68,48"/>
+<area shape="poly" title=" " alt="" coords="73,47,73,81,68,81,68,47"/>
+<area shape="poly" title=" " alt="" coords="139,11,149,19,140,26,123,28,122,23,138,21,144,19,136,16"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -136,6 +137,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a246985e9366d3a2e16805d0b5565c543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="memitem:a08db3cb18946d4d0f6e4b200ce05f2c8" id="r_a08db3cb18946d4d0f6e4b200ce05f2c8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a08db3cb18946d4d0f6e4b200ce05f2c8">TmLtchMPBttn</a> (const int8_t &amp;mpbttnPin, const unsigned long int &amp;svcTime, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)</td></tr>
 <tr class="memdesc:a08db3cb18946d4d0f6e4b200ce05f2c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:aed19b14317250132f6e320292d00ef31" id="r_aed19b14317250132f6e320292d00ef31"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed19b14317250132f6e320292d00ef31">TmLtchMPBttn</a> (const <a class="el" href="class_tm_ltch_m_p_bttn.html">TmLtchMPBttn</a> &amp;other)</td></tr>
+<tr class="memdesc:aed19b14317250132f6e320292d00ef31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
+<tr class="memitem:ad6439e2eb19c1f1ea2bb49c53ad70d11" id="r_ad6439e2eb19c1f1ea2bb49c53ad70d11"><td class="memItemLeft" align="right" valign="top"><a id="ad6439e2eb19c1f1ea2bb49c53ad70d11" name="ad6439e2eb19c1f1ea2bb49c53ad70d11"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~TmLtchMPBttn</b> ()</td></tr>
+<tr class="memdesc:ad6439e2eb19c1f1ea2bb49c53ad70d11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class virtual destructor. <br /></td></tr>
 <tr class="memitem:a8c27b3a6f642a4c7bb4d27b56cc3abaf" id="r_a8c27b3a6f642a4c7bb4d27b56cc3abaf"><td class="memItemLeft" align="right" valign="top"><a id="a8c27b3a6f642a4c7bb4d27b56cc3abaf" name="a8c27b3a6f642a4c7bb4d27b56cc3abaf"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clrStatus</b> (bool clrIsOn=true)</td></tr>
 <tr class="memdesc:a8c27b3a6f642a4c7bb4d27b56cc3abaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a class="el" href="class_dbncd_m_p_bttn.html#a3009725646aeb160884b8109d180b530" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing.">DbncdMPBttn::clrStatus(bool)</a> <br /></td></tr>
@@ -151,8 +157,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clrStatus</b> (bool c
 <tr class="memdesc:ab1856959f1318126a6370a04b2cd9782 inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="memitem:a4ce98361389a5c5c5b7a8aee638ccc9c inherit pub_methods_class_ltch_m_p_bttn" id="r_a4ce98361389a5c5c5b7a8aee638ccc9c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ltch_m_p_bttn.html#a4ce98361389a5c5c5b7a8aee638ccc9c">LtchMPBttn</a> (const int8_t &amp;mpbttnPin, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)</td></tr>
 <tr class="memdesc:a4ce98361389a5c5c5b7a8aee638ccc9c inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
-<tr class="memitem:aa15f59d4fa5b3d57d6884914399bfa4d inherit pub_methods_class_ltch_m_p_bttn" id="r_aa15f59d4fa5b3d57d6884914399bfa4d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ltch_m_p_bttn.html#aa15f59d4fa5b3d57d6884914399bfa4d">begin</a> (const unsigned long int &amp;pollDelayMs=_StdPollDelay)</td></tr>
-<tr class="memdesc:aa15f59d4fa5b3d57d6884914399bfa4d inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
+<tr class="memitem:a41e826688b0cd221275ed14f90c19bb4 inherit pub_methods_class_ltch_m_p_bttn" id="r_a41e826688b0cd221275ed14f90c19bb4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ltch_m_p_bttn.html#a41e826688b0cd221275ed14f90c19bb4">LtchMPBttn</a> (const <a class="el" href="class_ltch_m_p_bttn.html">LtchMPBttn</a> &amp;other)</td></tr>
+<tr class="memdesc:a41e826688b0cd221275ed14f90c19bb4 inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
+<tr class="memitem:a504174fb6c928c040ffbc05ba1ef7da0 inherit pub_methods_class_ltch_m_p_bttn" id="r_a504174fb6c928c040ffbc05ba1ef7da0"><td class="memItemLeft" align="right" valign="top">
+virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~LtchMPBttn</b> ()</td></tr>
+<tr class="memdesc:a504174fb6c928c040ffbc05ba1ef7da0 inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class virtual destructor. <br /></td></tr>
+<tr class="memitem:aa15f59d4fa5b3d57d6884914399bfa4d inherit pub_methods_class_ltch_m_p_bttn" id="r_aa15f59d4fa5b3d57d6884914399bfa4d"><td class="memItemLeft" align="right" valign="top">
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>begin</b> (const unsigned long int &amp;pollDelayMs=_StdPollDelay)</td></tr>
+<tr class="memdesc:aa15f59d4fa5b3d57d6884914399bfa4d inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">See DbncdMPBttn::begin(const unsigned long int) <br /></td></tr>
 <tr class="memitem:aa52047bd930afc19d8c1f9026f7605ef inherit pub_methods_class_ltch_m_p_bttn" id="r_aa52047bd930afc19d8c1f9026f7605ef"><td class="memItemLeft" align="right" valign="top">
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clrStatus</b> (bool clrIsOn=true)</td></tr>
 <tr class="memdesc:aa52047bd930afc19d8c1f9026f7605ef inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">See <a class="el" href="class_dbncd_m_p_bttn.html#a3009725646aeb160884b8109d180b530" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing.">DbncdMPBttn::clrStatus(bool)</a> <br /></td></tr>
@@ -226,6 +238,8 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memdesc:ac78bb12cb1d9bdb43b4e4e593812b300 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the <b>isOn</b> attribute flag.  <br /></td></tr>
 <tr class="memitem:a9cee3ead20e3628c02975a9d0c8a4baa inherit pub_methods_class_dbncd_m_p_bttn" id="r_a9cee3ead20e3628c02975a9d0c8a4baa"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a9cee3ead20e3628c02975a9d0c8a4baa">getIsOnDisabled</a> () const</td></tr>
 <tr class="memdesc:a9cee3ead20e3628c02975a9d0c8a4baa inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the <b>isOnDisabled</b> attribute flag.  <br /></td></tr>
+<tr class="memitem:a3158ce729e25784a3a2adc76e77a34a1 inherit pub_methods_class_dbncd_m_p_bttn" id="r_a3158ce729e25784a3a2adc76e77a34a1"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_dbncd_m_p_bttn.html">DbncdMPBttn</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a3158ce729e25784a3a2adc76e77a34a1">getMpbInstnc</a> () const</td></tr>
+<tr class="memdesc:a3158ce729e25784a3a2adc76e77a34a1 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the present instanced object.  <br /></td></tr>
 <tr class="memitem:ad89b27d055137f6b27123050fd708aef inherit pub_methods_class_dbncd_m_p_bttn" id="r_ad89b27d055137f6b27123050fd708aef"><td class="memItemLeft" align="right" valign="top">const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#ad89b27d055137f6b27123050fd708aef">getOtptsSttsPkgd</a> ()</td></tr>
 <tr class="memdesc:ad89b27d055137f6b27123050fd708aef inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the relevant attribute flags values for the object state encoded as a 32 bits value, required to pass current state of the object to another thread/task managing the outputs.  <br /></td></tr>
 <tr class="memitem:ac646101296a76321e855250ba044c8d7 inherit pub_methods_class_dbncd_m_p_bttn" id="r_ac646101296a76321e855250ba044c8d7"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#ac646101296a76321e855250ba044c8d7">getOutputsChange</a> () const</td></tr>
@@ -245,7 +259,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memitem:a2df98cfb822df05bc232143f883e5c32 inherit pub_methods_class_dbncd_m_p_bttn" id="r_a2df98cfb822df05bc232143f883e5c32"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32">resetFda</a> ()</td></tr>
 <tr class="memdesc:a2df98cfb822df05bc232143f883e5c32 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the MPB behavior automaton to it's <b>Initial</b> or <b>Start State</b>  <br /></td></tr>
 <tr class="memitem:a9540a12554008a6705056b02fbafed38 inherit pub_methods_class_dbncd_m_p_bttn" id="r_a9540a12554008a6705056b02fbafed38"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38">resume</a> ()</td></tr>
-<tr class="memdesc:a9540a12554008a6705056b02fbafed38 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag.  <br /></td></tr>
+<tr class="memdesc:a9540a12554008a6705056b02fbafed38 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restarts the software timer updating the calculation of the object internal flags.  <br /></td></tr>
 <tr class="memitem:a0ebb74dc4cf265035b016f520b8597e2 inherit pub_methods_class_dbncd_m_p_bttn" id="r_a0ebb74dc4cf265035b016f520b8597e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a0ebb74dc4cf265035b016f520b8597e2">setBeginDisabled</a> (const bool &amp;newBeginDisabled=false)</td></tr>
 <tr class="memdesc:a0ebb74dc4cf265035b016f520b8597e2 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the starting isDisabled state.  <br /></td></tr>
 <tr class="memitem:afa8a94396ee3fe8f9cc41c8ea9d8b8d3 inherit pub_methods_class_dbncd_m_p_bttn" id="r_afa8a94396ee3fe8f9cc41c8ea9d8b8d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#afa8a94396ee3fe8f9cc41c8ea9d8b8d3">setDbncTime</a> (const unsigned long int &amp;newDbncTime)</td></tr>
@@ -277,7 +291,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <p>class <a class="el" href="class_tm_ltch_m_p_bttn.html" title="Models a Timer Latch DD-MPB, a.k.a. Timer Switch (TiLDD-MPB).">TmLtchMPBttn</a> </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a08db3cb18946d4d0f6e4b200ce05f2c8" name="a08db3cb18946d4d0f6e4b200ce05f2c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08db3cb18946d4d0f6e4b200ce05f2c8">&#9670;&#160;</a></span>TmLtchMPBttn()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a08db3cb18946d4d0f6e4b200ce05f2c8">&#9670;&#160;</a></span>TmLtchMPBttn() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -331,6 +345,43 @@ Here is the call graph for this function:</div>
 <area shape="rect" title="Class constructor." alt="" coords="5,5,211,32"/>
 <area shape="rect" href="class_ltch_m_p_bttn.html#ab1856959f1318126a6370a04b2cd9782" title="Default constructor." alt="" coords="259,5,426,32"/>
 <area shape="poly" title=" " alt="" coords="211,16,243,16,243,21,211,21"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="aed19b14317250132f6e320292d00ef31" name="aed19b14317250132f6e320292d00ef31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed19b14317250132f6e320292d00ef31">&#9670;&#160;</a></span>TmLtchMPBttn() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TmLtchMPBttn::TmLtchMPBttn </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_tm_ltch_m_p_bttn.html">TmLtchMPBttn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>Reference to an existing <a class="el" href="class_tm_ltch_m_p_bttn.html" title="Models a Timer Latch DD-MPB, a.k.a. Timer Switch (TiLDD-MPB).">TmLtchMPBttn</a> object to be copied. </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_tm_ltch_m_p_bttn_aed19b14317250132f6e320292d00ef31_cgraph.png" border="0" usemap="#aclass_tm_ltch_m_p_bttn_aed19b14317250132f6e320292d00ef31_cgraph" loading="lazy" alt=""/></div>
+<map name="aclass_tm_ltch_m_p_bttn_aed19b14317250132f6e320292d00ef31_cgraph" id="aclass_tm_ltch_m_p_bttn_aed19b14317250132f6e320292d00ef31_cgraph">
+<area shape="rect" title="Copy constructor." alt="" coords="5,31,211,57"/>
+<area shape="rect" href="class_ltch_m_p_bttn.html#ab1856959f1318126a6370a04b2cd9782" title="Default constructor." alt="" coords="278,5,445,32"/>
+<area shape="poly" title=" " alt="" coords="211,31,262,26,262,31,212,36"/>
+<area shape="rect" href="class_tm_ltch_m_p_bttn.html#a246985e9366d3a2e16805d0b5565c543" title="Default constructor." alt="" coords="259,56,464,83"/>
+<area shape="poly" title=" " alt="" coords="212,52,243,55,243,60,211,57"/>
 </map>
 </div>
 

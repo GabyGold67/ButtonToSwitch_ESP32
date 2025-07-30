@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "author": "Gaby Goldman",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 92.6,
+      "left": -115.2,
+      "attrs": { "color": "green", "xray": "1", "key": "1" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -51.6,
+      "left": 109.4,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 14.4,
+      "left": 105.05,
+      "rotate": 90,
+      "attrs": { "value": "47" }
+    },
+    {
+      "type": "wokwi-pushbutton-6mm",
+      "id": "btn2",
+      "top": 151.4,
+      "left": -86.4,
+      "attrs": { "color": "red", "xray": "1", "key": "0" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text1",
+      "top": -76.8,
+      "left": 115.2,
+      "rotate": 270,
+      "attrs": { "text": "On" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text2",
+      "top": 38.4,
+      "left": -105.6,
+      "attrs": { "text": "Latch On\n(Key 1)" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text3",
+      "top": 172.8,
+      "left": -86.4,
+      "attrs": { "text": "Unlatch\n(Key 0)" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": -51.6,
+      "left": 138.2,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 14.4,
+      "left": 133.85,
+      "rotate": 90,
+      "attrs": { "value": "47" }
+    },
+    { "type": "wokwi-junction", "id": "j1", "top": 81.6, "left": 120, "attrs": {} },
+    { "type": "wokwi-junction", "id": "j2", "top": 81.6, "left": 148.8, "attrs": {} },
+    {
+      "type": "wokwi-text",
+      "id": "text4",
+      "top": -96,
+      "left": 124.8,
+      "rotate": 270,
+      "attrs": { "text": "Disabled" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:25", "btn1:1.r", "green", [ "h-52.61", "v28.8" ] ],
+    [ "esp:GND.1", "btn1:2.r", "black", [ "h-14.21", "v-29" ] ],
+    [ "r1:1", "led1:A", "green", [ "h0" ] ],
+    [ "esp:21", "r1:2", "green", [ "h33.64" ] ],
+    [ "esp:GND.1", "btn2:2.r", "black", [ "h-14.21", "v-58" ] ],
+    [ "esp:26", "btn2:1.r", "red", [ "h-33.41", "v-38.4" ] ],
+    [ "led2:A", "r2:1", "red", [ "v0" ] ],
+    [ "esp:GND.3", "j1:J", "black", [ "h0" ] ],
+    [ "j1:J", "j2:J", "black", [ "v0" ] ],
+    [ "j2:J", "led2:C", "black", [ "v0" ] ],
+    [ "j1:J", "led1:C", "black", [ "v0" ] ],
+    [ "esp:18", "r2:2", "red", [ "h62.44" ] ]
+  ],
+  "dependencies": {}
+}

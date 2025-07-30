@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.5.0
+  * @version v4.6.1
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   09/07/2025 19:10 (GMT+0200) DST  
+  *       Last update:   30/07/2025 17:30 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -75,6 +75,7 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 		_dbncTimeOrigSett = 0;
 	}
 	
+	_mpbInstnc = this;
 	_isOnMutex = xSemaphoreCreateMutex();
 	_strtDelayMutex = xSemaphoreCreateMutex();
 	_updFdaMutex = xSemaphoreCreateMutex();
@@ -264,6 +265,11 @@ const bool DbncdMPBttn::getIsPressed() const {
 	return _isPressed;
 }
 
+const DbncdMPBttn* DbncdMPBttn::getMpbInstnc() const {
+
+	return _mpbInstnc;
+}
+
 const uint32_t DbncdMPBttn::getOtptsSttsPkgd(){
 
 	return _otptsSttsPkg();
@@ -361,7 +367,7 @@ void DbncdMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 			if (xReturned != pdPASS)
 				errorFlag = pdTRUE;
 		}
-		mpbObj->resetOutputsChngTskTrggr();
+		// mpbObj->resetOutputsChngTskTrggr();
 	}
 
 	return;
@@ -416,11 +422,11 @@ void DbncdMPBttn::resetFda(){
 	return;
 }
 
-void DbncdMPBttn::resetOutputsChngTskTrggr(){
-	_outputsChngTskTrggr = false;
+/* void DbncdMPBttn::resetOutputsChngTskTrggr(){
+ 	_outputsChngTskTrggr = false;
 
-	return;
-}
+ 	return;
+} */
 
 bool DbncdMPBttn::resume(){
    bool result {false};
@@ -808,7 +814,7 @@ void DbncdMPBttn::updFdaState(){
 	return;
 }
 
-bool DbncdMPBttn::updIsPressed(){	//FFDR - Future Feature Development Request
+bool DbncdMPBttn::updIsPressed(){	//FFDR - Refactor to a Strategy Pattern design
 	/*	
 	This method will be changed to accomodate different sources of detection signals. 
 	The current MPB state will come from a PressSignalGenerator class that might include subclasses for:
@@ -951,26 +957,18 @@ LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool
 {
 }
 
-/*LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	//FFDR Check new code implemented and uncomment
+LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	//FFDR Check new code implemented and uncomment
 : DbncdDlydMPBttn(other) // Call base class copy constructor
 {
-	_mpbPollTmrName = other._mpbPollTmrName;
-	_isLatched = other._isLatched;
-	_validUnlatchPend = other._validUnlatchPend;
-	_validUnlatchRlsPend = other._validUnlatchRlsPend;
-	_trnOffASAP = other._trnOffASAP;
-	_mpbFdaState = other._mpbFdaState;
-	_sttChng = other._sttChng;
+	this->_isLatched = other._isLatched;
+	this->_trnOffASAP = other._trnOffASAP;
+	this->_validUnlatchPend = other._validUnlatchPend;
+	this->_validUnlatchRlsPend = other._validUnlatchRlsPend;
+}
 
-	// Mutexes must be created anew, not copied
-	_isLatchedMutex = xSemaphoreCreateMutex();
-	_validUnlatchPendMutex = xSemaphoreCreateMutex();
-	_validUnlatchRlsPendMutex = xSemaphoreCreateMutex();
-	_updFdaMutex = xSemaphoreCreateMutex();
-
-	// Timer handle should not be copied (timers are not duplicated)
-	_mpbPollTmrHndl = nullptr;
-}*/
+LtchMPBttn::~LtchMPBttn()
+{
+}
 
 bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
    bool result {false};
@@ -1063,7 +1061,7 @@ void LtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 			if (xReturned != pdPASS)
 				errorFlag = pdTRUE;
 		}
-		mpbObj->resetOutputsChngTskTrggr();
+		// mpbObj->resetOutputsChngTskTrggr();
 	}
 
 	return;
@@ -1318,6 +1316,15 @@ TgglLtchMPBttn::TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, co
 {
 }
 
+TgglLtchMPBttn::TgglLtchMPBttn(const TgglLtchMPBttn& other)
+: LtchMPBttn(other)
+{
+	// No additional members to initialize beyond base class constructor parameters
+}
+
+TgglLtchMPBttn::~TgglLtchMPBttn(){	
+}
+
 void TgglLtchMPBttn::stOffNVURP_Do(){
 	// This method is invoked exclusively from the updFdaState, no need to declare it critical section
 	if(_validDisablePend){
@@ -1361,6 +1368,17 @@ TmLtchMPBttn::TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &act
 	if(_srvcTime < _MinSrvcTime)    // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
 		_srvcTime = _MinSrvcTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 
+}
+
+TmLtchMPBttn::TmLtchMPBttn(const TmLtchMPBttn &other)
+: LtchMPBttn(other), _srvcTime{other._srvcTime}
+{
+	this->_srvcTimerStrt = other._srvcTimerStrt;
+	this->_tmRstbl = other._tmRstbl;
+}
+
+TmLtchMPBttn::~TmLtchMPBttn()
+{	
 }
 
 void TmLtchMPBttn::clrStatus(bool clrIsOn){
@@ -1445,6 +1463,27 @@ HntdTmLtchMPBttn::HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long 
 :TmLtchMPBttn(mpbttnPin, actTime, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
 {
 	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;   
+}
+
+HntdTmLtchMPBttn::HntdTmLtchMPBttn(const HntdTmLtchMPBttn &other)
+: TmLtchMPBttn(other), _wrnngPrctg{other._wrnngPrctg}
+{
+	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;
+	_fnWhnTrnOffPilot = other._fnWhnTrnOffPilot;
+	_fnWhnTrnOffWrnng = other._fnWhnTrnOffWrnng;
+	_fnWhnTrnOnPilot = other._fnWhnTrnOnPilot;
+	_fnWhnTrnOnWrnng = other._fnWhnTrnOnWrnng;
+	_keepPilot = other._keepPilot;
+	_pilotOn = other._pilotOn;
+	_wrnngOn = other._wrnngOn;
+	_validWrnngSetPend = other._validWrnngSetPend;
+	_validWrnngResetPend = other._validWrnngResetPend;
+	_validPilotSetPend = other._validPilotSetPend;
+	_validPilotResetPend = other._validPilotResetPend;
+}
+
+HntdTmLtchMPBttn::~HntdTmLtchMPBttn()
+{	
 }
 
 bool HntdTmLtchMPBttn::begin(const unsigned long int &pollDelayMs){
@@ -2696,6 +2735,96 @@ void SldrDALtchMPBttn::clrStatus(bool clrIsOn){
 	return;
 }
 
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrDirUp(){
+   
+	return _fnWhnTrnOffSldrDirUp;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrDirUp(){
+
+   return _fnWhnTrnOnSldrDirUp;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrMax(){
+	
+   return _fnWhnTrnOffSldrMax;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOffSldrMin(){
+
+   return _fnWhnTrnOffSldrMin;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrMax(){
+	
+   return _fnWhnTrnOnSldrMax;
+}
+
+fncPtrType SldrDALtchMPBttn::getFnWhnTrnOnSldrMin(){
+	
+   return _fnWhnTrnOnSldrMin;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrDirUp(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrDirUp;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOffSldrDirUpArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrDirUp(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrDirUp;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOnSldrDirUpArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMax(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrMax;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMaxArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrMaxArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMax(){
+	
+   return _fnVdPtrPrmWhnTrnOnSldrMax;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMaxArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrMaxArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMin(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrMin;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOffSldrMinArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOffSldrMinArgPtr;
+}
+
+fncVdPtrPrmPtrType SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMin(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrMin;
+}
+
+void *SldrDALtchMPBttn::getFVPPWhnTrnOnSldrMinArgPtr(){
+
+   return _fnVdPtrPrmWhnTrnOnSldrMinArgPtr;
+}
+
 uint16_t SldrDALtchMPBttn::getOtptCurVal(){
 
 	return _otptCurVal;
@@ -2703,12 +2832,14 @@ uint16_t SldrDALtchMPBttn::getOtptCurVal(){
 
 bool SldrDALtchMPBttn::getOtptCurValIsMax(){
 
-	return (_otptCurVal == _otptValMax);
+	// return (_otptCurVal == _otptValMax);
+	return _otptCurValIsMax;
 }
 
 bool SldrDALtchMPBttn::getOtptCurValIsMin(){
 
-	return (_otptCurVal == _otptValMin);
+	// return (_otptCurVal == _otptValMin);
+	return _otptCurValIsMin;
 }
 
 unsigned long SldrDALtchMPBttn::getOtptSldrSpd(){
@@ -2736,11 +2867,167 @@ bool SldrDALtchMPBttn::getSldrDirUp(){
 	return _curSldrDirUp;
 }
 
+void SldrDALtchMPBttn::_ntfyChngSldrDir(){
+	if(_curSldrDirUp){
+		if(_fnWhnTrnOnSldrDirUp != nullptr)
+			_fnWhnTrnOnSldrDirUp();
+		if(_fnVdPtrPrmWhnTrnOnSldrDirUp != nullptr){
+			_fnVdPtrPrmWhnTrnOnSldrDirUp(_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr);
+		}
+	}
+	else{
+		if(_fnWhnTrnOffSldrDirUp != nullptr)
+			_fnWhnTrnOffSldrDirUp();
+		if(_fnVdPtrPrmWhnTrnOffSldrDirUp != nullptr){
+			_fnVdPtrPrmWhnTrnOffSldrDirUp(_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr);
+		}
+	}
+	return;
+}
+
 uint32_t SldrDALtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
 	prevVal = DblActnLtchMPBttn::_otptsSttsPkg(prevVal);
 	prevVal |= (((uint32_t)_otptCurVal) << OtptCurValBitPos);
 
 	return prevVal;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOffSldrDirUp(void (*newFnWhnTrnOff)()){
+	if(_fnWhnTrnOffSldrDirUp != newFnWhnTrnOff)
+		_fnWhnTrnOffSldrDirUp = newFnWhnTrnOff;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOnSldrDirUp(void (*newFnWhnTrnOn)()){
+	if(_fnWhnTrnOnSldrDirUp != newFnWhnTrnOn)
+		_fnWhnTrnOnSldrDirUp = newFnWhnTrnOn;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOffSldrMaxPtr(void (*newFnWhnTrnOff)()){
+	if(_fnWhnTrnOffSldrMax != newFnWhnTrnOff)
+		_fnWhnTrnOffSldrMax = newFnWhnTrnOff;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOffSldrMinPtr(void (*newFnWhnTrnOff)()){
+	if(_fnWhnTrnOffSldrMin != newFnWhnTrnOff)
+		_fnWhnTrnOffSldrMin = newFnWhnTrnOff;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOnSldrMaxPtr(void (*newFnWhnTrnOn)()){
+	if(_fnWhnTrnOnSldrMax != newFnWhnTrnOn)
+		_fnWhnTrnOnSldrMax = newFnWhnTrnOn;
+	
+	return;
+}
+
+void SldrDALtchMPBttn::setFnWhnTrnOnSldrMinPtr(void (*newFnWhnTrnOn)()){
+	if(_fnWhnTrnOnSldrMin != newFnWhnTrnOn)
+		_fnWhnTrnOnSldrMin = newFnWhnTrnOn;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrDirUp != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffSldrDirUp = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrDirUpArgPtr(void *newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr = newFVPPWhnTrnOffArgPtr;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrDirUp(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrDirUp != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnSldrDirUp = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrDirUpArgPtr(void *newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr = newFVPPWhnTrnOnArgPtr;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMax(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrMax != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffSldrMax = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMaxArgPtr(void *newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr = newFVPPWhnTrnOffArgPtr;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMax(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrMax != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnSldrMax = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMaxArgPtr(void *newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr = newFVPPWhnTrnOnArgPtr;
+		
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMin(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrMin != newFVPPWhnTrnOff){
+		_fnVdPtrPrmWhnTrnOffSldrMin = newFVPPWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffSldrMinArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOffSldrMinArgPtr(void *newFVPPWhnTrnOffArgPtr){
+	if (_fnVdPtrPrmWhnTrnOffSldrMinArgPtr != newFVPPWhnTrnOffArgPtr)
+		_fnVdPtrPrmWhnTrnOffSldrMinArgPtr = newFVPPWhnTrnOffArgPtr;
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMin(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrMin != newFVPPWhnTrnOn){
+		_fnVdPtrPrmWhnTrnOnSldrMin = newFVPPWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnSldrMinArgPtr = argPtr;
+	}
+
+	return;
+}
+
+void SldrDALtchMPBttn::setFVPPWhnTrnOnSldrMinArgPtr(void *newFVPPWhnTrnOnArgPtr){
+	if (_fnVdPtrPrmWhnTrnOnSldrMinArgPtr != newFVPPWhnTrnOnArgPtr)
+		_fnVdPtrPrmWhnTrnOnSldrMinArgPtr = newFVPPWhnTrnOnArgPtr;
+
+	return;
 }
 
 bool SldrDALtchMPBttn::setOtptCurVal(const uint16_t &newVal){
@@ -2841,16 +3128,21 @@ bool SldrDALtchMPBttn::_setSldrDir(const bool &newVal){
 
 	taskENTER_CRITICAL(&mux);
 	if(newVal != _curSldrDirUp){
-		if(newVal){	// Try to set new direction Up
+		if(newVal){	//Try to set new direction Up
 			if(_otptCurVal != _otptValMax)
 				_curSldrDirUp = true;
 		}
-		else{		// Try to set new direction down
+		else{		//Try to set new direction down
 			if(_otptCurVal != _otptValMin)
 				_curSldrDirUp = false;
 		}
-		if(_curSldrDirUp != newVal)
+		if(_curSldrDirUp != newVal){	// Change of direction failed
 			result = false;
+		}
+		else{	// Change of direction succeeded
+			_ntfyChngSldrDir();
+
+		}
 	}
 	taskEXIT_CRITICAL(&mux);
 
@@ -2881,17 +3173,6 @@ void SldrDALtchMPBttn::setSwpDirOnPrss(const bool &newVal){
 	return;
 }
 
-/*void SldrDALtchMPBttn::stDisabled_In(){
-	if(_isOnScndry != _isOnDisabled){
-		if(_isOnDisabled)
-			_turnOnScndry();
-		else
-			_turnOffScndry();
-	}
-
-	return;
-}*/
-
 void SldrDALtchMPBttn::stOnEndScndMod_Out(){
 	if(_isOnScndry)
 		_turnOffScndry();
@@ -2906,40 +3187,55 @@ void SldrDALtchMPBttn::stOnScndMod_Do(){
 	unsigned long _sldrTmrNxtStrt{0};
 	unsigned long _sldrTmrRemains{0};
 
-	_sldrTmrNxtStrt = (xTaskGetTickCount() / portTICK_RATE_MS);
+	_sldrTmrNxtStrt = millis();
 	_otpStpsChng = (_sldrTmrNxtStrt - _scndModTmrStrt) /_otptSldrSpd;
 	_sldrTmrRemains = ((_sldrTmrNxtStrt - _scndModTmrStrt) % _otptSldrSpd) * _otptSldrSpd;
 	_sldrTmrNxtStrt -= _sldrTmrRemains;
-	_scndModTmrStrt = _sldrTmrNxtStrt;	// This ends the time management section of the state, calculating the time
+	_scndModTmrStrt = _sldrTmrNxtStrt;	//This ends the time management section of the state, calculating the time
 
-	if(_curSldrDirUp){
-		// The slider is moving up
+	if(_curSldrDirUp){	// The slider is moving up		
 		if(_otptCurVal != _otptValMax){
-			if((_otptValMax - _otptCurVal) >= (_otpStpsChng * _otptSldrStpSize))				
-				_otptCurVal += (_otpStpsChng * _otptSldrStpSize);	// The value change is in range
-			else				
-				_otptCurVal = _otptValMax;	// The value change goes out of range
+			if((_otptValMax - _otptCurVal) >= (_otpStpsChng * _otptSldrStpSize)){	//The value change is in range				
+				_otptCurVal += (_otpStpsChng * _otptSldrStpSize);
+			}
+			else{	//The value change goes out of range				
+				_otptCurVal = _otptValMax;
+			}
 			setOutputsChange(true);
 		}
 		if(getOutputsChange()){
-			if(_otptCurVal == _otptValMax)
-				if(_autoSwpDirOnEnd == true)
+			if(_otptCurValIsMin){
+				_turnOffSldrMin();
+			}
+			if(_otptCurVal == _otptValMax){
+				_turnOnSldrMax();
+				if(_autoSwpDirOnEnd == true){
 					_curSldrDirUp = false;
+				}
+			}
 		}
 	}
-	else{
-		// The slider is moving down
+	else{	// The slider is moving down		
 		if(_otptCurVal != _otptValMin){
-			if((_otptCurVal - _otptValMin) >= (_otpStpsChng * _otptSldrStpSize))
-				_otptCurVal -= (_otpStpsChng * _otptSldrStpSize);	// The value change is in range
-			else
-				_otptCurVal = _otptValMin;	// The value change goes out of range
+			if((_otptCurVal - _otptValMin) >= (_otpStpsChng * _otptSldrStpSize)){	//The value change is in range				
+				_otptCurVal -= (_otpStpsChng * _otptSldrStpSize);
+			}
+			else{	//The value change goes out of range				
+				_otptCurVal = _otptValMin;
+			}
 			setOutputsChange(true);
 		}
-		if(getOutputsChange())
-			if(_otptCurVal == _otptValMin)
-				if(_autoSwpDirOnEnd == true)
+		if(getOutputsChange()){
+			if(_otptCurValIsMax){
+				_turnOffSldrMax();
+			}
+			if(_otptCurVal == _otptValMin){
+				_turnOnSldrMin();
+				if(_autoSwpDirOnEnd == true){
 					_curSldrDirUp = true;
+				}
+			}
+		}
 	}
 
 	return;
@@ -2957,6 +3253,82 @@ void SldrDALtchMPBttn::stOnStrtScndMod_In(){
 bool SldrDALtchMPBttn::swapSldrDir(){
 
 	return _setSldrDir(!_curSldrDirUp);
+}
+
+void SldrDALtchMPBttn::_turnOffSldrMax(){
+	if(_otptCurValIsMax){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffSldrMax != nullptr){
+			_fnWhnTrnOffSldrMax();
+		}
+		if(_fnVdPtrPrmWhnTrnOffSldrMax != nullptr){
+			_fnVdPtrPrmWhnTrnOffSldrMax(_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMax = false;
+		setOutputsChange(true);
+	}
+
+	_otptCurValIsMax = false;
+
+	return;
+}
+
+void SldrDALtchMPBttn::_turnOnSldrMax(){
+	if(!_otptCurValIsMax){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnSldrMax != nullptr){
+			_fnWhnTrnOnSldrMax();
+		}
+		if(_fnVdPtrPrmWhnTrnOnSldrMax != nullptr){
+			_fnVdPtrPrmWhnTrnOnSldrMax(_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMax = true;
+		setOutputsChange(true);
+	}
+
+	_otptCurValIsMax = true;
+
+	return;
+}
+
+void SldrDALtchMPBttn::_turnOffSldrMin(){
+	if(_otptCurValIsMin){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOffSldrMin != nullptr){
+			_fnWhnTrnOffSldrMin();
+		}
+		if(_fnVdPtrPrmWhnTrnOffSldrMin != nullptr){
+			_fnVdPtrPrmWhnTrnOffSldrMin(_fnVdPtrPrmWhnTrnOffSldrMinArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMin = false;
+		setOutputsChange(true);
+	}
+
+	_otptCurValIsMin = false;
+
+	return;
+}
+
+void SldrDALtchMPBttn::_turnOnSldrMin(){
+	if(!_otptCurValIsMin){
+		//---------------->> Functions related actions
+		if(_fnWhnTrnOnSldrMin != nullptr){
+			_fnWhnTrnOnSldrMin();
+		}
+		if(_fnVdPtrPrmWhnTrnOnSldrMin != nullptr){
+			_fnVdPtrPrmWhnTrnOnSldrMin(_fnVdPtrPrmWhnTrnOnSldrMinArgPtr);
+		}
+		//---------------->> Flags related actions
+		_otptCurValIsMin = true;
+		setOutputsChange(true);
+	}
+
+	_otptCurValIsMin = true;
+
+	return;
 }
 
 //=========================================================================> Class methods delimiter
@@ -3622,7 +3994,6 @@ bool SnglSrvcVdblMPBttn::updVoidStatus(){
 
 //=========================================================================> Class methods delimiter
 
-
 /**
  * @brief Unpackages a 32-bit value into a DbncdMPBttn object status
  * 
@@ -3678,12 +4049,7 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts){
 		mpbCurSttsDcdd.isOnScndry = true;
 	else
 		mpbCurSttsDcdd.isOnScndry = false;
-	if(pkgOtpts & (((uint32_t)1) << IsClckdBitPos))
-		mpbCurSttsDcdd.isClckd = true;
-	else
-		mpbCurSttsDcdd.isClckd = false;
 
-	mpbCurSttsDcdd.clcksCnt = (pkgOtpts & (((uint32_t)0b011) << ClcksCntBitPos))>> ClcksCntBitPos;
 	mpbCurSttsDcdd.otptCurVal = (pkgOtpts & 0xffff0000) >> OtptCurValBitPos;
 
 	return mpbCurSttsDcdd;

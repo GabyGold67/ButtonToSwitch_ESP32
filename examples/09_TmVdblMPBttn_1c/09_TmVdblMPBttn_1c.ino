@@ -3,17 +3,20 @@
   * @file	: 09_TmVdblMPBttn_1c.ino
   * @brief  : Example for the ButtonToSwitch_ESP32 library TmVdblMPBttn class
   *
-  *   Framework: Arduino
-  *   Platform: ESP32
+  * Repository: https://github.com/GabyGold67/ButtonToSwitch_ESP32
+  * WOKWI simulation URL: https://wokwi.com/projects/437899134448951297
   * 
-  * The example instantiates a TmVdblMPBttn object using:
+  * Framework: Arduino
+  * Platform: ESP32
+  * 
+  * @details The example instantiates a TmVdblMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
   *   - 1 led with it's corresponding resistor between GND and tvlmpbLoadPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsDisabledPin
   *
-  * ### This example creates two Tasks and deletes the default `loopTask` task
-  * ### This example creates a software timer
+  * - This example creates two Tasks and deletes the default `loopTask` task
+  * - This example creates a software timer
   *
   * The "Main control task" is created in the regular setup() and then that 
   * arduino standard `loopTask` is deleted in the loop()
@@ -33,17 +36,23 @@
   * value, showing the behavior of the instantiated object when enabled and when
   * disabled.
   *
-  * 	@author	: Gabriel D. Goldman
+  * @author	: Gabriel D. Goldman
+  * mail <gdgoldman67@hotmail.com>
+  * Github <https://github.com/GabyGold67>
   *
-  * 	@date	: 	01/08/2023 First release
-  * 				    23/09/2024 Last update
+  * @date	: 	01/08/2023 First release
+  * 			   23/09/2024 Last update
   *
   ******************************************************************************
-  * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
-  * library. All files needed are provided as part of the source code for the library.
+  * @warning **Use of this library is under your own responsibility**
+  * 
+  * @warning The use of this library falls in the category described by The Alan 
+  * Parsons Project (c) 1980 "Games People play" disclaimer:  
+  * Games people play, you take it or you leave it  
+  * Things that they say aren't alright  
+  * If I promised you the moon and the stars, would you believe it?  
   * 
   * Released into the public domain in accordance with "GPL-3.0-or-later" license terms.
-  *
   ******************************************************************************
   */
 #include <Arduino.h>
@@ -131,8 +140,8 @@ void mainCtrlTsk(void *pvParameters){
 
 void dmpsOutputTsk(void *pvParameters){
    const uint8_t dmpbLoadPin{GPIO_NUM_21};
-   const uint8_t tvLoadPin{GPIO_NUM_19};
-   const uint8_t dmpbIsDisabledPin{GPIO_NUM_18};
+   const uint8_t tvLoadPin{GPIO_NUM_18};
+   const uint8_t dmpbIsDisabledPin{GPIO_NUM_19};
 
    pinMode(dmpbLoadPin, OUTPUT);
    pinMode(tvLoadPin, OUTPUT);

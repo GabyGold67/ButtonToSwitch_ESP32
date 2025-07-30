@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.5.0</span>
+   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.6.1</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -121,13 +121,14 @@ Collaboration diagram for DblActnLtchMPBttn:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_dbl_actn_ltch_m_p_bttn__coll__graph.png" border="0" usemap="#a_dbl_actn_ltch_m_p_bttn_coll__map" loading="lazy" alt="Collaboration graph"/></div>
 <map name="a_dbl_actn_ltch_m_p_bttn_coll__map" id="a_dbl_actn_ltch_m_p_bttn_coll__map">
-<area shape="rect" title="Abstract class, base to model Double Action LDD&#45;MPBs (DALDD&#45;MPBs)." alt="" coords="5,229,143,256"/>
-<area shape="rect" href="class_ltch_m_p_bttn.html" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD&#45;MPB)." alt="" coords="29,155,119,181"/>
-<area shape="poly" title=" " alt="" coords="77,197,77,229,71,229,71,197"/>
-<area shape="rect" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="9,80,139,107"/>
-<area shape="poly" title=" " alt="" coords="77,122,77,154,71,154,71,122"/>
+<area shape="rect" title="Abstract class, base to model Double Action LDD&#45;MPBs (DALDD&#45;MPBs)." alt="" coords="5,233,143,260"/>
+<area shape="rect" href="class_ltch_m_p_bttn.html" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD&#45;MPB)." alt="" coords="29,157,119,184"/>
+<area shape="poly" title=" " alt="" coords="77,199,77,233,71,233,71,199"/>
+<area shape="rect" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="9,81,139,108"/>
+<area shape="poly" title=" " alt="" coords="77,123,77,157,71,157,71,123"/>
 <area shape="rect" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D&#45;MPB)." alt="" coords="22,5,126,32"/>
-<area shape="poly" title=" " alt="" coords="77,48,77,80,71,80,71,48"/>
+<area shape="poly" title=" " alt="" coords="77,47,77,81,71,81,71,47"/>
+<area shape="poly" title=" " alt="" coords="143,11,152,19,144,26,126,28,126,23,142,21,147,19,140,16"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -187,6 +188,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>clrStatus</b> (bool c
 <tr class="memdesc:ab1856959f1318126a6370a04b2cd9782 inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="memitem:a4ce98361389a5c5c5b7a8aee638ccc9c inherit pub_methods_class_ltch_m_p_bttn" id="r_a4ce98361389a5c5c5b7a8aee638ccc9c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ltch_m_p_bttn.html#a4ce98361389a5c5c5b7a8aee638ccc9c">LtchMPBttn</a> (const int8_t &amp;mpbttnPin, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)</td></tr>
 <tr class="memdesc:a4ce98361389a5c5c5b7a8aee638ccc9c inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:a41e826688b0cd221275ed14f90c19bb4 inherit pub_methods_class_ltch_m_p_bttn" id="r_a41e826688b0cd221275ed14f90c19bb4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ltch_m_p_bttn.html#a41e826688b0cd221275ed14f90c19bb4">LtchMPBttn</a> (const <a class="el" href="class_ltch_m_p_bttn.html">LtchMPBttn</a> &amp;other)</td></tr>
+<tr class="memdesc:a41e826688b0cd221275ed14f90c19bb4 inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
+<tr class="memitem:a504174fb6c928c040ffbc05ba1ef7da0 inherit pub_methods_class_ltch_m_p_bttn" id="r_a504174fb6c928c040ffbc05ba1ef7da0"><td class="memItemLeft" align="right" valign="top">
+virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~LtchMPBttn</b> ()</td></tr>
+<tr class="memdesc:a504174fb6c928c040ffbc05ba1ef7da0 inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class virtual destructor. <br /></td></tr>
 <tr class="memitem:aa52047bd930afc19d8c1f9026f7605ef inherit pub_methods_class_ltch_m_p_bttn" id="r_aa52047bd930afc19d8c1f9026f7605ef"><td class="memItemLeft" align="right" valign="top">
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clrStatus</b> (bool clrIsOn=true)</td></tr>
 <tr class="memdesc:aa52047bd930afc19d8c1f9026f7605ef inherit pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">See <a class="el" href="class_dbncd_m_p_bttn.html#a3009725646aeb160884b8109d180b530" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing.">DbncdMPBttn::clrStatus(bool)</a> <br /></td></tr>
@@ -260,6 +266,8 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memdesc:ac78bb12cb1d9bdb43b4e4e593812b300 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the <b>isOn</b> attribute flag.  <br /></td></tr>
 <tr class="memitem:a9cee3ead20e3628c02975a9d0c8a4baa inherit pub_methods_class_dbncd_m_p_bttn" id="r_a9cee3ead20e3628c02975a9d0c8a4baa"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a9cee3ead20e3628c02975a9d0c8a4baa">getIsOnDisabled</a> () const</td></tr>
 <tr class="memdesc:a9cee3ead20e3628c02975a9d0c8a4baa inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the <b>isOnDisabled</b> attribute flag.  <br /></td></tr>
+<tr class="memitem:a3158ce729e25784a3a2adc76e77a34a1 inherit pub_methods_class_dbncd_m_p_bttn" id="r_a3158ce729e25784a3a2adc76e77a34a1"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_dbncd_m_p_bttn.html">DbncdMPBttn</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a3158ce729e25784a3a2adc76e77a34a1">getMpbInstnc</a> () const</td></tr>
+<tr class="memdesc:a3158ce729e25784a3a2adc76e77a34a1 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the present instanced object.  <br /></td></tr>
 <tr class="memitem:ad89b27d055137f6b27123050fd708aef inherit pub_methods_class_dbncd_m_p_bttn" id="r_ad89b27d055137f6b27123050fd708aef"><td class="memItemLeft" align="right" valign="top">const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#ad89b27d055137f6b27123050fd708aef">getOtptsSttsPkgd</a> ()</td></tr>
 <tr class="memdesc:ad89b27d055137f6b27123050fd708aef inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the relevant attribute flags values for the object state encoded as a 32 bits value, required to pass current state of the object to another thread/task managing the outputs.  <br /></td></tr>
 <tr class="memitem:ac646101296a76321e855250ba044c8d7 inherit pub_methods_class_dbncd_m_p_bttn" id="r_ac646101296a76321e855250ba044c8d7"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#ac646101296a76321e855250ba044c8d7">getOutputsChange</a> () const</td></tr>
@@ -279,7 +287,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~DbncdMPBttn</b> (
 <tr class="memitem:a2df98cfb822df05bc232143f883e5c32 inherit pub_methods_class_dbncd_m_p_bttn" id="r_a2df98cfb822df05bc232143f883e5c32"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a2df98cfb822df05bc232143f883e5c32">resetFda</a> ()</td></tr>
 <tr class="memdesc:a2df98cfb822df05bc232143f883e5c32 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the MPB behavior automaton to it's <b>Initial</b> or <b>Start State</b>  <br /></td></tr>
 <tr class="memitem:a9540a12554008a6705056b02fbafed38 inherit pub_methods_class_dbncd_m_p_bttn" id="r_a9540a12554008a6705056b02fbafed38"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38">resume</a> ()</td></tr>
-<tr class="memdesc:a9540a12554008a6705056b02fbafed38 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag.  <br /></td></tr>
+<tr class="memdesc:a9540a12554008a6705056b02fbafed38 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restarts the software timer updating the calculation of the object internal flags.  <br /></td></tr>
 <tr class="memitem:a0ebb74dc4cf265035b016f520b8597e2 inherit pub_methods_class_dbncd_m_p_bttn" id="r_a0ebb74dc4cf265035b016f520b8597e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#a0ebb74dc4cf265035b016f520b8597e2">setBeginDisabled</a> (const bool &amp;newBeginDisabled=false)</td></tr>
 <tr class="memdesc:a0ebb74dc4cf265035b016f520b8597e2 inherit pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the starting isDisabled state.  <br /></td></tr>
 <tr class="memitem:afa8a94396ee3fe8f9cc41c8ea9d8b8d3 inherit pub_methods_class_dbncd_m_p_bttn" id="r_afa8a94396ee3fe8f9cc41c8ea9d8b8d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dbncd_m_p_bttn.html#afa8a94396ee3fe8f9cc41c8ea9d8b8d3">setDbncTime</a> (const unsigned long int &amp;newDbncTime)</td></tr>

@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "author": "Gaby Goldman",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 92.6,
+      "left": -124.8,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -51.6,
+      "left": 109.4,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 14.4,
+      "left": 105.05,
+      "rotate": 90,
+      "attrs": { "value": "47" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text1",
+      "top": -76.8,
+      "left": 115.2,
+      "rotate": 270,
+      "attrs": { "text": "On" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:25", "btn1:1.r", "green", [ "v0", "h-14.21", "v-38.4" ] ],
+    [ "esp:GND.1", "btn1:2.r", "black", [ "h-23.81", "v-28.8", "h-38.6" ] ],
+    [ "esp:GND.2", "led1:C", "black", [ "v0", "h24.04" ] ],
+    [ "r1:1", "led1:A", "green", [ "h0" ] ],
+    [ "esp:21", "r1:2", "green", [ "h33.64" ] ]
+  ],
+  "dependencies": {}
+}

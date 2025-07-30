@@ -20,6 +20,6 @@
 <area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="244,143,203,143,203,137,244,137"/>
 <area shape="rect" id="Node000010" href="$class_tm_vdbl_m_p_bttn.html#a33bb7f6a78ea9c912a6d2c906ef756e5" title="See DbncdMPBttn::clrStatus(bool)" alt="" coords="259,228,430,255"/>
 <area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="476,244,430,244,430,239,476,239"/>
-<area shape="rect" id="Node000012" href="$class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Resets the outputs change task unblocking trigger (outputsChngTskTrggr) attribute flag." alt="" coords="267,279,422,305"/>
+<area shape="rect" id="Node000012" href="$class_dbncd_m_p_bttn.html#a9540a12554008a6705056b02fbafed38" title="Restarts the software timer updating the calculation of the object internal flags." alt="" coords="267,279,422,305"/>
 <area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="470,295,422,295,422,289,470,289"/>
 </map>

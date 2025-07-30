@@ -3,16 +3,19 @@
   * @file	: 01_DbncdMPBttn_1b.ino
   * @brief  : Example for the ButtonToSwitch_ESP32 library DbncdMPBttn class
   *
-  *   Framework: Arduino
-  *   Platform: ESP32
+  * Repository: https://github.com/GabyGold67/ButtonToSwitch_ESP32
+  * WOKWI simulation URL: https://wokwi.com/projects/421169391724855297
   * 
-  * The example instantiates a DbncdMPBttn object using:
+  * Framework: Arduino
+  * Platform: ESP32
+  * 
+  * @details The example instantiates a DbncdMPBttn object using:
   * 	- 1 push button between GND and dmpbSwitchPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbLoadPin
   * 	- 1 led with it's corresponding resistor between GND and dmpbIsDisabledPin
   *
-  * ### This example doesn't create extra Tasks (by using the default `loopTask` Task):
-  * ### This example creates a software timer
+  * This example does not create extra Tasks (by using the default `loopTask` Task):  
+  * This example creates a software timer
   *
   * This simple example instantiates the DbncdMPBttn object in the setup(),
   * and uses the default `loop ()` (loop() is the loopTask() disguised
@@ -27,16 +30,22 @@
   * value, showing the behavior of the instantiated object when enabled and when disabled.
   *
   * @author	: Gabriel D. Goldman
+  * mail <gdgoldman67@hotmail.com>
+  * Github <https://github.com/GabyGold67>
   *
-  * @date First release: 01/08/2023 
-  *       Last update:   20/01/2025 19:50 (GMT+0300 DST)
+  * @date	: 	01/08/2023 First release
+  * 			   05/09/2024 Last update
   *
   ******************************************************************************
-  * @attention	This file is part of the examples folder for the ButtonToSwitch_ESP32
-  * library. All files needed are provided as part of the source code for the library.
+  * @warning **Use of this library is under your own responsibility**
+  * 
+  * @warning The use of this library falls in the category described by The Alan 
+  * Parsons Project (c) 1980 "Games People play" disclaimer:  
+  * Games people play, you take it or you leave it  
+  * Things that they say aren't alright  
+  * If I promised you the moon and the stars, would you believe it?  
   * 
   * Released into the public domain in accordance with "GPL-3.0-or-later" license terms.
-  *
   ******************************************************************************
   */
 #include <Arduino.h>
