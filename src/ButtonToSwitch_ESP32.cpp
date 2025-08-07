@@ -61,6 +61,9 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 {
 
 	if(mpbttnPin != _InvalidPinNum){
+
+		_signalSource = new McuInputPin(_mpbttnPin, _pulledUp, _typeNO);	// Strategy setter to compute _isPressed based on the signal received in an MCU GPIO input pin
+
 		String mpbPinNumStr {"00" + String(_mpbttnPin)};
 		mpbPinNumStr = mpbPinNumStr.substring(mpbPinNumStr.length() - 2, 2);
 		_mpbPollTmrName = "PollMpbPin" + mpbPinNumStr + "_tmr";
@@ -79,6 +82,27 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 	_isOnMutex = xSemaphoreCreateMutex();
 	_strtDelayMutex = xSemaphoreCreateMutex();
 	_updFdaMutex = xSemaphoreCreateMutex();
+}
+
+DbncdMPBttn::DbncdMPBttn(MethodsSetters* setMthdPrcss, const unsigned long int &dbncTimeOrigSett)
+:_dbncTimeOrigSett{dbncTimeOrigSett}
+{
+	// _signalSource = new MethodsSetters;
+	_signalSource = setMthdPrcss;
+// ---
+	String mpbPinNumStr {"00" + String(_mpbttnPin)};
+	mpbPinNumStr = mpbPinNumStr.substring(mpbPinNumStr.length() - 2, 2);
+	_mpbPollTmrName = "PollMpbPin" + mpbPinNumStr + "_tmr";
+
+	if(_dbncTimeOrigSett < _stdMinDbncTime) // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
+		_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
+	_dbncTimeTempSett = _dbncTimeOrigSett;
+// ---
+	_mpbInstnc = this;
+	_isOnMutex = xSemaphoreCreateMutex();
+	_strtDelayMutex = xSemaphoreCreateMutex();
+	_updFdaMutex = xSemaphoreCreateMutex();
+
 }
 
 DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn& other)
@@ -814,25 +838,25 @@ void DbncdMPBttn::updFdaState(){
 	return;
 }
 
-bool DbncdMPBttn::updIsPressed(){	//FFDR - Refactor to a Strategy Pattern design
-	/*	
-	This method will be changed to accomodate different sources of detection signals. 
-	The current MPB state will come from a PressSignalGenerator class that might include subclasses for:
-	- McuInpPin: For MCU input pins, like the current implementation.
-	- ExpInpPin: For external inputs, like a I2C GPIO expander, SPI GPIO expander.
-	- SRGXInpPin: For shift register inputs, like a 74HC165 or similar.
-	- WiFiInpPin: For WiFi inputs, like a web server or a MQTT client.
-	- BLEInpPin: For BLE inputs, like a BLE server or a BLE client.
-	*/
+// Original single signal source code, based on a MCU GPIO Input pin, the new code includes this soltion into a Strategy Pattern
+/*bool DbncdMPBttn::updIsPressed(){
+	// This method will be changed to accomodate different sources of detection signals. 
+	// The current MPB state will come from a PressSignalGenerator class that might include subclasses for:
+	// - McuInpPin: For MCU input pins, like the current implementation.
+	// - ExpInpPin: For external inputs, like a I2C GPIO expander, SPI GPIO expander.
+	// - SRGXInpPin: For shift register inputs, like a 74HC165 or similar.
+	// - WiFiInpPin: For WiFi inputs, like a web server or a MQTT client.
+	// - BLEInpPin: For BLE inputs, like a BLE server or a BLE client.
 
-	/*To be 'pressed' the conditions are:
-	1) For NO == true
-		a)  _pulledUp == false ==> digitalRead == HIGH
-		b)  _pulledUp == true ==> digitalRead == LOW
-	2) For NO == false
-		a)  _pulledUp == false ==> digitalRead == LOW
-		b)  _pulledUp == true ==> digitalRead == HIGH
-	*/
+
+	// To be 'pressed' the conditions are:
+	// 1) For NO == true
+	// 	a)  _pulledUp == false ==> digitalRead == HIGH
+	// 	b)  _pulledUp == true ==> digitalRead == LOW
+	// 2) For NO == false
+	// 	a)  _pulledUp == false ==> digitalRead == LOW
+	// 	b)  _pulledUp == true ==> digitalRead == HIGH
+	
 	bool result {false};
 	bool tmpPinLvl {digitalRead(_mpbttnPin)};
     
@@ -861,7 +885,14 @@ bool DbncdMPBttn::updIsPressed(){	//FFDR - Refactor to a Strategy Pattern design
 	_isPressed = result;
 
 	return _isPressed;
+}*/
+
+bool DbncdMPBttn::updIsPressed(){
+	_isPressed = _signalSource->updIsPressed();
+
+	return _isPressed;
 }
+
 
 bool DbncdMPBttn::updValidPressesStatus(){
 	if(_isPressed){

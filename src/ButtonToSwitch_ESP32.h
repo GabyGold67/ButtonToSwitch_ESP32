@@ -53,6 +53,7 @@
 
 #include <Arduino.h>
 #include <stdint.h>
+#include <./helperClasses/BTSPatterns.h>
 
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
@@ -181,10 +182,12 @@ protected:
 	void _turnOff();
 	void _turnOn();
 	virtual void updFdaState();
-	bool updIsPressed();	//FFDR Refactor to a Strategy Pattern design to accomodate different signal sources
+	bool updIsPressed();
 	virtual bool updValidPressesStatus();
 	const bool getOutputsChngTskTrggr() const;
 	// void resetOutputsChngTskTrggr();
+
+	PressSignalSource* _signalSource{nullptr};	// Base (interface strategy) pointer to the input signal source (concrete strategy) to calculate the _isPressed value.
 
 public:    
 	/** 
@@ -205,6 +208,9 @@ public:
 	 * @note The Arduino development environment has defined a constant to indicate a **non connected to a GPIO pin** identified as **GPIO_NUM_NC**.  
 	 */
 	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
+
+	DbncdMPBttn(MethodsSetters* setMthdPrcss, const unsigned long int &dbncTimeOrigSett = 0);
+
 	 /**
      * @brief Copy constructor
 	  * 
@@ -683,7 +689,7 @@ protected:
 	virtual void stOffVPP_Out(){};
 	virtual void stOffVURP_Out(){};
 	virtual void stOnNVRP_Do(){};
-	virtual void updFdaState();
+	virtual void updFdaState() override;
 	virtual void updValidUnlatchStatus() = 0;
 public:
 	/**
@@ -802,7 +808,7 @@ public:
 class TgglLtchMPBttn: public LtchMPBttn{
 protected:
 	virtual void stOffNVURP_Do();
-	virtual void updValidUnlatchStatus();
+	virtual void updValidUnlatchStatus() override;
 public:
 	/**
 	 * @brief Default constructor
@@ -846,7 +852,7 @@ protected:
 
 	virtual void stOffNotVPP_Out();
 	virtual void stOffVPP_Out();
-	virtual void updValidUnlatchStatus();
+	virtual void updValidUnlatchStatus() override;
 
 public:
 	/**
@@ -1254,7 +1260,7 @@ protected:
     bool _xtrnUnltchPRlsCcl {false};
 
  	virtual void stOffNVURP_Do();
- 	virtual void updValidUnlatchStatus();
+ 	virtual void updValidUnlatchStatus() override;
 public:
 	/**
 	 * @brief Default constructor
@@ -1359,9 +1365,9 @@ protected:
 	virtual void stOnStrtScndMod_In(){};
 	virtual void _turnOffScndry();
 	virtual void _turnOnScndry();
-	virtual void updFdaState();
-	virtual bool updValidPressesStatus();
-   virtual void updValidUnlatchStatus();
+	virtual void updFdaState() override;
+	virtual bool updValidPressesStatus() override;
+   virtual void updValidUnlatchStatus() override;
 
 public:
 	/**
@@ -2233,7 +2239,7 @@ private:
 	virtual void stOffVPP_Do(){};	// This provides a setting point for the voiding mechanism to be started
 	void _turnOffVdd();
 	void _turnOnVdd();
-	virtual void updFdaState();
+	virtual void updFdaState() override;
 	virtual bool updVoidStatus() = 0;
 	
 public:
