@@ -131,7 +131,7 @@ protected:
 	};
 	const unsigned long int _stdMinDbncTime {_HwMinDbncTime};
 
-	int8_t _mpbttnPin{};
+	int8_t _mpbttnPin{_InvalidPinNum};	//FFDR Important implementation change, the constructor for a mpb with MCUPin signal will change this value, if it persists the signal source is an alternative to that
 	bool _pulledUp{};
 	bool _typeNO{};
 	unsigned long int _dbncTimeOrigSett{};
