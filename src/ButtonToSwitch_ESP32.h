@@ -53,7 +53,6 @@
 
 #include <Arduino.h>
 #include <stdint.h>
-#include <./helperClasses/BTSPatterns.h>
 
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
@@ -101,6 +100,8 @@ typedef  fncPtrType (*ptrToTrnFnc)();
  The resulting **fncVdPtrPrmPtrType** type then defines a pointer to a function of the described properties and signature*/
 typedef void (*fncVdPtrPrmPtrType)(void*);
 typedef fncVdPtrPrmPtrType (*ptrToTrnFncVdPtr)(void*);
+
+class PressSignalSource;
 
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
@@ -185,7 +186,6 @@ protected:
 	bool updIsPressed();
 	virtual bool updValidPressesStatus();
 	const bool getOutputsChngTskTrggr() const;
-	// void resetOutputsChngTskTrggr();
 
 	PressSignalSource* _signalSource{nullptr};	// Base (interface strategy) pointer to the input signal source (concrete strategy) to calculate the _isPressed value.
 
@@ -208,9 +208,6 @@ public:
 	 * @note The Arduino development environment has defined a constant to indicate a **non connected to a GPIO pin** identified as **GPIO_NUM_NC**.  
 	 */
 	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
-
-	DbncdMPBttn(MethodsSetters* setMthdPrcss, const unsigned long int &dbncTimeOrigSett = 0);
-
 	 /**
      * @brief Copy constructor
 	  * 
@@ -2523,5 +2520,55 @@ public:
 };
 
 //==========================================================>>
+
+/*
+   Strategy Pattern implementation of the updIsPressed() method of the DbncdMPBttn class
+   Before this implementation the had a single source for detecting pushbuttons as being pressed:
+   - The voltage level of an MCU GPIO pin configured as input, considered through the pushbutton characteristics and physical connection characteristics (NO/NC. Pulled-Up/Down)
+
+   A strategy pattern implementation will be used to enable different sources to consider the pushbutton as being pressed, that would be (not limited to):
+   - Public methods mpbPressed(), mpbReleased() that would update the _isPressed attribute.
+   - GPIO expanders hardware signaling the state of the connected pin through the corresponding communications protocols and throug an adapter pattern, to be ultimately treated in an analog way to the original method.
+*/
+
+/*
+Interface Strategy
+*/
+class PressSignalSource{   // Interface Strategy
+public:
+   PressSignalSource();
+   virtual ~PressSignalSource();
+   virtual bool updIsPressed() = 0;
+};
+
+/*
+Concrete Strategy
+*/
+class McuInputPin: public PressSignalSource{ // Concrete Strategy
+protected:
+   int8_t _mcuPin{};
+   bool _pulledUp{};
+   bool _typeNO{};
+
+public:
+   McuInputPin(const int8_t &mcuPin, const bool &pulledUp = true, const bool &typeNO = true);
+   virtual ~McuInputPin();
+   bool updIsPressed();
+};
+
+/*
+Concrete Strategy
+*/
+class MethodsSetters: public PressSignalSource{
+private:
+   bool _vIsPressed{false};
+
+public:
+   MethodsSetters();
+   virtual ~MethodsSetters();
+   void vPress();
+   void vRelease();
+   bool updIsPressed();
+};
 
 #endif	/*_BUTTONTOSWITCH_ESP32_H_*/
