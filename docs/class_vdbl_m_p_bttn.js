@@ -2,7 +2,7 @@ var class_vdbl_m_p_bttn =
 [
     [ "VdblMPBttn", "class_vdbl_m_p_bttn.html#a9a66706295d3de374cba43fdf82ec88d", null ],
     [ "VdblMPBttn", "class_vdbl_m_p_bttn.html#a73c4a6007b5ef15752d264bf0a317a03", null ],
-    [ "~VdblMPBttn", "class_vdbl_m_p_bttn.html#a99c75dd8225c791015dcdbc8b1c9a07e", null ],
+    [ "~VdblMPBttn", "class_vdbl_m_p_bttn.html#adfbd7364328692a5b69891d83ba254cf", null ],
     [ "clrStatus", "class_vdbl_m_p_bttn.html#a7ea82534da6a8f39d9715a3126387d30", null ],
     [ "getFnWhnTrnOffVdd", "class_vdbl_m_p_bttn.html#a9d2d6568745db4c67e326af0ef93e531", null ],
     [ "getFnWhnTrnOnVdd", "class_vdbl_m_p_bttn.html#a604c2ef47f632dac7a0310b57e102433", null ],

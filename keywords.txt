@@ -27,6 +27,7 @@ clrStatus   KEYWORD2
 disable  KEYWORD2
 enable   KEYWORD2
 end KEYWORD2
+getBtsSerialNum   KEYWORD2
 getCurDbncTime  KEYWORD2
 getFnWhnTrnOff KEYWORD2
 getFnWhnTrnOn  KEYWORD2
@@ -43,7 +44,6 @@ getOutputsChange  KEYWORD2
 getStrtDelay   KEYWORD2
 getTaskToNotify   KEYWORD2
 getTaskWhileOn KEYWORD2
-init    KEYWORD2
 otptsSttsUnpkg KEYWORD2
 pause   KEYWORD2
 resetDbncTime   KEYWORD2

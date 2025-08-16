@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="Complex_Switch_Sq_Sm_Color_In.jpg"/></td>
   <td id="projectalign">
-   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v4.6.1</span>
+   <div id="projectname">ButtonToSwitch Library for ESP32 (Arduino)<span id="projectnumber">&#160;v5.0.0</span>
    </div>
    <div id="projectbrief">A library that provides elaborated switch mechanism behavior simulation for digital signals inputs</div>
   </td>
@@ -98,16 +98,21 @@ $(function(){initNavTree('_button_to_switch___e_s_p32_8h.html','',''); });
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;Arduino.h&gt;</code><br />
 <code>#include &lt;stdint.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="_prss_sgnl_src__esp32_8h_source.html">./IntrfcsImplmntd/PrssSgnlSrc_esp32.h</a>&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for ButtonToSwitch_ESP32.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="_button_to_switch___e_s_p32_8h__incl.png" border="0" usemap="#a_c_1_2_users_2_dev_padawan_2_documents_2_my_01_projects_2_training_01_projects_2_libs_dev___e_s_p32_2lib_2_button_to_switch___e_s_p32_2src_2_button_to_switch___e_s_p32_8h" loading="lazy" alt=""/></div>
 <map name="a_c_1_2_users_2_dev_padawan_2_documents_2_my_01_projects_2_training_01_projects_2_libs_dev___e_s_p32_2lib_2_button_to_switch___e_s_p32_2src_2_button_to_switch___e_s_p32_8h" id="a_c_1_2_users_2_dev_padawan_2_documents_2_my_01_projects_2_training_01_projects_2_libs_dev___e_s_p32_2lib_2_button_to_switch___e_s_p32_2src_2_button_to_switch___e_s_p32_8h">
 <area shape="rect" title=": Header file for the ButtonToSwitch_ESP32 library classes" alt="" coords="5,5,252,96"/>
-<area shape="rect" title=" " alt="" coords="44,144,120,171"/>
-<area shape="poly" title=" " alt="" coords="111,97,96,131,91,129,106,95"/>
-<area shape="rect" title=" " alt="" coords="144,144,209,171"/>
-<area shape="poly" title=" " alt="" coords="151,95,167,129,162,131,146,97"/>
+<area shape="rect" title=" " alt="" coords="34,235,111,261"/>
+<area shape="poly" title=" " alt="" coords="65,98,45,120,30,145,25,165,30,186,39,205,51,222,47,225,34,207,25,188,19,165,25,143,41,117,61,95"/>
+<area shape="rect" title=" " alt="" coords="151,235,215,261"/>
+<area shape="poly" title=" " alt="" coords="196,95,216,117,232,143,238,165,232,188,222,208,209,225,205,222,218,205,227,186,232,165,227,145,212,120,192,98"/>
+<area shape="rect" href="_prss_sgnl_src__esp32_8h.html" title=": Header file for the ButtonToSwitch_ESP32 library&#39;s PressSignalSource interface implementation class..." alt="" coords="40,144,217,187"/>
+<area shape="poly" title=" " alt="" coords="131,96,131,129,126,129,126,96"/>
+<area shape="poly" title=" " alt="" coords="116,189,92,223,88,220,112,186"/>
+<area shape="poly" title=" " alt="" coords="145,186,168,220,164,223,140,189"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -153,11 +158,6 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Models a Time Voidable DD-MPB, a.k.a. Anti-tampering switch (<b>TVDD-MPB</b>)  <a href="class_tm_vdbl_m_p_bttn.html#details">More...</a><br /></td></tr>
 <tr class="memitem:SnglSrvcVdblMPBttn" id="r_SnglSrvcVdblMPBttn"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sngl_srvc_vdbl_m_p_bttn.html">SnglSrvcVdblMPBttn</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Models a Single Service Voidable DD-MPB a.k.a. Trigger switch (<b>SSVDD-MPB</b>)  <a href="class_sngl_srvc_vdbl_m_p_bttn.html#details">More...</a><br /></td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a3d6625d24dab5d24741899eb3bd6b816" id="r_a3d6625d24dab5d24741899eb3bd6b816"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_mpb_otpts__t.html">MpbOtpts_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d6625d24dab5d24741899eb3bd6b816">otptsSttsUnpkg</a> (uint32_t pkgOtpts)</td></tr>
-<tr class="memdesc:a3d6625d24dab5d24741899eb3bd6b816"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unpackages a 32-bit value into a <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> object status.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>: Header file for the ButtonToSwitch_ESP32 library classes </p>
@@ -170,9 +170,9 @@ Functions</h2></td></tr>
  mail <a href="#" onclick="location.href='mai'+'lto:'+'gdg'+'ol'+'dma'+'n6'+'7@h'+'ot'+'mai'+'l.'+'com'; return false;">gdgol<span class="obfuscator">.nosp@m.</span>dman<span class="obfuscator">.nosp@m.</span>67@ho<span class="obfuscator">.nosp@m.</span>tmai<span class="obfuscator">.nosp@m.</span>l.com</a> <br  />
  Github <a href="https://github.com/GabyGold67">https://github.com/GabyGold67</a> <br  />
 </dd></dl>
-<dl class="section version"><dt>Version</dt><dd>v4.6.1</dd></dl>
+<dl class="section version"><dt>Version</dt><dd>v5.0.0</dd></dl>
 <dl class="section date"><dt>Date</dt><dd>First release: 06/11/2023 <br  />
- Last update: 30/07/2025 17:30 (GMT+0200) DST <br  />
+ Last update: 16/08/2025 09:10 (GMT+0200) DST <br  />
 </dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2025 GPL-3.0 license <br  />
 </dd></dl>
@@ -184,35 +184,7 @@ The use of this library falls in the category described by The Alan Parsons Proj
  Games people play, you take it or you leave it <br  />
  Things that they say aren't alright <br  />
  If I promised you the moon and the stars, would you believe it? </dd></dl>
-</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
-<a id="a3d6625d24dab5d24741899eb3bd6b816" name="a3d6625d24dab5d24741899eb3bd6b816"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d6625d24dab5d24741899eb3bd6b816">&#9670;&#160;</a></span>otptsSttsUnpkg()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="struct_mpb_otpts__t.html">MpbOtpts_t</a> otptsSttsUnpkg </td>
-          <td>(</td>
-          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>pkgOtpts</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Unpackages a 32-bit value into a <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> object status. </p>
-<p>The 32-bit encoded and packaged is used for inter-task object status comunication, passed as a "notification value" in a xTaskNotify() execution. For each bit value attribute flag represented see <a class="el" href="class_dbncd_m_p_bttn.html#ad89b27d055137f6b27123050fd708aef" title="Returns the relevant attribute flags values for the object state encoded as a 32 bits value,...">DbncdMPBttn::getOtptsSttsPkgd()</a></p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">pkgOtpts</td><td>A 32-bit value holding a <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> status encoded </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="struct_mpb_otpts__t.html" title="Type to hold the complete set of output attribute flags from any DbncdMPBttn class and subclasses obj...">MpbOtpts_t</a> type element containing the information decoded </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>

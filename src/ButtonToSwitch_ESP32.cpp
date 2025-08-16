@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.6.1
+  * @version v5.0.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   30/07/2025 17:30 (GMT+0200) DST  
+  *       Last update:   16/08/2025 09:10 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -49,6 +49,7 @@
  #include "ButtonToSwitch_ESP32.h"
 //===========================>> BEGIN General use Global variables
 static BaseType_t errorFlag {pdFALSE};
+uint8_t DbncdMPBttn::_btsLastSerialNum = 0;
 //===========================>> END General use Global variables
 
 DbncdMPBttn::DbncdMPBttn()
@@ -61,27 +62,28 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 {
 
 	if(mpbttnPin != _InvalidPinNum){
-
 		_signalSource = new McuInputPin(_mpbttnPin, _pulledUp, _typeNO);	// Strategy setter to compute _isPressed based on the signal received in an MCU GPIO input pin
-
-		String mpbPinNumStr {"00" + String(_mpbttnPin)};
-		mpbPinNumStr = mpbPinNumStr.substring(mpbPinNumStr.length() - 2, 2);
-		_mpbPollTmrName = "PollMpbPin" + mpbPinNumStr + "_tmr";
+		++_btsLastSerialNum;
+		_btsSerialNum = _btsLastSerialNum;
+		String _btsSerialNumStr {"000" + String(_btsSerialNum)};
+		_btsSerialNumStr = _btsSerialNumStr.substring(_btsSerialNumStr.length() - 3, 3);
+		_mpbPollTmrName = "PollBtsNum" + _btsSerialNumStr + "_tmr";
 
 		if(_dbncTimeOrigSett < _stdMinDbncTime) // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
 			_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 		_dbncTimeTempSett = _dbncTimeOrigSett;
-	}
-	else{
-		_pulledUp = true;
-		_typeNO = true;
-		_dbncTimeOrigSett = 0;
-	}
-	
 	_mpbInstnc = this;
 	_isOnMutex = xSemaphoreCreateMutex();
 	_strtDelayMutex = xSemaphoreCreateMutex();
 	_updFdaMutex = xSemaphoreCreateMutex();
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		// _pulledUp = true;
+		// _typeNO = true;
+		// _dbncTimeOrigSett = 0;
+	}
+	
 }
 
 DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn& other)
@@ -213,6 +215,11 @@ bool DbncdMPBttn::end(){
    return result;
 }
 
+uint8_t DbncdMPBttn::getBtsSerialNum() const{
+	
+   return _btsSerialNum;
+}
+
 const unsigned long int DbncdMPBttn::getCurDbncTime() const{
 
 	return _dbncTimeTempSett;
@@ -303,7 +310,7 @@ const TaskHandle_t DbncdMPBttn::getTaskWhileOn(){
 	return _taskWhileOnHndl;
 }
 
-bool DbncdMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett){
+/*bool DbncdMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett){
 	bool result {false};
 
 	if(_mpbttnPin == _InvalidPinNum){
@@ -331,7 +338,7 @@ bool DbncdMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool
 	}
     
 	return result;
-}
+}*/
 
 void DbncdMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	DbncdMPBttn* mpbObj = (DbncdMPBttn*)pvTimerGetTimerID(mpbTmrCbArg);
@@ -880,7 +887,7 @@ DbncdDlydMPBttn::~DbncdDlydMPBttn()
 	}
 }
 
-bool DbncdDlydMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
+/*bool DbncdDlydMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
 	bool result {false};
 
 	result = DbncdMPBttn::init(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett);
@@ -3945,101 +3952,6 @@ bool SnglSrvcVdblMPBttn::updVoidStatus(){
 
 	return _validVoidPend;
 }
-
-//=========================================================================> Class methods delimiter
-
-PressSignalSource::PressSignalSource()
-{
-}
-
-PressSignalSource::~PressSignalSource()
-{
-}
-
-//=========================================================================> Class methods delimiter
-
-McuInputPin::McuInputPin(const int8_t &mcuPin, const bool &pulledUp, const bool &typeNO)
-:_mcuPin{mcuPin}, _pulledUp{pulledUp}, _typeNO{typeNO}
-{   
-}
-
-McuInputPin::~McuInputPin()
-{   
-}
-
-bool McuInputPin::updIsPressed()
-{
-
-	/*To be 'pressed' the conditions are:
-	1) For NO == true
-		a)  _pulledUp == false ==> digitalRead == HIGH
-		b)  _pulledUp == true ==> digitalRead == LOW
-	2) For NO == false
-		a)  _pulledUp == false ==> digitalRead == LOW
-		b)  _pulledUp == true ==> digitalRead == HIGH
-	*/
-	bool result {false};
-	bool tmpPinLvl {digitalRead(_mcuPin)};
-    
-	if (_typeNO == true){
-		//For NO MPBs
-		if (_pulledUp == false){
-			if (tmpPinLvl == HIGH)
-				result = true;
-		}
-		else{
-			if (tmpPinLvl == LOW)
-				result = true;
-		}
-	}
-    else{
-		//For NC MPBs
-		if (_pulledUp == false){
-			if (tmpPinLvl == LOW)
-				result = true;
-		}
-		else{
-			if (tmpPinLvl == HIGH)
-				result = true;
-		}
-	}    
-	// _isPressed = result;
-	// return _isPressed;
-
-   return result;
-}
-
-//=========================================================================> Class methods delimiter
-
-MethodsSetters::MethodsSetters()
-{
-}
-
-MethodsSetters::~MethodsSetters()
-{
-}
-
-void MethodsSetters::vPress()
-{
-	_vIsPressed = true;
-	
-	return;
-}
-
-void MethodsSetters::vRelease()
-{
-	_vIsPressed = false;
-
-	return;
-}
-
-bool MethodsSetters::updIsPressed()
-{
-	
-	return _vIsPressed;
-}
-
-//=========================================================================> Class methods delimiter
 
 /**
  * @brief Unpackages a 32-bit value into a DbncdMPBttn object status

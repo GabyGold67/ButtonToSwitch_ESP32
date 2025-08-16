@@ -20,10 +20,10 @@
   * mail <gdgoldman67@hotmail.com>  
   * Github <https://github.com/GabyGold67>  
   * 
-  * @version v4.6.1
+  * @version v5.0.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   30/07/2025 17:30 (GMT+0200) DST  
+  *       Last update:   16/08/2025 09:10 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2025  GPL-3.0 license  
   *******************************************************************************
@@ -53,6 +53,7 @@
 
 #include <Arduino.h>
 #include <stdint.h>
+#include <./IntrfcsImplmntd/PrssSgnlSrc_esp32.h>
 
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
@@ -101,8 +102,6 @@ typedef  fncPtrType (*ptrToTrnFnc)();
 typedef void (*fncVdPtrPrmPtrType)(void*);
 typedef fncVdPtrPrmPtrType (*ptrToTrnFncVdPtr)(void*);
 
-class PressSignalSource;
-
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 //===========================>> END General use function prototypes
@@ -132,12 +131,14 @@ protected:
 	};
 	const unsigned long int _stdMinDbncTime {_HwMinDbncTime};
 
-	int8_t _mpbttnPin{_InvalidPinNum};	//FFDR Important implementation change, the constructor for a mpb with MCUPin signal will change this value, if it persists the signal source is an alternative to that
-	bool _pulledUp{};
-	bool _typeNO{};
-	unsigned long int _dbncTimeOrigSett{};
+	int8_t _mpbttnPin{_InvalidPinNum};	// Important v5.0.0 implementation change, the constructor for a mpb with MCUPin signal will change this value, if it persists the signal source is an alternative to an MCU GPIO pin, like a GPIO expander or other.
+	bool _pulledUp{true};
+	bool _typeNO{true};
+	unsigned long int _dbncTimeOrigSett{0};
 
 	bool _beginDisabled{false};
+	static uint8_t _btsLastSerialNum;
+	uint8_t _btsSerialNum{0};
 	unsigned long int _dbncRlsTimerStrt{0};
 	unsigned long int _dbncRlsTimeTempSett{0};
 	unsigned long int _dbncTimerStrt{0};
@@ -187,7 +188,7 @@ protected:
 	virtual bool updValidPressesStatus();
 	const bool getOutputsChngTskTrggr() const;
 
-	PressSignalSource* _signalSource{nullptr};	// Base (interface strategy) pointer to the input signal source (concrete strategy) to calculate the _isPressed value.
+	PressSignalSource* _signalSource{nullptr};	// Base class pointer (strategy pattern interface class) to the input signal source (concrete strategy) to calculate the _isPressed attribute flag value.
 
 public:    
 	/** 
@@ -272,6 +273,12 @@ public:
 	 * @retval false: the object detachment and/or entry removal was rejected by the O.S..
 	 */
 	bool end();    
+	/**
+	 * @brief Get the object's Instantiation Serial Number
+	 * 
+	 * @return uint8_t _btsSerialNum value
+	 */
+	uint8_t getBtsSerialNum() const;
 	/**
 	 * @brief Returns the current debounce period time set for the object.
 	 *
@@ -428,7 +435,7 @@ public:
 	 *
 	 * All the parameters correspond to the non-default constructor of the class, DbncdMPBttn(const int8_t, const bool, const bool, const unsigned long int)
 	 */
-	bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
+	// bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
 	/**
 	 * @brief Pauses the software timer updating the computation of the object's internal flags value.
 	 *
@@ -624,7 +631,7 @@ public:
      *
      * @note For the rest of the parameters see DbncdMPBttn::init(GPIO_TypeDef*, const uint16_t, const bool, const bool, const unsigned long int)
      */
-	bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	// bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
     /**
      * @brief Sets a new value to the "Start Delay" **strtDelay** attribute
      *
@@ -2520,55 +2527,5 @@ public:
 };
 
 //==========================================================>>
-
-/*
-   Strategy Pattern implementation of the updIsPressed() method of the DbncdMPBttn class
-   Before this implementation the had a single source for detecting pushbuttons as being pressed:
-   - The voltage level of an MCU GPIO pin configured as input, considered through the pushbutton characteristics and physical connection characteristics (NO/NC. Pulled-Up/Down)
-
-   A strategy pattern implementation will be used to enable different sources to consider the pushbutton as being pressed, that would be (not limited to):
-   - Public methods mpbPressed(), mpbReleased() that would update the _isPressed attribute.
-   - GPIO expanders hardware signaling the state of the connected pin through the corresponding communications protocols and throug an adapter pattern, to be ultimately treated in an analog way to the original method.
-*/
-
-/*
-Interface Strategy
-*/
-class PressSignalSource{   // Interface Strategy
-public:
-   PressSignalSource();
-   virtual ~PressSignalSource();
-   virtual bool updIsPressed() = 0;
-};
-
-/*
-Concrete Strategy
-*/
-class McuInputPin: public PressSignalSource{ // Concrete Strategy
-protected:
-   int8_t _mcuPin{};
-   bool _pulledUp{};
-   bool _typeNO{};
-
-public:
-   McuInputPin(const int8_t &mcuPin, const bool &pulledUp = true, const bool &typeNO = true);
-   virtual ~McuInputPin();
-   bool updIsPressed();
-};
-
-/*
-Concrete Strategy
-*/
-class MethodsSetters: public PressSignalSource{
-private:
-   bool _vIsPressed{false};
-
-public:
-   MethodsSetters();
-   virtual ~MethodsSetters();
-   void vPress();
-   void vRelease();
-   bool updIsPressed();
-};
 
 #endif	/*_BUTTONTOSWITCH_ESP32_H_*/

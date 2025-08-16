@@ -3,7 +3,7 @@ var class_dbl_actn_ltch_m_p_bttn =
     [ "DblActnLtchMPBttn", "class_dbl_actn_ltch_m_p_bttn.html#a838f268bf9d727e7eb074c7bbb1b5764", null ],
     [ "DblActnLtchMPBttn", "class_dbl_actn_ltch_m_p_bttn.html#ac0ac5901dd57d81bd148bf6da1845bad", null ],
     [ "~DblActnLtchMPBttn", "class_dbl_actn_ltch_m_p_bttn.html#aeac43f6938213f2de9cb4060b1d47c00", null ],
-    [ "begin", "class_dbl_actn_ltch_m_p_bttn.html#abbe944688e0b7402905d2c88d5d670de", null ],
+    [ "begin", "class_dbl_actn_ltch_m_p_bttn.html#a93c4f27611609012ec247cd0dee22240", null ],
     [ "clrStatus", "class_dbl_actn_ltch_m_p_bttn.html#a7454fc41a95d7bb028831a66781dffb3", null ],
     [ "getFnWhnTrnOffScndry", "class_dbl_actn_ltch_m_p_bttn.html#ad95d66ab25ff94f25c1924c3ca00fb8c", null ],
     [ "getFnWhnTrnOnScndry", "class_dbl_actn_ltch_m_p_bttn.html#a5de9cbf2ec48cb449018d2d589b5907f", null ],

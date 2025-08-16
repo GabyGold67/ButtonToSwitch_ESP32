@@ -68,7 +68,7 @@ var searchData=
   ['setswpdironend_65',['setSwpDirOnEnd',['../class_sldr_d_a_ltch_m_p_bttn.html#af946867260eb4c8c5431a2c0cd9f4a91',1,'SldrDALtchMPBttn']]],
   ['setswpdironprss_66',['setSwpDirOnPrss',['../class_sldr_d_a_ltch_m_p_bttn.html#ad4c83c3426708f3825c68d01ca2b3f0c',1,'SldrDALtchMPBttn']]],
   ['settasktonotify_67',['setTaskToNotify',['../class_dbncd_m_p_bttn.html#ab5d3ecd472c90f91c36eed3ce11cce7e',1,'DbncdMPBttn']]],
-  ['settaskwhileon_68',['setTaskWhileOn',['../class_dbncd_m_p_bttn.html#a539d25d84a2e6c772000cff0bd0d279f',1,'DbncdMPBttn::setTaskWhileOn()'],['../class_sngl_srvc_vdbl_m_p_bttn.html#a01e08b07893395fece2cd192dee185ef',1,'SnglSrvcVdblMPBttn::setTaskWhileOn()']]],
+  ['settaskwhileon_68',['setTaskWhileOn',['../class_dbncd_m_p_bttn.html#a539d25d84a2e6c772000cff0bd0d279f',1,'DbncdMPBttn::setTaskWhileOn()'],['../class_sngl_srvc_vdbl_m_p_bttn.html#a24b8d5b3d12cd903d6046bed76034db8',1,'SnglSrvcVdblMPBttn::setTaskWhileOn()']]],
   ['settaskwhileonscndry_69',['setTaskWhileOnScndry',['../class_dbl_actn_ltch_m_p_bttn.html#a8804e155d0d38a9ab6ae61acc2c10a87',1,'DblActnLtchMPBttn']]],
   ['settmerrstbl_70',['setTmerRstbl',['../class_tm_ltch_m_p_bttn.html#a60d303fd982536207a339bcff2569f4f',1,'TmLtchMPBttn']]],
   ['settrnoffasap_71',['setTrnOffASAP',['../class_ltch_m_p_bttn.html#a6308ffa1b2c39372b09c0f4829648a59',1,'LtchMPBttn']]],
