@@ -8,7 +8,7 @@
   * to evaluate the _isPressed attribute flag.  
   * From the simplest project using the MCU GPIO pins as signal source, the
   * project development might need to implement different sources for the signal,
-  * as MCU GPIO pins become used by other resources (GPIO expanders might be use as
+  * as MCU GPIO pins become used by other resources: (GPIO expanders might be used as
   * an alternative input pins source), as the the signal source
   * might be too far for a MCU GPIO pin signal to get to the right value due
   * to voltage drop or interfearence (a cabled or radio signal technology input
@@ -67,9 +67,14 @@
    - GPIO expanders hardware signaling the state of the connected pin through the corresponding communications protocols and throug an adapter pattern, to be ultimately treated in an analog way to the original method.
 */
 
-/*
-Interface Strategy
-*/
+/**
+ * @brief Strategy Pattern interface class
+ * 
+ * @details This interface defines the methods to be implemented by any concrete strategy
+ * to provide the signal source for the DbncdMPBttn class objects to evaluate the _isPressed attribute.
+ * 
+ * @class PressSignalSource
+ */
 class PressSignalSource{   // Interface Strategy
 public:
    PressSignalSource();
@@ -77,9 +82,14 @@ public:
    virtual bool updIsPressed() = 0;
 };
 
-/*
-Concrete Strategy
-*/
+/**
+ * @brief Concrete Strategy class for MCU GPIO pin input as signal source
+ * 
+ * @details This class implements the PressSignalSource interface to provide the signal source for
+ * the DbncdMPBttn class objects using an MCU GPIO pin as the input signal source.
+ * 
+ * @class McuInputPin
+ */
 class McuInputPin: public PressSignalSource{ // Concrete Strategy
 protected:
    int8_t _mcuPin{};

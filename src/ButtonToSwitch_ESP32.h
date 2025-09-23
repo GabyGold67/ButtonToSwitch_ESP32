@@ -53,7 +53,7 @@
 
 #include <Arduino.h>
 #include <stdint.h>
-#include <./IntrfcsImplmntd/PrssSgnlSrc_esp32.h>
+#include <./IntrfcsImplmntd/PrssSgnlSrc_ESP32.h>
 
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
