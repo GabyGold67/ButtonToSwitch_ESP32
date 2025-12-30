@@ -102,17 +102,27 @@ public:
    bool updIsPressed();
 };
 
-/*
-Concrete Strategy
-*/
-class MethodsSetters: public PressSignalSource{
+/**
+ * @brief Concrete Strategy class for public method "virtual pressing" of a MPButton
+ * 
+ * @details This class implements the PressSignalSource interface to provide the signal source for
+ * the DbncdMPBttn class objects using methods to generate the press and release events.
+ * This strategy is useful as a generic path to generate the needed signals when no physical
+ * connection is present:
+ * - Wireless implementations.
+ * - Wired interfaces connections (SPI, UART, etc)
+ * 
+ * @class McuInputPin
+ */
+class MethodInputPin: public PressSignalSource{
 private:
-   bool _vIsPressed{false};
+   bool _isVrtlPressed{false};
 
 public:
-   MethodsSetters();
-   virtual ~MethodsSetters();
-   void vPress();
+   MethodInputPin();
+   virtual ~MethodInputPin();
+
+   void vPress(const bool &newVal = true);
    void vRelease();
    bool updIsPressed();
 };

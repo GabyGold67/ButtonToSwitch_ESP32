@@ -310,36 +310,6 @@ const TaskHandle_t DbncdMPBttn::getTaskWhileOn(){
 	return _taskWhileOnHndl;
 }
 
-/*bool DbncdMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett){
-	bool result {false};
-
-	if(_mpbttnPin == _InvalidPinNum){
-		if (_mpbPollTmrName == ""){
-			_mpbttnPin = mpbttnPin;
-			_pulledUp = pulledUp;
-			_typeNO = typeNO;
-			_dbncTimeOrigSett = dbncTimeOrigSett;
-
-			String mpbPinNumStr {"00" + String(_mpbttnPin)};
-			mpbPinNumStr = mpbPinNumStr.substring(mpbPinNumStr.length() - 2, 2);
-			_mpbPollTmrName = "PollMpbPin" + mpbPinNumStr + "_tmr";
-
-			if(_dbncTimeOrigSett < _stdMinDbncTime) // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
-				_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
-			_dbncTimeTempSett = _dbncTimeOrigSett;
-			// pinMode(mpbttnPin, (pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-			result = true;
-		}
-		else{
-			_pulledUp = true;
-			_typeNO = true;
-			_dbncTimeOrigSett = 0;
-		}
-	}
-    
-	return result;
-}*/
-
 void DbncdMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	DbncdMPBttn* mpbObj = (DbncdMPBttn*)pvTimerGetTimerID(mpbTmrCbArg);
 	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
@@ -885,16 +855,6 @@ DbncdDlydMPBttn::~DbncdDlydMPBttn()
 		vSemaphoreDelete(_strtDelayMutex);
 		_strtDelayMutex = NULL;
 	}
-}
-
-/*bool DbncdDlydMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
-	bool result {false};
-
-	result = DbncdMPBttn::init(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett);
-	if (result)
-		setStrtDelay(strtDelay);
-
-	return result;
 }
 
 void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
@@ -3330,9 +3290,9 @@ fncPtrType VdblMPBttn::getFnWhnTrnOnVdd(){
 	return _fnWhnTrnOnVdd;
 }
 
-bool VdblMPBttn::getFrcOtptLvlWhnVdd(){
+bool VdblMPBttn::getFrcdOtptLvlWhnVdd(){
 
-	return _frcOtptLvlWhnVdd;
+	return _frcdOtptLvlWhnVdd;
 }
 
 fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOffVdd(){
@@ -3360,9 +3320,9 @@ const bool VdblMPBttn::getIsVoided() const{
 	return _isVoided;
 }
 
-bool VdblMPBttn::getStOnWhnOtpFrcd(){
+bool VdblMPBttn::getStOnWhnVddOtpLvlFrcd(){
 
-	return _stOnWhnOtptFrcd;
+	return _stOnWhnVddOtptLvlFrcd;
 }
 
 void VdblMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
@@ -3430,12 +3390,12 @@ void VdblMPBttn::setFnWhnTrnOnVddPtr(void(*newFnWhnTrnOn)()){
 	return;
 }
 
-void VdblMPBttn::setFrcdOtptWhnVdd(const bool &newVal){
+void VdblMPBttn::setFrcdOtptLvlWhnVdd(const bool &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if(_frcOtptLvlWhnVdd != newVal)
-		_frcOtptLvlWhnVdd = newVal;
+	if(_frcdOtptLvlWhnVdd != newVal)
+		_frcdOtptLvlWhnVdd = newVal;
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -3501,12 +3461,12 @@ bool VdblMPBttn::setIsVoided(){
 	return setVoided(true);
 }
 
-void VdblMPBttn::setStOnWhnOtpFrcd(const bool &newVal){
+void VdblMPBttn::setStOnWhnVddOtpFrcd(const bool &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	taskENTER_CRITICAL(&mux);
-	if(_stOnWhnOtptFrcd != newVal)
-		_stOnWhnOtptFrcd = newVal;
+	if(_stOnWhnVddOtptLvlFrcd != newVal)
+		_stOnWhnVddOtptLvlFrcd = newVal;
 	taskEXIT_CRITICAL(&mux);
 
 	return;
@@ -3893,8 +3853,8 @@ SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const int8_t &mpbttnPin, const bool &pull
 :VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, false)
 {
 	_isOnDisabled = false;
-   _frcOtptLvlWhnVdd = true;	// This attribute is subclass inherent characteristic, no setter will be provided for it
-   _stOnWhnOtptFrcd = false;	// This attribute is subclass inherent characteristic, no setter will be provided for it
+   _frcdOtptLvlWhnVdd = true;	// This attribute is subclass inherent characteristic, no setter will be provided for it
+   _stOnWhnVddOtptLvlFrcd = false;	// This attribute is subclass inherent characteristic, no setter will be provided for it
 }
 
 SnglSrvcVdblMPBttn::~SnglSrvcVdblMPBttn()

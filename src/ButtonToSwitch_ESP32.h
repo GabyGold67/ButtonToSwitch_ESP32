@@ -171,6 +171,10 @@ protected:
 	volatile bool _validPressPend{false};
 	volatile bool _validReleasePend{false};
 
+	//-------------------------------------
+	bool _frcdOtptLvlWhnDsbld {true};
+	//-------------------------------------
+
 	SemaphoreHandle_t _isOnMutex; // Mutex to protect the _isOn attribute flag value from concurrent access
 	SemaphoreHandle_t _strtDelayMutex; // Mutex to protect the _strtDelay attribute value from concurrent access
 	SemaphoreHandle_t _updFdaMutex; // Mutex to protect the updFdsState state updating automaton from concurrent access
@@ -209,6 +213,9 @@ public:
 	 * @note The Arduino development environment has defined a constant to indicate a **non connected to a GPIO pin** identified as **GPIO_NUM_NC**.  
 	 */
 	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
+
+	DbncdMPBttn(const PressSignalSource* &altSignalSource);
+
 	 /**
      * @brief Copy constructor
 	  * 
@@ -431,12 +438,6 @@ public:
 	 */
 	const TaskHandle_t getTaskWhileOn();
 	/**
-	 * @brief Initializes an object instantiated by the default constructor
-	 *
-	 * All the parameters correspond to the non-default constructor of the class, DbncdMPBttn(const int8_t, const bool, const bool, const unsigned long int)
-	 */
-	// bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
-	/**
 	 * @brief Pauses the software timer updating the computation of the object's internal flags value.
 	 *
 	 * The immediate stop of the timer that keeps the object's state updated implies that the object's state will be kept, whatever that state is it. The same consideration as the end() method applies referring to options to modify the state in which the object will be while in the **Pause state**.
@@ -583,6 +584,12 @@ public:
     * @warning Take special consideration about the implications of the execution **priority** of the task to be executed while the MPB is in **On state** and its relation to the priority of the calling task, as it might affect the normal execution of the application.
 	 */    
 	virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
+
+	//-------------------------------------
+	bool getFrcdOtptLvlWhnDsbld();
+	void setFrcdOtptLvlWhnDsbld(const bool &newVal);
+	//-------------------------------------
+
 };
 
 //==========================================================>>
@@ -623,24 +630,15 @@ public:
 	  * @brief Class destructor
 	  */
 	virtual ~DbncdDlydMPBttn();
-    /**
-     *
-     * @brief see DbncdMPBttn::init(const int8_t, const bool, const bool, const unsigned long int)
-     * 
-     * @param strtDelay Sets the initial value for the **strtDelay** attribute.
-     *
-     * @note For the rest of the parameters see DbncdMPBttn::init(GPIO_TypeDef*, const uint16_t, const bool, const bool, const unsigned long int)
-     */
-	// bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-    /**
-     * @brief Sets a new value to the "Start Delay" **strtDelay** attribute
-     *
-     * @param newStrtDelay New value for the "Start Delay" attribute in milliseconds.
-     *
-     * @note Setting the delay attribute to 0 makes the instantiated object act exactly as a Debounced MPB (D-MPB)
-     * 
-     * @warning: Using very high **strtDelay** values is valid but might make the system seem less responsive, be aware of how it will affect the user experience.
-     */
+	/**
+	 * @brief Sets a new value to the "Start Delay" **strtDelay** attribute
+	 *
+	 * @param newStrtDelay New value for the "Start Delay" attribute in milliseconds.
+	 *
+	 * @note Setting the delay attribute to 0 makes the instantiated object act exactly as a Debounced MPB (D-MPB)
+	 * 
+	 * @warning: Using very high **strtDelay** values is valid but might make the system seem less responsive, be aware of how it will affect the user experience.
+	 */
 	void setStrtDelay(const unsigned long int &newStrtDelay);
 };
 
@@ -2198,8 +2196,8 @@ public:
  */
 class VdblMPBttn: public DbncdDlydMPBttn{
 private:
-   void setFrcdOtptWhnVdd(const bool &newVal);
-   void setStOnWhnOtpFrcd(const bool &newVal);
+   void setFrcdOtptLvlWhnVdd(const bool &newVal);
+   void setStOnWhnVddOtpFrcd(const bool &newVal);
 
 	protected:
 	enum fdaVmpbStts{
@@ -2227,9 +2225,9 @@ private:
 	void* _fnVdPtrPrmWhnTrnOnVddArgPtr{nullptr};	// _fVPPWhnTrnOnVddArgPtr
 	void (*_fnWhnTrnOffVdd)() {nullptr};
 	void (*_fnWhnTrnOnVdd)() {nullptr};
-	bool _frcOtptLvlWhnVdd {true};
+	bool _frcdOtptLvlWhnVdd {true};
 	bool _isVoided{false};
-	bool _stOnWhnOtptFrcd{false};
+	bool _stOnWhnVddOtptLvlFrcd{false};
 	bool _validVoidPend{false};
 	bool _validUnvoidPend{false};
 
@@ -2294,7 +2292,7 @@ public:
     *
      * @note As of this version of the library no VdblMPBttn class or subclasses **make use of the frcOtptLvlWhnVdd attribute**, their inclusion is "New Features Under Development" related to the refactoring of **binary states** to **Non-binary states**.
      */
-    bool getFrcOtptLvlWhnVdd();
+    bool getFrcdOtptLvlWhnVdd();
 	/**
 	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Voided Off State** a.k.a. **Not Voided State**.
 	 * 
@@ -2344,7 +2342,7 @@ public:
      *
      * @note As of this version of the library no VdblMPBttn class or subclasses **make use of the frcOtptLvlWhnVdd attribute**, their inclusion is "New Features Under Development" related to the refactoring of **binary states** to **Non-binary states**.
      */
-	bool getStOnWhnOtpFrcd();
+	bool getStOnWhnVddOtpLvlFrcd();
     /**
  	 * @brief Sets the function that will be called to execute every time the object's **isVoided** attribute flag is **reset**.
  	 *

@@ -115,32 +115,33 @@ bool McuInputPin::updIsPressed()
 
 //=========================================================================> Class methods delimiter
 
-MethodsSetters::MethodsSetters()
+MethodInputPin::MethodInputPin()
 {
 }
 
-MethodsSetters::~MethodsSetters()
+MethodInputPin::~MethodInputPin()
 {
 }
 
-void MethodsSetters::vPress()
+void MethodInputPin::vPress(const bool &newVal)
 {
-	_vIsPressed = true;
+	if(_isVrtlPressed != newVal)
+    _isVrtlPressed = newVal;
 	
 	return;
 }
 
-void MethodsSetters::vRelease()
+void MethodInputPin::vRelease()
 {
-	_vIsPressed = false;
+	_isVrtlPressed = false;
 
 	return;
 }
 
-bool MethodsSetters::updIsPressed()
+bool MethodInputPin::updIsPressed()
 {
 	
-	return _vIsPressed;
+	return _isVrtlPressed;
 }
 
 //=========================================================================> Class methods delimiter
