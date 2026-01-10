@@ -49,6 +49,7 @@
  *******************************************************************************
  */
 #include <./IntrfcsImplmntd/PrssSgnlSrc_ESP32.h>
+#include "PrssSgnlSrc_ESP32.h"
 
  //=========================================================================> Class methods delimiter
 
@@ -146,3 +147,15 @@ bool MethodInputPin::updIsPressed()
 
 //=========================================================================> Class methods delimiter
 
+SRGPIOXpInputPin::SRGPIOXpInputPin()
+{
+}
+
+SRGPIOXpInputPin::~SRGPIOXpInputPin()
+{
+}
+
+bool SRGPIOXpInputPin::updIsPressed()
+{
+   return false;
+}

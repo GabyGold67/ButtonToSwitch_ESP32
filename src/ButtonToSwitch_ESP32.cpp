@@ -72,10 +72,12 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 		if(_dbncTimeOrigSett < _stdMinDbncTime) // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
 			_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 		_dbncTimeTempSett = _dbncTimeOrigSett;
-	_mpbInstnc = this;
-	_isOnMutex = xSemaphoreCreateMutex();
-	_strtDelayMutex = xSemaphoreCreateMutex();
-	_updFdaMutex = xSemaphoreCreateMutex();
+
+		//FFDR Create the signal source object, its pointer and call the next constructor with the object pointer as argument
+	// _mpbInstnc = this;
+	// _isOnMutex = xSemaphoreCreateMutex();
+	// _strtDelayMutex = xSemaphoreCreateMutex();
+	// _updFdaMutex = xSemaphoreCreateMutex();
 	}
 	else{
 		// The object creation failed due to invalid pin number
@@ -84,6 +86,15 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 		// _dbncTimeOrigSett = 0;
 	}
 	
+}
+
+DbncdMPBttn::DbncdMPBttn(PressSignalSource* newSignalSource)
+:_signalSource{newSignalSource}
+{
+	_mpbInstnc = this;
+	_isOnMutex = xSemaphoreCreateMutex();
+	_strtDelayMutex = xSemaphoreCreateMutex();
+	_updFdaMutex = xSemaphoreCreateMutex();
 }
 
 DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn& other)
@@ -253,6 +264,11 @@ fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOn(){
 void* DbncdMPBttn::getFVPPWhnTrnOnArgPtr(){
 
 	return _fnVdPtrPrmWhnTrnOnArgPtr;
+}
+
+bool DbncdMPBttn::getFrcdOtptLvlWhnDsbld(){
+   
+	return _frcdOtptLvlWhnDsbld;
 }
 
 const bool DbncdMPBttn::getIsEnabled() const{
@@ -513,6 +529,26 @@ void DbncdMPBttn::setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr){
 	return;
 }
 
+void DbncdMPBttn::setFrcdOtptLvlWhnDsbld(const bool &newVal){
+	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	taskENTER_CRITICAL(&mux);
+	if(_frcdOtptLvlWhnDsbld != newVal){
+		_frcdOtptLvlWhnDsbld = newVal;
+		if(!_isEnabled && _frcdOtptLvlWhnDsbld){
+			if(_isOn != _isOnDisabled){
+				if(_isOnDisabled)
+					_turnOn();
+				else
+					_turnOff();
+			}
+		}
+	}
+	taskEXIT_CRITICAL(&mux);
+
+	return;
+}
+
 void DbncdMPBttn::_setIsEnabled(const bool &newEnabledValue){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
@@ -749,11 +785,13 @@ void DbncdMPBttn::updFdaState(){
 			case stDisabled:
 				// In: >>---------------------------------->>
 				if(_sttChng){
-					if(_isOn != _isOnDisabled){
-						if(_isOn)
-							_turnOff();
-						else
-							_turnOn();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn != _isOnDisabled){
+							if(_isOn)
+								_turnOff();
+							else
+								_turnOn();
+						}
 					}
 					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 					_isEnabled = false;
@@ -763,8 +801,10 @@ void DbncdMPBttn::updFdaState(){
 				}	// Execute this code only ONCE, when entering this state
 				// Do: >>---------------------------------->>
 				if(_validEnablePend){
-					if(_isOn)
-						_turnOff();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn)
+							_turnOff();
+					}
 					_isEnabled = true;
 					_validEnablePend = false;
 					setOutputsChange(true);
@@ -1185,11 +1225,13 @@ void LtchMPBttn::updFdaState(){
 			case stDisabled:
 				// In: >>---------------------------------->>
 				if(_sttChng){
-					if(_isOn != _isOnDisabled){
-						if(_isOn)
-							_turnOff();
-						else
-							_turnOn();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn != _isOnDisabled){
+							if(_isOn)
+								_turnOff();
+							else
+								_turnOn();
+						}
 					}
 					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 					stDisabled_In();
@@ -1200,8 +1242,10 @@ void LtchMPBttn::updFdaState(){
 				}	// Execute this code only ONCE, when entering this state
 				// Do: >>---------------------------------->>
 				if(_validEnablePend){
-					if(_isOn)
-						_turnOff();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn)
+							_turnOff();
+					}
 					_isEnabled = true;
 					_validEnablePend = false;
 					setOutputsChange(true);
@@ -2491,16 +2535,18 @@ void DblActnLtchMPBttn::updFdaState(){
 				// In: >>---------------------------------->>
 				if(_sttChng){
 					stDisabled_In();
-					if(_isOn != _isOnDisabled)
-						if(_isOn)
-							_turnOff();
-						else
-							_turnOn();
-					if(_isOnScndry != _isOnDisabled)
-						if(_isOnScndry)
-							_turnOffScndry();
-						else
-							_turnOnScndry();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn != _isOnDisabled)
+							if(_isOn)
+								_turnOff();
+							else
+								_turnOn();
+						if(_isOnScndry != _isOnDisabled)
+							if(_isOnScndry)
+								_turnOffScndry();
+							else
+								_turnOnScndry();
+					}
 					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 					_isEnabled = false;
 					_validDisablePend = false;
@@ -2509,10 +2555,12 @@ void DblActnLtchMPBttn::updFdaState(){
 				}	// Execute this code only ONCE, when entering this state
 				// Do: >>---------------------------------->>
 				if(_validEnablePend){
-					if(_isOnScndry)
-						_turnOffScndry();
-					if(_isOn)
-						_turnOff();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOnScndry)
+							_turnOffScndry();
+						if(_isOn)
+							_turnOff();
+					}
 					_isEnabled = true;
 					_validEnablePend = false;
 					setOutputsChange(true);

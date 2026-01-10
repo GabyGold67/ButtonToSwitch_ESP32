@@ -214,7 +214,7 @@ public:
 	 */
 	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
 
-	DbncdMPBttn(const PressSignalSource* &altSignalSource);
+	DbncdMPBttn(PressSignalSource* newSignalSource);
 
 	 /**
      * @brief Copy constructor

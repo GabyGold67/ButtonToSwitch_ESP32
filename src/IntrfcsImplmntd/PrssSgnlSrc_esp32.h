@@ -127,5 +127,14 @@ public:
    bool updIsPressed();
 };
 
+class SRGPIOXpInputPin: public PressSignalSource{ // Concrete Strategy
+protected:
+
+public:
+   SRGPIOXpInputPin();
+   ~SRGPIOXpInputPin();
+   bool updIsPressed();
+
+};
 
 #endif   // _PRSSSGNLSRC_ESP32_
