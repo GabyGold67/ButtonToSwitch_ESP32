@@ -72,6 +72,14 @@ McuInputPin::~McuInputPin()
 {   
 }
 
+bool McuInputPin::begin(){
+   bool result{true};
+
+   pinMode(_mcuPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+
+   return result;
+}
+
 bool McuInputPin::updIsPressed()
 {
 
@@ -124,6 +132,11 @@ MethodInputPin::~MethodInputPin()
 {
 }
 
+bool MethodInputPin::begin(){
+   
+   return false;
+}
+
 void MethodInputPin::vPress(const bool &newVal)
 {
 	if(_isVrtlPressed != newVal)
@@ -153,6 +166,11 @@ SRGPIOXpInputPin::SRGPIOXpInputPin()
 
 SRGPIOXpInputPin::~SRGPIOXpInputPin()
 {
+}
+
+bool SRGPIOXpInputPin::begin()
+{
+   return false;
 }
 
 bool SRGPIOXpInputPin::updIsPressed()

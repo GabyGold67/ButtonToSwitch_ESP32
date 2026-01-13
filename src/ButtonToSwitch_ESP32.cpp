@@ -53,16 +53,21 @@ uint8_t DbncdMPBttn::_btsLastSerialNum = 0;
 //===========================>> END General use Global variables
 
 DbncdMPBttn::DbncdMPBttn()
-: _mpbttnPin{_InvalidPinNum}, _pulledUp{true}, _typeNO{true}, _dbncTimeOrigSett{0}
+// : _mpbttnPin{_InvalidPinNum}, _pulledUp{true}, _typeNO{true}, _dbncTimeOrigSett{0}
+:_signalSource{nullptr}
 {
 }
 
 DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett)
-: _mpbttnPin{mpbttnPin}, _pulledUp{pulledUp}, _typeNO{typeNO}, _dbncTimeOrigSett{dbncTimeOrigSett}
+//: _mpbttnPin{mpbttnPin}, _pulledUp{pulledUp}, _typeNO{typeNO}, _dbncTimeOrigSett{dbncTimeOrigSett}
+:_dbncTimeOrigSett{dbncTimeOrigSett}
 {
-
+	//FFDR Create the signal source object, its pointer and call the next constructor with the object pointer as argument
 	if(mpbttnPin != _InvalidPinNum){
-		_signalSource = new McuInputPin(_mpbttnPin, _pulledUp, _typeNO);	// Strategy setter to compute _isPressed based on the signal received in an MCU GPIO input pin
+		/*Added for v5.0.0 refactoring*/
+		DbncdMPBttn(new McuInputPin(_mpbttnPin, _pulledUp, _typeNO), _dbncTimeOrigSett);	// Call to the other constructor to complete the object instantiation
+
+		/* Moved for v5.0.0 refactoring
 		++_btsLastSerialNum;
 		_btsSerialNum = _btsLastSerialNum;
 		String _btsSerialNumStr {"000" + String(_btsSerialNum)};
@@ -73,11 +78,11 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 			_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 		_dbncTimeTempSett = _dbncTimeOrigSett;
 
-		//FFDR Create the signal source object, its pointer and call the next constructor with the object pointer as argument
-	// _mpbInstnc = this;
-	// _isOnMutex = xSemaphoreCreateMutex();
-	// _strtDelayMutex = xSemaphoreCreateMutex();
-	// _updFdaMutex = xSemaphoreCreateMutex();
+		_mpbInstnc = this;
+		_isOnMutex = xSemaphoreCreateMutex();
+		_strtDelayMutex = xSemaphoreCreateMutex();
+		_updFdaMutex = xSemaphoreCreateMutex();
+		*/
 	}
 	else{
 		// The object creation failed due to invalid pin number
@@ -88,9 +93,19 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 	
 }
 
-DbncdMPBttn::DbncdMPBttn(PressSignalSource* newSignalSource)
-:_signalSource{newSignalSource}
+DbncdMPBttn::DbncdMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett)
+:_signalSource{newSignalSource}, _dbncTimeOrigSett{dbncTimeOrigSett}
 {
+	++_btsLastSerialNum;
+	_btsSerialNum = _btsLastSerialNum;
+	String _btsSerialNumStr {"000" + String(_btsSerialNum)};
+	_btsSerialNumStr = _btsSerialNumStr.substring(_btsSerialNumStr.length() - 3, 3);
+	_mpbPollTmrName = "PollBtsNum" + _btsSerialNumStr + "_tmr";
+
+	if(_dbncTimeOrigSett < _stdMinDbncTime) // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
+		_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
+	_dbncTimeTempSett = _dbncTimeOrigSett;
+	
 	_mpbInstnc = this;
 	_isOnMutex = xSemaphoreCreateMutex();
 	_strtDelayMutex = xSemaphoreCreateMutex();
@@ -98,7 +113,8 @@ DbncdMPBttn::DbncdMPBttn(PressSignalSource* newSignalSource)
 }
 
 DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn& other)
-: _mpbttnPin{other._mpbttnPin}, _pulledUp{other._pulledUp},	_typeNO{other._typeNO},	_dbncTimeOrigSett{other._dbncTimeOrigSett}
+// : _mpbttnPin{other._mpbttnPin}, _pulledUp{other._pulledUp},	_typeNO{other._typeNO},	_dbncTimeOrigSett{other._dbncTimeOrigSett}
+:_signalSource{other._signalSource}, _dbncTimeOrigSett{other._dbncTimeOrigSett}
 {
 		_mpbPollTmrName = other._mpbPollTmrName;	//FFDR A new timer name must be created based on the  constructor implemented mechanism
 		_dbncTimeTempSett = other._dbncTimeTempSett;
@@ -144,7 +160,12 @@ bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 	bool result {false};
 	BaseType_t tmrModResult {pdFAIL};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	
+	//-Modified for v5.0.0 refactoring--------------------------------------
+	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	_signalSource->begin();
+	//----------------------------------------------------------------------
+
 	if(_beginDisabled){
 		_isEnabled = false;
 		_validDisablePend = true;
@@ -871,6 +892,8 @@ bool DbncdMPBttn::updValidPressesStatus(){
 }
 
 //=========================================================================> Class methods delimiter
+
+//TODO : start code review here
 
 DbncdDlydMPBttn::DbncdDlydMPBttn()
 :DbncdMPBttn()

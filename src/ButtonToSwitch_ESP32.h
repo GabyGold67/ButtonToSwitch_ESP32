@@ -149,7 +149,7 @@ protected:
 	void* _fnVdPtrPrmWhnTrnOnArgPtr{nullptr};	// _fVPPWhnTrnOnArgPtr
 	fncPtrType _fnWhnTrnOff{nullptr};
 	fncPtrType _fnWhnTrnOn{nullptr};
-
+	bool _frcdOtptLvlWhnDsbld {true};
 	bool _isEnabled{true};
 	volatile bool _isOn{false};
 	bool _isOnDisabled{false};
@@ -171,10 +171,6 @@ protected:
 	volatile bool _validPressPend{false};
 	volatile bool _validReleasePend{false};
 
-	//-------------------------------------
-	bool _frcdOtptLvlWhnDsbld {true};
-	//-------------------------------------
-
 	SemaphoreHandle_t _isOnMutex; // Mutex to protect the _isOn attribute flag value from concurrent access
 	SemaphoreHandle_t _strtDelayMutex; // Mutex to protect the _strtDelay attribute value from concurrent access
 	SemaphoreHandle_t _updFdaMutex; // Mutex to protect the updFdsState state updating automaton from concurrent access
@@ -192,7 +188,9 @@ protected:
 	virtual bool updValidPressesStatus();
 	const bool getOutputsChngTskTrggr() const;
 
+	//-------------------------------------
 	PressSignalSource* _signalSource{nullptr};	// Base class pointer (strategy pattern interface class) to the input signal source (concrete strategy) to calculate the _isPressed attribute flag value.
+	//-------------------------------------
 
 public:    
 	/** 
@@ -214,7 +212,7 @@ public:
 	 */
 	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
 
-	DbncdMPBttn(PressSignalSource* newSignalSource);
+	DbncdMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0);
 
 	 /**
      * @brief Copy constructor

@@ -78,6 +78,7 @@
 class PressSignalSource{   // Interface Strategy
 public:
    PressSignalSource();
+   virtual bool begin() = 0;
    virtual ~PressSignalSource();
    virtual bool updIsPressed() = 0;
 };
@@ -99,6 +100,7 @@ protected:
 public:
    McuInputPin(const int8_t &mcuPin, const bool &pulledUp = true, const bool &typeNO = true);
    virtual ~McuInputPin();
+   bool begin();
    bool updIsPressed();
 };
 
@@ -121,7 +123,7 @@ private:
 public:
    MethodInputPin();
    virtual ~MethodInputPin();
-
+   bool begin();
    void vPress(const bool &newVal = true);
    void vRelease();
    bool updIsPressed();
@@ -132,7 +134,8 @@ protected:
 
 public:
    SRGPIOXpInputPin();
-   ~SRGPIOXpInputPin();
+   virtual ~SRGPIOXpInputPin();
+   bool begin();
    bool updIsPressed();
 
 };
