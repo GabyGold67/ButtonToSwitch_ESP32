@@ -209,7 +209,6 @@ void DbncdMPBttn::clrStatus(bool clrIsOn){
 	//_outputsChangeCnt = 0;
 	taskEXIT_CRITICAL(&mux);
 
-
 	return;
 }
 
@@ -893,8 +892,6 @@ bool DbncdMPBttn::updValidPressesStatus(){
 
 //=========================================================================> Class methods delimiter
 
-//TODO : start code review here
-
 DbncdDlydMPBttn::DbncdDlydMPBttn()
 :DbncdMPBttn()
 {
@@ -906,14 +903,19 @@ DbncdDlydMPBttn::DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, 
 	_strtDelay = strtDelay;
 }
 
+DbncdDlydMPBttn::DbncdDlydMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:DbncdMPBttn(newSignalSource, dbncTimeOrigSett)
+{
+	_strtDelay = strtDelay;
+}
+
 DbncdDlydMPBttn::DbncdDlydMPBttn(const DbncdDlydMPBttn& other)
 : DbncdMPBttn(other) // Call base class copy constructor
 {
 	this->_strtDelay = other._strtDelay;		// Copy the strtDelay attribute
 }
 
-DbncdDlydMPBttn::~DbncdDlydMPBttn()
-{
+DbncdDlydMPBttn::~DbncdDlydMPBttn(){
 	if(_strtDelayMutex != NULL){
 		vSemaphoreDelete(_strtDelayMutex);
 		_strtDelayMutex = NULL;
@@ -941,6 +943,12 @@ LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool
 {
 }
 
+LtchMPBttn::LtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:DbncdDlydMPBttn(newSignalSource, dbncTimeOrigSett)
+{
+	_strtDelay = strtDelay;
+}
+
 LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	//FFDR Check new code implemented and uncomment
 : DbncdDlydMPBttn(other) // Call base class copy constructor
 {
@@ -958,7 +966,10 @@ bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
    bool result {false};
    BaseType_t tmrModResult {pdFAIL};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	//-Modified for v5.0.0 refactoring--------------------------------------
+	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	_signalSource->begin();
+	//----------------------------------------------------------------------
 	if(_beginDisabled){
 		_isEnabled = false;
 		_validDisablePend = true;
@@ -1304,6 +1315,13 @@ TgglLtchMPBttn::TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, co
 {
 }
 
+TgglLtchMPBttn::TgglLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(newSignalSource, dbncTimeOrigSett)
+{
+	_strtDelay = strtDelay;
+}
+
+
 TgglLtchMPBttn::TgglLtchMPBttn(const TgglLtchMPBttn& other)
 : LtchMPBttn(other)
 {
@@ -1356,6 +1374,13 @@ TmLtchMPBttn::TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &act
 	if(_srvcTime < _MinSrvcTime)    // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
 		_srvcTime = _MinSrvcTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 
+}
+
+TmLtchMPBttn::TmLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &actTime, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay), _srvcTime{actTime}
+{
+	if(_srvcTime < _MinSrvcTime)    // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
+		_srvcTime = _MinSrvcTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
 }
 
 TmLtchMPBttn::TmLtchMPBttn(const TmLtchMPBttn &other)
@@ -1443,12 +1468,20 @@ void TmLtchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
+//TODO : start code review here
+
 HntdTmLtchMPBttn::HntdTmLtchMPBttn()
 {
 }
 
 HntdTmLtchMPBttn::HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :TmLtchMPBttn(mpbttnPin, actTime, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
+{
+	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;   
+}
+
+HntdTmLtchMPBttn::HntdTmLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:TmLtchMPBttn(newSignalSource, actTime, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
 {
 	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;   
 }

@@ -618,7 +618,10 @@ public:
      * @note If the **delay** attribute is set to 0, the resulting object is equivalent in functionality to a **DbncdMPBttn** class object.
      */
 	DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-	 /**
+
+	DbncdDlydMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+
+	/**
      * @brief Copy constructor
 	  * 
 	  * @param other Reference to an existing DbncdDlydMPBttn object to be copied.
@@ -702,7 +705,10 @@ public:
     * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
 	LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-	 /**
+
+	LtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+
+	/**
      * @brief Copy constructor
 	  * 
 	  * @param other Reference to an existing LtchMPBttn object to be copied.
@@ -821,6 +827,9 @@ public:
 	 * For the parameters see DbncdMPBttn(const int8_t, const bool, const bool, const unsigned long int)
 	 */
 	TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	
+	TgglLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+
 	/**
     * @brief Copy constructor
 	 * 
@@ -868,6 +877,9 @@ public:
  	 * @note For the other parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
 	*/
 	TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &svcTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+
+	TmLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &svcTime, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+
 	/**
     * @brief Copy constructor
 	 * 
@@ -973,8 +985,11 @@ public:
 	 *
 	 * For the rest of the parameters see TmLtchMPBttn(const int8_t, const unsigned long int, const bool, const bool, const unsigned long int, const unsigned long int)
 	 */
-    HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &svcTime, const unsigned int &wrnngPrctg = 0, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-	/**
+   HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &svcTime, const unsigned int &wrnngPrctg = 0, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+
+	HntdTmLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &svcTime, const unsigned int &wrnngPrctg = 0,const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+
+	 /**
     * @brief Copy constructor
 	 * 
 	 * @param other Reference to an existing HntdTmLtchMPBttn object to be copied.
