@@ -1297,7 +1297,11 @@ public:
  	 */
     XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
-    /**
+
+    XtrnUnltchMPBttn(PressSignalSource* newSignalSource,  DbncdDlydMPBttn* unLtchBttn,
+        const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+
+	/**
      * @brief Class constructor
      *
      * This class constructor instantiates an object that relies on the **unlatch()** method invocation to release the latched MPB
@@ -1306,6 +1310,9 @@ public:
      */
     XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+
+    XtrnUnltchMPBttn(PressSignalSource* newSignalSource,
+        const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
 
     /**
      * @brief See DbncdMPBttn::begin(const unsigned long int)

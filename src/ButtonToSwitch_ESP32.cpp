@@ -53,42 +53,20 @@ uint8_t DbncdMPBttn::_btsLastSerialNum = 0;
 //===========================>> END General use Global variables
 
 DbncdMPBttn::DbncdMPBttn()
-// : _mpbttnPin{_InvalidPinNum}, _pulledUp{true}, _typeNO{true}, _dbncTimeOrigSett{0}
 :_signalSource{nullptr}
 {
 }
 
 DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett)
-//: _mpbttnPin{mpbttnPin}, _pulledUp{pulledUp}, _typeNO{typeNO}, _dbncTimeOrigSett{dbncTimeOrigSett}
 :_dbncTimeOrigSett{dbncTimeOrigSett}
 {
 	//FFDR Create the signal source object, its pointer and call the next constructor with the object pointer as argument
 	if(mpbttnPin != _InvalidPinNum){
-		/*Added for v5.0.0 refactoring*/
-		DbncdMPBttn(new McuInputPin(_mpbttnPin, _pulledUp, _typeNO), _dbncTimeOrigSett);	// Call to the other constructor to complete the object instantiation
-
-		/* Moved for v5.0.0 refactoring
-		++_btsLastSerialNum;
-		_btsSerialNum = _btsLastSerialNum;
-		String _btsSerialNumStr {"000" + String(_btsSerialNum)};
-		_btsSerialNumStr = _btsSerialNumStr.substring(_btsSerialNumStr.length() - 3, 3);
-		_mpbPollTmrName = "PollBtsNum" + _btsSerialNumStr + "_tmr";
-
-		if(_dbncTimeOrigSett < _stdMinDbncTime) // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
-			_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
-		_dbncTimeTempSett = _dbncTimeOrigSett;
-
-		_mpbInstnc = this;
-		_isOnMutex = xSemaphoreCreateMutex();
-		_strtDelayMutex = xSemaphoreCreateMutex();
-		_updFdaMutex = xSemaphoreCreateMutex();
-		*/
+		DbncdMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), _dbncTimeOrigSett);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
 		// The object creation failed due to invalid pin number
-		// _pulledUp = true;
-		// _typeNO = true;
-		// _dbncTimeOrigSett = 0;
+		DbncdMPBttn();
 	}
 	
 }
@@ -898,9 +876,14 @@ DbncdDlydMPBttn::DbncdDlydMPBttn()
 }
 
 DbncdDlydMPBttn::DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:DbncdMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett)
 {
-	_strtDelay = strtDelay;
+	if(mpbttnPin != _InvalidPinNum){
+		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		DbncdDlydMPBttn();
+	}
 }
 
 DbncdDlydMPBttn::DbncdDlydMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
@@ -935,12 +918,19 @@ void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
 //=========================================================================> Class methods delimiter
 
 LtchMPBttn::LtchMPBttn()
+:DbncdDlydMPBttn()
 {
 }
 
 LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
+	if(mpbttnPin != _InvalidPinNum){
+		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		DbncdDlydMPBttn();
+	}
 }
 
 LtchMPBttn::LtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
@@ -1307,12 +1297,19 @@ void LtchMPBttn::updFdaState(){
 //=========================================================================> Class methods delimiter
 
 TgglLtchMPBttn::TgglLtchMPBttn()
+:LtchMPBttn()
 {
 }
 
 TgglLtchMPBttn::TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
+	if(mpbttnPin != _InvalidPinNum){
+		TgglLtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		TgglLtchMPBttn();
+	}
 }
 
 TgglLtchMPBttn::TgglLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
@@ -1320,7 +1317,6 @@ TgglLtchMPBttn::TgglLtchMPBttn(PressSignalSource *newSignalSource, const unsigne
 {
 	_strtDelay = strtDelay;
 }
-
 
 TgglLtchMPBttn::TgglLtchMPBttn(const TgglLtchMPBttn& other)
 : LtchMPBttn(other)
@@ -1365,14 +1361,19 @@ void TgglLtchMPBttn::updValidUnlatchStatus(){
 //=========================================================================> Class methods delimiter
 
 TmLtchMPBttn::TmLtchMPBttn()
+:LtchMPBttn()
 {
 }
 
 TmLtchMPBttn::TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &actTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _srvcTime{actTime}
 {
-	if(_srvcTime < _MinSrvcTime)    // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
-		_srvcTime = _MinSrvcTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
+	if(mpbttnPin != _InvalidPinNum){
+		TmLtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), actTime, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		TmLtchMPBttn();
+	}
 
 }
 
@@ -1468,16 +1469,20 @@ void TmLtchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
-//TODO : start code review here
-
 HntdTmLtchMPBttn::HntdTmLtchMPBttn()
+:TmLtchMPBttn()
 {
 }
 
 HntdTmLtchMPBttn::HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:TmLtchMPBttn(mpbttnPin, actTime, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
 {
-	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;   
+	if(mpbttnPin != _InvalidPinNum){
+		HntdTmLtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), actTime, wrnngPrctg, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		HntdTmLtchMPBttn();
+	}
 }
 
 HntdTmLtchMPBttn::HntdTmLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
@@ -2061,7 +2066,10 @@ bool HntdTmLtchMPBttn::updWrnngOn(){
 
 //=========================================================================> Class methods delimiter
 
+//TODO Start new constructors revision from here on
+
 XtrnUnltchMPBttn::XtrnUnltchMPBttn()
+:LtchMPBttn()
 {
 }
 
@@ -2071,9 +2079,17 @@ XtrnUnltchMPBttn::XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* un
 {
 }
 
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(PressSignalSource *newSignalSource, DbncdDlydMPBttn *unLtchBttn, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+{
+}
+
 XtrnUnltchMPBttn::XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+}
+
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 {
 }
 
