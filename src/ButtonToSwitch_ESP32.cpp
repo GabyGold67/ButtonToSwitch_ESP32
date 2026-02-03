@@ -2066,30 +2066,53 @@ bool HntdTmLtchMPBttn::updWrnngOn(){
 
 //=========================================================================> Class methods delimiter
 
-//TODO Start new constructors revision from here on
-
 XtrnUnltchMPBttn::XtrnUnltchMPBttn()
 :LtchMPBttn()
 {
 }
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
-        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
-:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _unLtchBttn{unLtchBttn}
+        										const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
 {
+	if(mpbttnPin != _InvalidPinNum){
+		if(unLtchBttn != nullptr){
+			XtrnUnltchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), unLtchBttn, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+		}
+		else{
+			XtrnUnltchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+		}
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		XtrnUnltchMPBttn();
+	}
 }
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn(PressSignalSource *newSignalSource, DbncdDlydMPBttn *unLtchBttn, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
 {
+	if(unLtchBttn != nullptr){
+		_unLtchBttn = unLtchBttn;
+	}
+	else{
+		XtrnUnltchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
 }
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
-:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
+	if(mpbttnPin != _InvalidPinNum){
+		XtrnUnltchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		XtrnUnltchMPBttn();
+	}
 }
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
 {
 }
 
@@ -2174,12 +2197,18 @@ void XtrnUnltchMPBttn::updValidUnlatchStatus(){
 
 //=========================================================================> Class methods delimiter
 
+//TODO Start new constructors revision from here on
+
 DblActnLtchMPBttn::DblActnLtchMPBttn()
 {
 }
 
 DblActnLtchMPBttn::DblActnLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+}
+
+DblActnLtchMPBttn::DblActnLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 {
 }
 

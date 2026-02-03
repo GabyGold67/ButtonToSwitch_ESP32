@@ -123,6 +123,9 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 class DbncdMPBttn{
 protected:
 	enum fdaDmpbStts {
+		stStart,
+		stSetup,
+		//--------
 		stOffNotVPP,
 		stOffVPP,
 		stOn,
@@ -1403,7 +1406,10 @@ public:
 	 * @note For parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
 	 */
    DblActnLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-   /**
+
+   DblActnLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+
+	/**
 	 * @brief Virtual destructor
     */
 	~DblActnLtchMPBttn();
