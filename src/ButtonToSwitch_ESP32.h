@@ -130,7 +130,10 @@ protected:
 		stOffVPP,
 		stOn,
 		stOnVRP,
-		stDisabled
+		stDisabled,
+		//--------
+		stStdnby,
+		stStop
 	};
 	const unsigned long int _stdMinDbncTime {_HwMinDbncTime};
 
@@ -667,16 +670,22 @@ public:
 class LtchMPBttn: public DbncdDlydMPBttn{
 protected:
     enum fdaLmpbStts {
-        stOffNotVPP,
-        stOffVPP,
-        stOnNVRP,
-        stOnVRP,
-        stLtchNVUP,
-        stLtchdVUP,
-        stOffVUP,
-        stOffNVURP,
-        stOffVURP,
-        stDisabled
+		stStart,
+		stSetup,
+		//--------
+		stOffNotVPP,
+		stOffVPP,
+		stOnNVRP,
+		stOnVRP,
+		stLtchNVUP,
+		stLtchdVUP,
+		stOffVUP,
+		stOffNVURP,
+		stOffVURP,
+		stDisabled,
+		//--------
+		stStdnby,
+		stStop
 	};
 	bool _isLatched{false};
 	fdaLmpbStts _mpbFdaState {stOffNotVPP};
@@ -1346,7 +1355,7 @@ public:
  * - 1. -> 3.: long press.
  * - 2. -> 3.: long press.
  * - 2. -> 1.: short press.
- * - 3. -> 2.: secondary behavior unlatch (subclass dependent, maybe release, external unlatch, etc.)
+ * - 3. -> 2.: secondary behavior unlatch (subclass dependent, maybe MPB release, external unlatch, etc.)
  *
  * @note The **short press** will always be calculated as the Debounce + Delay set attributes.
  * @note The **long press** is a configurable attribute of the class, the **Secondary Mode Activation Delay** (scndModActvDly) that holds the time after the Debounce + Delay period that the MPB must remain pressed to activate the mentioned mode. The same time will be required to keep pressed the MPB while in **Main Behavior** to enter the **Secondary behavior**.
@@ -1356,6 +1365,9 @@ public:
 class DblActnLtchMPBttn: public LtchMPBttn{
 protected:
 	enum fdaDALmpbStts{
+		stStart,
+		stSetup,
+		//--------
 		stOffNotVPP,
 		stOffVPP,
 		stOnMPBRlsd,
@@ -1366,8 +1378,11 @@ protected:
 		//--------
 		stOnTurnOff,
 		//--------
-		stDisabled
-	};
+		stDisabled,
+		//--------
+		stStdnby,
+		stStop
+};
    volatile bool _isOnScndry{false};
 	fdaDALmpbStts _mpbFdaState {stOffNotVPP};
 	unsigned long _scndModActvDly {2000};
@@ -1609,7 +1624,10 @@ public:
 	 * @note For parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
    DDlydDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-   /**
+
+   DDlydDALtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+
+	/**
 	 * @brief Class virtual destructor
     */
    ~DDlydDALtchMPBttn();
@@ -2227,6 +2245,9 @@ private:
 
 	protected:
 	enum fdaVmpbStts{
+		stStart,
+		stSetup,
+		//--------
  		stOffNotVPP,
  		stOffVPP,
  		stOnNVRP,
@@ -2241,7 +2262,10 @@ private:
 		stOnTurnOff,
 		stOff,
 		//--------
-		stDisabled
+		stDisabled,
+		//--------
+		stStdnby,
+		stStop
  	};
  	fdaVmpbStts _mpbFdaState {stOffNotVPP};
 
