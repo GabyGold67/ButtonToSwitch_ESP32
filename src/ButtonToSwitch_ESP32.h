@@ -215,9 +215,18 @@ public:
 	 * @note The **mpbttnpin** parameter valid values is MCU dependant, as each one of the MCUs have a specific number of GPIO pins values available for use. The Arduino development environment have a minimum and maximum values constants set for each MCU it supports. The  valid range for the **mpbttnpin** in an Espressif ESP32 mcu family then is **GPIO_NUM_0 <= mpbttnpin < GPIO_NUM_MAX**  
 	 * 
 	 * @note The Arduino development environment has defined a constant to indicate a **non connected to a GPIO pin** identified as **GPIO_NUM_NC**.  
+	 * 
+	 * @attention This constructor is held for compatibility with pre v5.0.0 library compatibility. Pre v5.0.0 library legacy objects were created hard linked to a MPU GPIO pin that provided the input signal from the MPButton. The v5.0.0 and newer versions are created linked to a PressSignalSource class object, that instantiates a concrete strategy for the signal source, that might be an MCU GPIO pin, but also other signal sources as GPIO expanders or even public methods to generate the press and release events. This constructor provides a bridge by creating the needed PressSignalSource class object, specifically a McuInputPin subclass object, and then instantiating a DbncdMPBttn class object using the resulting object as a parameter.  
 	 */
 	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
-
+	/**
+	 * @brief Class constructor
+	 *
+	 * @param newSignalSource Pointer to a PressSignalSource class object, that will be used as the input signal source for the MPB signal. The PressSignalSource class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a PressSignalSource subclass can be used as the input signal source for the DbncdMPBttn class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to MCU GPIO pins.
+	 * @param dbncTimeOrigSett (Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.
+	 *
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn class. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
 	DbncdMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0);
 
 	 /**
@@ -1422,7 +1431,7 @@ public:
 	 */
    DblActnLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
 
-   DblActnLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	DblActnLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
 
 	/**
 	 * @brief Virtual destructor
