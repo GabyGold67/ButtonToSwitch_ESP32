@@ -1,31 +1,31 @@
 /**
   ******************************************************************************
-  * @file	: ButtonToSwitch_ESP32.h
-  * @brief	: Header file for the ButtonToSwitch_ESP32 library classes
+  * @file	ButtonToSwitch_ESP32.h
+  * @brief	Header file for the ButtonToSwitch_ESP32 library classes
   *
   * @details The library implements classes that model several switch mechanisms
-  * replacements out of simple push buttons or similar equivalent digital signal 
-  * inputs.
+  * replacements out of simple momentary push buttons or similar equivalent
+  * digital signal inputs.
   * By using just a button (a.k.a. momentary switches or momentary push buttons,
   * _**MPB**_ for short from here on) the classes implemented in this library will 
   * manage, calculate and update several parameters to **generate the embedded 
   * behavior of standard electromechanical switches**.
   *
-  * Repository: https://github.com/GabyGold67/ButtonToSwitch_ESP32
+  * @repository https://github.com/GabyGold67/ButtonToSwitch_ESP32
   * 
   * Framework: Arduino  
   * Platform: ESP32  
   * 
   * @author Gabriel D. Goldman  
-  * mail <gdgoldman67@hotmail.com>  
-  * Github <https://github.com/GabyGold67>  
+  * @mail <gdgoldman67@hotmail.com>  
+  * @Github <https://github.com/GabyGold67>  
   * 
   * @version v5.0.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   16/08/2025 09:10 (GMT+0200) DST  
+  *       Last update:   01/06/2026 18:00 (GMT+0200) DST  
   * 
-  * @copyright Copyright (c) 2025  GPL-3.0 license  
+  * @copyright Copyright (c) 2023  GPL-3.0 license  
   *******************************************************************************
   * @attention	This library was originally developed as part of the refactoring
   * process for an industrial machines security enforcement and productivity control
@@ -45,8 +45,9 @@
   * If I promised you the moon and the stars, would you believe it?  
  *******************************************************************************
  */
-//FFDR For Future Development Reminder!!
-//FTPO For Testing Purposes Only code!!
+// Better Comments extension additional tags:
+	//FFDR For Future Development Reminder!!
+	//FTPO For Testing Purposes Only code!!
 
 #ifndef _BUTTONTOSWITCH_ESP32_H_
 #define _BUTTONTOSWITCH_ESP32_H_
@@ -58,7 +59,7 @@
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
 #define _MinSrvcTime 100
-#define _InvalidPinNum GPIO_NUM_NC  //Not Connected pin number (in this hardware platform -1), so a signed numeric type must be used! Value to give as "yet to be defined pin"
+#define _InvalidPinNum GPIO_NUM_NC  //Not Connected pin number, in this hardware platform -1, so a signed numeric type must be used! Value to give as "yet to be defined pin"
 #define _maxValidPinNum GPIO_NUM_MAX-1
 
 /*---------------- xTaskNotify() mechanism related constants, argument structs, information packing and unpacking BEGIN -------*/
@@ -73,10 +74,11 @@ const uint8_t OtptCurValBitPos{16};
 #ifndef MPBOTPTS_T
 	#define MPBOTPTS_T
 	/**
-	 * @brief Type to hold the complete set of output attribute flags from any DbncdMPBttn class and subclasses object.
+	 * @brief Type to hold the complete set of output attribute flags from any DbncdMPBttn class (and subclasses) object.
 	 *
 	 * Only two members (isOn and isEnabled) are relevant to all classes, the rest of the members might be relevant for one or more of the DbcndMPBttn subclasses.
 	 * The type is provided as a standard return value for the decoding of the 32-bit notification value provided by the use of the xTaskNotify() inter-task mechanism. See setTaskToNotify(const TaskHandle_t) for more information.
+	 * In a more general view, this type is useful to hold the complete set of output attribute flags from any DbncdMPBttn class (and subclasses) object, for example to pass the complete set of output attribute flags values to a function that manages the outputs according to the MPB status, or to keep a record of the MPB status changes in a log file or other storage medium.
 	 */
 	struct MpbOtpts_t{
 		bool isOn;
@@ -102,6 +104,12 @@ typedef  fncPtrType (*ptrToTrnFnc)();
 typedef void (*fncVdPtrPrmPtrType)(void*);
 typedef fncVdPtrPrmPtrType (*ptrToTrnFncVdPtr)(void*);
 
+/* Definition workaround to let a function/method return value to be a function pointer
+ to a function that receives a void* argument and returns a void* 
+ */
+using fncVdPtrPrmVdPtrRtrnType = void* (*)(void*);	// This line creates an alias called fncVdPtrPrmVdPtrRtrnType (the name translates literally as: "Function Type that takes Void Pointer Parameter and Returns Void Pointer").
+using ptrToFncVdPtrRtrnVdPtr = fncVdPtrPrmVdPtrRtrnType (*)(void*); // This line creates a second alias called ptrToFncVdPtrRtrnVdPtr (which translates to: "Pointer to Function that Returns [a function that returns] Void Pointer"). This alias depends directly on the first one.
+
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 //===========================>> END General use function prototypes
@@ -109,12 +117,12 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 //===========================>> BEGIN General use Global variables
 //===========================>> END General use Global variables
 
-//==========================================================>> Classes declarations BEGIN
+//==========================================================>> BEGIN Classes declarations 
 
 /**
  * @brief Base class, models a Debounced Momentary Push Button (**D-MPB**).
  *
- * This class provides the resources needed to process a momentary digital input signal -as the one provided by a MPB (Momentary Push Button)- returning a clean signal to be used as a switch, implementing the needed services to replace a wide range of physical related switch characteristics: Debouncing, deglitching, disabling.
+ * This class provides the resources needed to process a momentary digital input signal -as the one provided by a MPB (Momentary Push Button)- returning a clean signal to be used as a switch, implementing the needed services to replace a wide range of physical related switch characteristics: Debouncing, deglitching, disabling, etc..
  *
  * More physical switch situations can be emulated, like temporarily disconnecting it (isDisabled=true and isOnDisabled=false), short circuiting it (isDisabled=true and isOnDisabled=true) and others.
  *
@@ -132,7 +140,7 @@ protected:
 		stOnVRP,
 		stDisabled,
 		//--------
-		stStdnby,
+		stStndby,
 		stStop
 	};
 	const unsigned long int _stdMinDbncTime {_HwMinDbncTime};
@@ -222,7 +230,7 @@ public:
 	/**
 	 * @brief Class constructor
 	 *
-	 * @param newSignalSource Pointer to a PressSignalSource class object, that will be used as the input signal source for the MPB signal. The PressSignalSource class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a PressSignalSource subclass can be used as the input signal source for the DbncdMPBttn class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to MCU GPIO pins.
+	 * @param newSignalSource Pointer to a PressSignalSource class object that will be used as the input signal source for the MPB signal. The PressSignalSource class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a PressSignalSource subclass can be used as the input signal source for the DbncdMPBttn class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to MCU GPIO pins.
 	 * @param dbncTimeOrigSett (Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.
 	 *
 	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn class. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
@@ -693,7 +701,7 @@ protected:
 		stOffVURP,
 		stDisabled,
 		//--------
-		stStdnby,
+		stStndby,
 		stStop
 	};
 	bool _isLatched{false};
@@ -1389,7 +1397,7 @@ protected:
 		//--------
 		stDisabled,
 		//--------
-		stStdnby,
+		ststStndby,
 		stStop
 };
    volatile bool _isOnScndry{false};
@@ -2273,7 +2281,7 @@ private:
 		//--------
 		stDisabled,
 		//--------
-		stStdnby,
+		stStndby,
 		stStop
  	};
  	fdaVmpbStts _mpbFdaState {stOffNotVPP};
@@ -2583,6 +2591,6 @@ public:
    virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
 };
 
-//==========================================================>>
+//==========================================================>> END Classes declarations 
 
 #endif	/*_BUTTONTOSWITCH_ESP32_H_*/

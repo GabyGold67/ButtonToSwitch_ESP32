@@ -4,28 +4,28 @@
   * @brief	: Source file for the ButtonToSwitch_ESP32 library classes
   *
   * @details The library implements classes that model several switch mechanisms
-  * replacements out of simple push buttons or similar equivalent digital signal 
-  * inputs.
+  * replacements out of simple momentary push buttons or similar equivalent
+  * digital signal inputs.
   * By using just a button (a.k.a. momentary switches or momentary push buttons,
   * _**MPB**_ for short from here on) the classes implemented in this library will 
   * manage, calculate and update several parameters to **generate the embedded 
   * behavior of standard electromechanical switches**.
   *
-  * Repository: https://github.com/GabyGold67/ButtonToSwitch_ESP32
+  * @repository https://github.com/GabyGold67/ButtonToSwitch_ESP32
   * 
   * Framework: Arduino  
   * Platform: ESP32  
   * 
   * @author Gabriel D. Goldman  
-  * mail <gdgoldman67@hotmail.com>  
-  * Github <https://github.com/GabyGold67>  
+  * @mail <gdgoldman67@hotmail.com>  
+  * @Github <https://github.com/GabyGold67>  
   * 
   * @version v5.0.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   16/08/2025 09:10 (GMT+0200) DST  
+  *       Last update:   01/06/2026 18:00 (GMT+0200) DST  
   * 
-  * @copyright Copyright (c) 2025  GPL-3.0 license  
+  * @copyright Copyright (c) 2023  GPL-3.0 license  
   *******************************************************************************
   * @attention	This library was originally developed as part of the refactoring
   * process for an industrial machines security enforcement and productivity control
@@ -45,8 +45,11 @@
   * If I promised you the moon and the stars, would you believe it?  
  *******************************************************************************
  */
+// Better Comments extension additional tags:
+	//FFDR For Future Development Reminder!!
+	//FTPO For Testing Purposes Only code!!
 
- #include "ButtonToSwitch_ESP32.h"
+#include "ButtonToSwitch_ESP32.h"
 //===========================>> BEGIN General use Global variables
 static BaseType_t errorFlag {pdFALSE};
 uint8_t DbncdMPBttn::_btsLastSerialNum = 0;
@@ -719,6 +722,26 @@ void DbncdMPBttn::_turnOn(){
 void DbncdMPBttn::updFdaState(){
 	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
 		switch(_mpbFdaState){
+			case stStart:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stSetup;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stSetup:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
 			case stOffNotVPP:
 				// In: >>---------------------------------->>
 				if(_sttChng){
@@ -817,8 +840,27 @@ void DbncdMPBttn::updFdaState(){
 				}	// Execute this code only ONCE, when exiting this state
 				break;
 
-		default:
-			break;
+			case stStndby:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stStop;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stStop:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			default:
+				break;
 		}
 		xSemaphoreGive(_updFdaMutex);
 	}	
@@ -1102,6 +1144,26 @@ bool LtchMPBttn::unlatch(){
 void LtchMPBttn::updFdaState(){
 	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
 		switch(_mpbFdaState){
+			case stStart:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stSetup;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stSetup:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
 			case stOffNotVPP:
 				// In: >>---------------------------------->>
 				if(_sttChng){
@@ -1283,6 +1345,25 @@ void LtchMPBttn::updFdaState(){
 					stDisabled_Out();
 				}	// Execute this code only ONCE, when exiting this state
 				break;
+
+			case stStndby:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stStop;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stStop:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 			default:
 				break;
@@ -2517,6 +2598,26 @@ void DblActnLtchMPBttn::_turnOnScndry(){
 void DblActnLtchMPBttn::updFdaState(){
 	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
 		switch(_mpbFdaState){
+			case stStart:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stSetup;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stSetup:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
 			case stOffNotVPP:
 				// In: >>---------------------------------->>
 				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
@@ -2681,8 +2782,28 @@ void DblActnLtchMPBttn::updFdaState(){
 					clrStatus(true);
 				}	// Execute this code only ONCE, when exiting this state
 				break;
-		default:
-			break;
+
+			case stStndby:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stStop;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stStop:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			default:
+				break;
 		}
 		xSemaphoreGive(_updFdaMutex);
 	}
@@ -3714,6 +3835,26 @@ void VdblMPBttn::_turnOnVdd(){
 void VdblMPBttn::updFdaState(){
 	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
 		switch(_mpbFdaState){
+			case stStart:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stSetup;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stSetup:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
 		case stOffNotVPP:
 			// In: >>---------------------------------->>
 			if(_sttChng){
@@ -3888,8 +4029,27 @@ void VdblMPBttn::updFdaState(){
 			}	// Execute this code only ONCE, when exiting this state
 			break;
 
-	default:
-		break;
+			case stStndby:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stStop;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stStop:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			default:
+				break;
 	}
 	xSemaphoreGive(_updFdaMutex);
 	} 
