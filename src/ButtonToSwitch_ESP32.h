@@ -301,6 +301,16 @@ public:
 	 * @retval false: the object detachment and/or entry removal was rejected by the O.S..
 	 */
 	bool end();    
+   /**
+	 * @brief Returns the value of the **beginDisabled** attribute.
+	 * 
+	 * The beginDisabled flag configures the object disabled status to be held at the moment it begins being updated. If the flag is set to true the object will begin in a **Disabled = true** state, and it will be kept in that state until it is enabled.
+	 * 
+	 * @return The boolean value of the **beginDisabled** attribute.
+	 * 
+	 * @note The beginDisabled is a useful resource to create objects, begin their operation and enable one by one when more convenient for the developer.  
+	 */
+	bool getBeginDisabled();
 	/**
 	 * @brief Get the object's Instantiation Serial Number
 	 * 
@@ -1712,6 +1722,7 @@ protected:
 	void _ntfyChngSldrDir();
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	bool _setSldrDir(const bool &newVal);
+	virtual void stDisabled_In();
 	void stOnEndScndMod_Out();
    virtual void stOnScndMod_Do();
 	virtual void stOnStrtScndMod_In();

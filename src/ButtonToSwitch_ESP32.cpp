@@ -227,8 +227,14 @@ bool DbncdMPBttn::end(){
    return result;
 }
 
-uint8_t DbncdMPBttn::getBtsSerialNum() const{
-	
+bool DbncdMPBttn::getBeginDisabled(){
+
+   return _beginDisabled;
+}
+
+uint8_t DbncdMPBttn::getBtsSerialNum() const
+{
+
    return _btsSerialNum;
 }
 
@@ -1305,7 +1311,7 @@ void LtchMPBttn::updFdaState(){
 				if(_sttChng){
 					stOffVURP_Out();
 				}	// Execute this code only ONCE, when exiting this state
-				break;
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 			case stDisabled:
 				// In: >>---------------------------------->>
@@ -1595,7 +1601,10 @@ bool HntdTmLtchMPBttn::begin(const unsigned long int &pollDelayMs){
 	bool result {false};
 	BaseType_t tmrModResult {pdFAIL};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	//-Modified for v5.0.0 refactoring--------------------------------------
+	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	_signalSource->begin();
+	//----------------------------------------------------------------------
 	if(_beginDisabled){
 		_isEnabled = false;
 		_validDisablePend = true;
@@ -2199,7 +2208,10 @@ bool XtrnUnltchMPBttn::begin(const unsigned long int &pollDelayMs){
    BaseType_t tmrModResult {pdFAIL};
    bool result {false};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	//-Modified for v5.0.0 refactoring--------------------------------------
+	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	_signalSource->begin();
+	//----------------------------------------------------------------------
 	if(_beginDisabled){
 		_isEnabled = false;
 		_validDisablePend = true;
@@ -2306,7 +2318,10 @@ bool DblActnLtchMPBttn::begin(const unsigned long int &pollDelayMs) {
 	BaseType_t tmrModResult {pdFAIL};
 	bool result {false};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	//-Modified for v5.0.0 refactoring--------------------------------------
+	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	_signalSource->begin();
+	//----------------------------------------------------------------------
 	if(_beginDisabled){
 		_isEnabled = false;
 		_validDisablePend = true;
@@ -3383,6 +3398,19 @@ void SldrDALtchMPBttn::setSwpDirOnPrss(const bool &newVal){
 	return;
 }
 
+void SldrDALtchMPBttn::stDisabled_In()
+{
+	if(_isOnScndry != _isOnDisabled){
+		if(_isOnDisabled)
+			_turnOnScndry();
+		else
+			_turnOffScndry();
+		_outputsChange = true;
+	}
+ 
+	return;
+}
+
 void SldrDALtchMPBttn::stOnEndScndMod_Out(){
 	if(_isOnScndry)
 		_turnOffScndry();
@@ -4076,7 +4104,10 @@ bool TmVdblMPBttn::begin(const unsigned long int &pollDelayMs){
    bool result {false};
    BaseType_t tmrModResult {pdFAIL};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	//-Modified for v5.0.0 refactoring--------------------------------------
+	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	_signalSource->begin();
+	//----------------------------------------------------------------------
 	if(_beginDisabled){
 		_isEnabled = false;
 		_validDisablePend = true;
@@ -4193,7 +4224,10 @@ bool SnglSrvcVdblMPBttn::begin(const unsigned long int &pollDelayMs){
    BaseType_t tmrModResult {pdFAIL};
    bool result {false};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	//-Modified for v5.0.0 refactoring--------------------------------------
+	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+	_signalSource->begin();
+	//----------------------------------------------------------------------
 	if(_beginDisabled){
 		_isEnabled = false;
 		_validDisablePend = true;
