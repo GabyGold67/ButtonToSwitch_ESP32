@@ -11,19 +11,19 @@
   * manage, calculate and update several parameters to **generate the embedded 
   * behavior of standard electromechanical switches**.
   *
-  * @repository https://github.com/GabyGold67/ButtonToSwitch_ESP32
+  * repository https://github.com/GabyGold67/ButtonToSwitch_ESP32
   * 
   * Framework: Arduino  
   * Platform: ESP32  
   * 
   * @author Gabriel D. Goldman  
-  * @mail <gdgoldman67@hotmail.com>  
-  * @Github <https://github.com/GabyGold67>  
+  * mail <gdgoldman67@hotmail.com>  
+  * github <https://github.com/GabyGold67>  
   * 
   * @version v5.0.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   01/06/2026 18:00 (GMT+0200) DST  
+  *       Last update:   07/06/2026 18:00 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2023  GPL-3.0 license  
   *******************************************************************************
@@ -94,19 +94,19 @@ const uint8_t OtptCurValBitPos{16};
 
 /* Definition workaround to let a function/method return value to be a function pointer
  to a function that receives no arguments and returns no values: void (funcName*)() .
- The resulting **fncPtrType** type then defines a pointer to a function of the described properties */
+ The resulting **fncPtrType** type then defines a pointer to a function of the described properties and signature*/
 typedef void (*fncPtrType)();
 typedef  fncPtrType (*ptrToTrnFnc)();
 
 /* Definition workaround to let a function/method return value to be a function pointer
- to a function that receives a void* argument and returns no values: void (funcName*)(void*) 
+ to a function that receives a void* argument and returns no values: void (funcName*)(void*) .
  The resulting **fncVdPtrPrmPtrType** type then defines a pointer to a function of the described properties and signature*/
 typedef void (*fncVdPtrPrmPtrType)(void*);
 typedef fncVdPtrPrmPtrType (*ptrToTrnFncVdPtr)(void*);
 
 /* Definition workaround to let a function/method return value to be a function pointer
- to a function that receives a void* argument and returns a void* 
- */
+ to a function that receives a void* argument and returns a void* value: void* (funcName*)(void*) . 
+ The resulting **fncVdPtrPrmPtrType** type then defines a pointer to a function of the described properties and signature*/
 using fncVdPtrPrmVdPtrRtrnType = void* (*)(void*);	// This line creates an alias called fncVdPtrPrmVdPtrRtrnType (the name translates literally as: "Function Type that takes Void Pointer Parameter and Returns Void Pointer").
 using ptrToFncVdPtrRtrnVdPtr = fncVdPtrPrmVdPtrRtrnType (*)(void*); // This line creates a second alias called ptrToFncVdPtrRtrnVdPtr (which translates to: "Pointer to Function that Returns [a function that returns] Void Pointer"). This alias depends directly on the first one.
 
@@ -145,9 +145,9 @@ protected:
 	};
 	const unsigned long int _stdMinDbncTime {_HwMinDbncTime};
 
-	int8_t _mpbttnPin{_InvalidPinNum};	// Important v5.0.0 implementation change, the constructor for a mpb with MCUPin signal will change this value, if it persists the signal source is an alternative to an MCU GPIO pin, like a GPIO expander or other.
-	bool _pulledUp{true};
-	bool _typeNO{true};
+	// int8_t _mpbttnPin{_InvalidPinNum};	// Important v5.0.0 implementation change, the constructor for a mpb with MCUPin signal will change this value, if it persists the signal source is an alternative to an MCU GPIO pin, like a GPIO expander or other.
+	// bool _pulledUp{true};
+	// bool _typeNO{true};
 	unsigned long int _dbncTimeOrigSett{0};
 
 	bool _beginDisabled{false};
@@ -157,10 +157,10 @@ protected:
 	unsigned long int _dbncRlsTimeTempSett{0};
 	unsigned long int _dbncTimerStrt{0};
 	unsigned long int _dbncTimeTempSett{0};
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOff{nullptr};	// _fVPPWhnTrnOff
-	void* _fnVdPtrPrmWhnTrnOffArgPtr{nullptr};	// _fVPPWhnTrnOffArgPtr
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOn{nullptr};	// _fVPPWhnTrnOn
-	void* _fnVdPtrPrmWhnTrnOnArgPtr{nullptr};	// _fVPPWhnTrnOnArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOff{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOff
+	void* _fnVdPtrPrmWhnTrnOffArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOn{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOn
+	void* _fnVdPtrPrmWhnTrnOnArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnArgPtr
 	fncPtrType _fnWhnTrnOff{nullptr};
 	fncPtrType _fnWhnTrnOn{nullptr};
 	bool _frcdOtptLvlWhnDsbld {true};
@@ -168,7 +168,7 @@ protected:
 	volatile bool _isOn{false};
 	bool _isOnDisabled{false};
 	volatile bool _isPressed{false};
-	fdaDmpbStts _mpbFdaState {stOffNotVPP};
+	fdaDmpbStts _mpbFdaState {stStart};
 	DbncdMPBttn* _mpbInstnc{nullptr}; 
 	TimerHandle_t _mpbPollTmrHndl {NULL};   //FreeRTOS returns NULL if creation fails (not nullptr)
 	String _mpbPollTmrName {""};
@@ -209,7 +209,6 @@ protected:
 public:    
 	/** 
 	 * @brief Default class constructor
-	 *
 	 */
 	DbncdMPBttn();
 	/**
@@ -236,7 +235,6 @@ public:
 	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn class. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
 	 */
 	DbncdMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0);
-
 	 /**
      * @brief Copy constructor
 	  * 
@@ -977,14 +975,14 @@ protected:
 	unsigned long int _wrnngMs{0};
 	unsigned int _wrnngPrctg {0};
 
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffPilot{nullptr};	// _fVPPWhnTrnOffPilot
-	void* _fnVdPtrPrmWhnTrnOffPilotArgPtr{nullptr};	// _fVPPWhnTrnOffPilotArgPtr
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnPilot{nullptr};	// _fVPPWhnTrnOnPilot
-	void* _fnVdPtrPrmWhnTrnOnPilotArgPtr{nullptr};	// _fVPPWhnTrnOnPilotArgPtr
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffWrnng{nullptr};	// _fVPPWhnTrnOffWrnng
-	void* _fnVdPtrPrmWhnTrnOffWrnngArgPtr{nullptr};	// _fVPPWhnTrnOffWrnngArgPtr
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnWrnng{nullptr};	// _fVPPWhnTrnOnWrnng
-	void* _fnVdPtrPrmWhnTrnOnWrnngArgPtr{nullptr};	// _fVPPWhnTrnOnWrnngArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffPilot{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffPilot
+	void* _fnVdPtrPrmWhnTrnOffPilotArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffPilotArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnPilot{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnPilot
+	void* _fnVdPtrPrmWhnTrnOnPilotArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnPilotArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffWrnng{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffWrnng
+	void* _fnVdPtrPrmWhnTrnOffWrnngArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffWrnngArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnWrnng{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnWrnng
+	void* _fnVdPtrPrmWhnTrnOnWrnngArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnWrnngArgPtr
 	void (*_fnWhnTrnOffPilot)() {nullptr};
 	void (*_fnWhnTrnOffWrnng)() {nullptr};
 	void (*_fnWhnTrnOnPilot)() {nullptr};

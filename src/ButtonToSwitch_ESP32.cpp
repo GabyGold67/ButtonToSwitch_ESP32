@@ -11,19 +11,19 @@
   * manage, calculate and update several parameters to **generate the embedded 
   * behavior of standard electromechanical switches**.
   *
-  * @repository https://github.com/GabyGold67/ButtonToSwitch_ESP32
+  * repository https://github.com/GabyGold67/ButtonToSwitch_ESP32
   * 
   * Framework: Arduino  
   * Platform: ESP32  
   * 
   * @author Gabriel D. Goldman  
-  * @mail <gdgoldman67@hotmail.com>  
-  * @Github <https://github.com/GabyGold67>  
+  * mail <gdgoldman67@hotmail.com>  
+  * github <https://github.com/GabyGold67>  
   * 
   * @version v5.0.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   01/06/2026 18:00 (GMT+0200) DST  
+  *       Last update:   07/06/2026 18:00 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2023  GPL-3.0 license  
   *******************************************************************************
@@ -63,8 +63,7 @@ DbncdMPBttn::DbncdMPBttn()
 DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett)
 :_dbncTimeOrigSett{dbncTimeOrigSett}
 {
-	//FFDR Create the signal source object, its pointer and call the next constructor with the object pointer as argument
-	if(mpbttnPin != _InvalidPinNum){
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
 		DbncdMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), _dbncTimeOrigSett);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
@@ -94,47 +93,62 @@ DbncdMPBttn::DbncdMPBttn(PressSignalSource* newSignalSource, const unsigned long
 }
 
 DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn& other)
-// : _mpbttnPin{other._mpbttnPin}, _pulledUp{other._pulledUp},	_typeNO{other._typeNO},	_dbncTimeOrigSett{other._dbncTimeOrigSett}
-:_signalSource{other._signalSource}, _dbncTimeOrigSett{other._dbncTimeOrigSett}
 {
-		_mpbPollTmrName = other._mpbPollTmrName;	//FFDR A new timer name must be created based on the  constructor implemented mechanism
-		_dbncTimeTempSett = other._dbncTimeTempSett;
-		_isOn = other._isOn;
-		_isEnabled = other._isEnabled;
-		_isOnDisabled = other._isOnDisabled;
-		_isPressed = other._isPressed;
-		_outputsChange = other._outputsChange;
-		_outputsChangeCnt = other._outputsChangeCnt;
-		_outputsChngTskTrggr = other._outputsChngTskTrggr;
-		_taskToNotifyHndl = other._taskToNotifyHndl;	//FFDR The logic dictates that the task to notify must be different for each object, remove this line and document the need to set the task to notify after the object is created
-		_taskWhileOnHndl = other._taskWhileOnHndl;	//FFDR The logic dictates that the task to notify must be different for each object, remove this line and document the need to set the task to notify after the object is created
-		_fnWhnTrnOn = other._fnWhnTrnOn;		//FFDR The logic dictates that the function to execute must be different for each object, remove this line and document the need to set the function to call after the object is created
-		_fnWhnTrnOff = other._fnWhnTrnOff;	//FFDR The logic dictates that the function to execute must be different for each object, remove this line and document the need to set the function to call after the object is created
+	_signalSource = other._signalSource;
+	if(_signalSource != nullptr){	// The source of the copy object is an implemented object, copy or generate the rest of the attributes
+		_dbncTimeOrigSett = other._dbncTimeOrigSett;
 		_beginDisabled = other._beginDisabled;
-		_validDisablePend = other._validDisablePend;
-		_validEnablePend = other._validEnablePend;
-		_validPressPend = other._validPressPend;
-		_validReleasePend = other._validReleasePend;
-		_dbncTimerStrt = other._dbncTimerStrt;
-		_dbncRlsTimerStrt = other._dbncRlsTimerStrt;
+		//! BEGIN Taken from the class constructor
+			++_btsLastSerialNum;	
+			_btsSerialNum = _btsLastSerialNum;	//! Taken from the class constructor
+			String _btsSerialNumStr {"000" + String(_btsSerialNum)};
+			_btsSerialNumStr = _btsSerialNumStr.substring(_btsSerialNumStr.length() - 3, 3);
+			_mpbPollTmrName = "PollBtsNum" + _btsSerialNumStr + "_tmr";
+		//! END Taken from the class constructor
 		_dbncRlsTimeTempSett = other._dbncRlsTimeTempSett;
-		_prssRlsCcl = other._prssRlsCcl;
-		_mpbFdaState = other._mpbFdaState;
-		_sttChng = other._sttChng;
+		_dbncTimeTempSett = other._dbncTimeTempSett;
+		_fnVdPtrPrmWhnTrnOff = other._fnVdPtrPrmWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffArgPtr = other._fnVdPtrPrmWhnTrnOffArgPtr;
+		_fnVdPtrPrmWhnTrnOn = other._fnVdPtrPrmWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnArgPtr = other._fnVdPtrPrmWhnTrnOnArgPtr;
+		_fnWhnTrnOff = other._fnWhnTrnOff;
+		_fnWhnTrnOn = other._fnWhnTrnOn;
+		_frcdOtptLvlWhnDsbld = other._frcdOtptLvlWhnDsbld;
+		_isEnabled = true;
+		_isOn = false;
+		_isOnDisabled = other._isOnDisabled;
+		_isPressed = false;	// The _isPressed attribute is not copied, as it is a value that depends on the state of the input signal source, and the copy object might be used in a different context with a different signal source state. The FDA state is also not copied for the same reason, as it depends on the _isPressed value and other attributes that are not copied. The FDA state will be set to "Start" in the copy object, and the first call to updFdaState() will update it according to the new context. The same applies to the timers and related attributes, as they depend on the FDA state and the _isPressed value.
+		_mpbFdaState = stStart;
+		_mpbInstnc = this; 
+		_mpbPollTmrHndl = NULL;   //FreeRTOS returns NULL if creation fails (not nullptr)
+		_outputsChange = false;
+		_outputsChangeCnt = 0;
+		_outputsChngTskTrggr = false;
+		_prssRlsCcl  = false;
 		_strtDelay = other._strtDelay;
-
-		// Mutexes must be created anew, not copied
-		_isOnMutex = xSemaphoreCreateMutex();
-		_strtDelayMutex = xSemaphoreCreateMutex();
-		_updFdaMutex = xSemaphoreCreateMutex();
-
-		// Timer handle should not be copied (timers are not duplicated)
-		_mpbPollTmrHndl = nullptr;	//FFDR create a new timer handle with the same name as the original object, so the timer can be started and stopped independently of the original object
+		_sttChng = true;
+		_taskToNotifyHndl = other._taskToNotifyHndl;
+		_taskWhileOnHndl = other._taskWhileOnHndl;
+		_validDisablePend = false;
+		_validEnablePend = false;
+		_validPressPend = false;
+		_validReleasePend = false;
+		// _isOnMutex = other._isOnMutex;
+		_isOnMutex = xSemaphoreCreateMutex();	//! Mutexes must be created anew, not copied
+		// _strtDelayMutex = other._strtDelayMutex;
+		_strtDelayMutex = xSemaphoreCreateMutex();	//! Mutexes must be created anew, not copied
+		// _updFdaMutex = other._updFdaMutex;
+		_updFdaMutex = xSemaphoreCreateMutex();	//! Mutexes must be created anew, not copied
+	}
 }
+
+//TODO Start code revision from here on
 
 DbncdMPBttn::~DbncdMPBttn(){
     
 	end();  // Stops the software timer associated to the object, deletes it's entry and nullyfies the handle to it before destructing the object
+
+	//! If the _signalSource is pointing to a valid signal source Must it be destroyed before leaving this code segment?
 }
 
 bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
@@ -2872,8 +2886,6 @@ void DblActnLtchMPBttn::updValidUnlatchStatus(){
 }
 
 //=========================================================================> Class methods delimiter
-
-//TODO Start new constructors revision from here on
 
 DDlydDALtchMPBttn::DDlydDALtchMPBttn()
 {
