@@ -1,10 +1,12 @@
 <map id="SnglSrvcVdblMPBttn" name="SnglSrvcVdblMPBttn">
-<area shape="rect" id="Node000001" title="Models a Single Service Voidable DD&#45;MPB a.k.a. Trigger switch (SSVDD&#45;MPB)" alt="" coords="5,233,150,260"/>
-<area shape="rect" id="Node000002" href="$class_vdbl_m_p_bttn.html" title="Abstract class, base to model Voidable DD&#45;MPBs (VDD&#45;MPB)." alt="" coords="32,157,123,184"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,199,80,233,75,233,75,199"/>
-<area shape="rect" id="Node000003" href="$class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="12,81,143,108"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="80,123,80,157,75,157,75,123"/>
-<area shape="rect" id="Node000004" href="$class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D&#45;MPB)." alt="" coords="26,5,129,32"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="80,47,80,81,75,81,75,47"/>
-<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="146,11,156,19,147,26,130,28,129,23,145,21,151,19,143,16"/>
+<area shape="rect" id="Node000001" title="Models a Single Service Voidable DD&#45;MPB a.k.a. Trigger switch (SSVDD&#45;MPB)." alt="" coords="5,332,150,359"/>
+<area shape="rect" id="Node000002" href="$class_vdbl_m_p_bttn.html" title="Abstract class, base to model Voidable DD&#45;MPBs (VDD&#45;MPB)." alt="" coords="32,256,123,283"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,298,80,332,75,332,75,298"/>
+<area shape="rect" id="Node000003" href="$class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="12,180,143,207"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="80,222,80,256,75,256,75,222"/>
+<area shape="rect" id="Node000004" href="$class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D&#45;MPB)." alt="" coords="26,104,129,131"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="80,146,80,180,75,180,75,146"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="146,110,156,117,147,125,130,127,129,122,145,120,151,117,143,114"/>
+<area shape="rect" id="Node000005" href="$class_press_signal_source.html" title="Strategy Pattern interface class." alt="" coords="11,5,144,32"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="80,48,80,104,75,104,75,48"/>
 </map>

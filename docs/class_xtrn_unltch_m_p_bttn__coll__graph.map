@@ -1,11 +1,13 @@
 <map id="XtrnUnltchMPBttn" name="XtrnUnltchMPBttn">
-<area shape="rect" id="Node000001" title="Models an External Unlatch LDD&#45;MPB, a.k.a. Emergency Latched Switch (XULDD&#45;MPB)" alt="" coords="7,233,134,260"/>
-<area shape="rect" id="Node000002" href="$class_ltch_m_p_bttn.html" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD&#45;MPB)." alt="" coords="156,157,246,184"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="167,194,94,235,91,231,165,189"/>
-<area shape="rect" id="Node000003" href="$class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="5,81,136,108"/>
-<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="71,123,68,157,72,233,66,233,63,157,65,123"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="107,113,180,155,178,159,104,118"/>
-<area shape="rect" id="Node000004" href="$class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D&#45;MPB)." alt="" coords="19,5,122,32"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="73,47,73,81,68,81,68,47"/>
-<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="139,11,149,19,140,26,123,28,122,23,138,21,144,19,136,16"/>
+<area shape="rect" id="Node000001" title="Models an External Unlatch LDD&#45;MPB, a.k.a. Emergency Latched Switch (XULDD&#45;MPB)." alt="" coords="8,332,135,359"/>
+<area shape="rect" id="Node000002" href="$class_ltch_m_p_bttn.html" title="Abstract class, base to model Latched Debounced Delayed MPBs (LDD&#45;MPB)." alt="" coords="157,256,247,283"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="168,293,95,334,92,329,166,288"/>
+<area shape="rect" id="Node000003" href="$class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="6,180,137,207"/>
+<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="72,222,69,256,73,331,67,332,64,256,66,222"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="108,212,181,253,179,258,105,217"/>
+<area shape="rect" id="Node000004" href="$class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D&#45;MPB)." alt="" coords="20,104,123,131"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="74,146,74,180,69,180,69,146"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="140,110,150,117,141,125,124,127,123,122,139,120,145,117,137,114"/>
+<area shape="rect" id="Node000005" href="$class_press_signal_source.html" title="Strategy Pattern interface class." alt="" coords="5,5,138,32"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="74,48,74,104,69,104,69,48"/>
 </map>

@@ -2,6 +2,7 @@ var class_dbncd_m_p_bttn =
 [
     [ "DbncdMPBttn", "class_dbncd_m_p_bttn.html#a6b610f28298f925ce4672bf5891e843b", null ],
     [ "DbncdMPBttn", "class_dbncd_m_p_bttn.html#a4e512acf6547aad84d78bf95f8284177", null ],
+    [ "DbncdMPBttn", "class_dbncd_m_p_bttn.html#af5c038cae0cb88c96cb7c842c24cc56c", null ],
     [ "DbncdMPBttn", "class_dbncd_m_p_bttn.html#a4edb1d237123c0c4548aebb1402561e3", null ],
     [ "~DbncdMPBttn", "class_dbncd_m_p_bttn.html#a3f0f4c1a3b122541031fecaf9bb93101", null ],
     [ "begin", "class_dbncd_m_p_bttn.html#a5b4061687a017d5db4a62298b7278cb8", null ],
@@ -9,6 +10,7 @@ var class_dbncd_m_p_bttn =
     [ "disable", "class_dbncd_m_p_bttn.html#a881f9e15d1bf8da14edc77e2bcc63953", null ],
     [ "enable", "class_dbncd_m_p_bttn.html#a37d2120c99b476781ef0bced5a74f9a7", null ],
     [ "end", "class_dbncd_m_p_bttn.html#a58c55f2713734a81ef7ac01249973731", null ],
+    [ "getBeginDisabled", "class_dbncd_m_p_bttn.html#a0764d533a6cd35b4e373af47d2483544", null ],
     [ "getBtsSerialNum", "class_dbncd_m_p_bttn.html#a0b8c5d9334a6d0b66e37b26be507d282", null ],
     [ "getCurDbncTime", "class_dbncd_m_p_bttn.html#a30e73bf45b359a26065ba4ceab6841ab", null ],
     [ "getFnWhnTrnOff", "class_dbncd_m_p_bttn.html#ae90de3a636c2e9b4ae0939bdb06cc5b0", null ],

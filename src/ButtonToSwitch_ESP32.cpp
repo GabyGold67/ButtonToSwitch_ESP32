@@ -121,6 +121,7 @@ DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn& other)
 		_mpbFdaState = stStart;
 		_mpbInstnc = this; 
 		_mpbPollTmrHndl = NULL;   //FreeRTOS returns NULL if creation fails (not nullptr)
+		_mpbPollTmrName = "";
 		_outputsChange = false;
 		_outputsChangeCnt = 0;
 		_outputsChngTskTrggr = false;
@@ -156,30 +157,29 @@ bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 	BaseType_t tmrModResult {pdFAIL};
 
 	
-	//-Modified for v5.0.0 refactoring--------------------------------------
-	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	_signalSource->begin();
-	//----------------------------------------------------------------------
-
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-
-	if (pollDelayMs > 0){
-		if (!_mpbPollTmrHndl){        
-			_mpbPollTmrHndl = xTimerCreate(
-				_mpbPollTmrName.c_str(),  // Timer name
-				pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-				pdTRUE,     // Auto-reload true
-				this,       // TimerID: data passed to the callback function to work
-				mpbPollCallback	  // Callback function
-			);
-        	if (_mpbPollTmrHndl != NULL){
-				tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-            if (tmrModResult == pdPASS)
-					result = true;
-        	}
+	if(_signalSource != nullptr){
+		result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+		if(result){
+			if(_beginDisabled){
+				_isEnabled = false;
+				_validDisablePend = true;
+			}
+			if (pollDelayMs > 0){
+				if (!_mpbPollTmrHndl){        
+					_mpbPollTmrHndl = xTimerCreate(
+						_mpbPollTmrName.c_str(),  // Timer name
+						pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+						pdTRUE,     // Auto-reload true
+						this,       // TimerID: data passed to the callback function to work
+						mpbPollCallback	  // Callback function
+					);
+					if (_mpbPollTmrHndl != NULL){
+						tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+						if (tmrModResult == pdPASS)
+							result = true;
+					}
+				}
+			}
 		}
 	}
 

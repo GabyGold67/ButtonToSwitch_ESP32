@@ -13,5 +13,6 @@ var _button_to_switch___e_s_p32_8h =
     [ "SldrDALtchMPBttn", "class_sldr_d_a_ltch_m_p_bttn.html", "class_sldr_d_a_ltch_m_p_bttn" ],
     [ "VdblMPBttn", "class_vdbl_m_p_bttn.html", "class_vdbl_m_p_bttn" ],
     [ "TmVdblMPBttn", "class_tm_vdbl_m_p_bttn.html", "class_tm_vdbl_m_p_bttn" ],
-    [ "SnglSrvcVdblMPBttn", "class_sngl_srvc_vdbl_m_p_bttn.html", "class_sngl_srvc_vdbl_m_p_bttn" ]
+    [ "SnglSrvcVdblMPBttn", "class_sngl_srvc_vdbl_m_p_bttn.html", "class_sngl_srvc_vdbl_m_p_bttn" ],
+    [ "otptsSttsUnpkg", "_button_to_switch___e_s_p32_8h.html#a3d6625d24dab5d24741899eb3bd6b816", null ]
 ];

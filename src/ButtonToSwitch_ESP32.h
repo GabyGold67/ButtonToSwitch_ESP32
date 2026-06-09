@@ -176,6 +176,9 @@ protected:
 	uint32_t _outputsChangeCnt{0};
 	bool _outputsChngTskTrggr{false};
 	bool _prssRlsCcl{false};
+	//-------------------------------------
+	PressSignalSource* _signalSource{nullptr};	// Base class pointer (strategy pattern interface class) to the input signal source (concrete strategy) to calculate the _isPressed attribute flag value.
+	//-------------------------------------
 	unsigned long int _strtDelay {0};
 	bool _sttChng {true};
 	TaskHandle_t _taskToNotifyHndl {NULL};
@@ -191,6 +194,7 @@ protected:
 
    void clrSttChng();
 	const bool getIsPressed() const;
+	const bool getOutputsChngTskTrggr() const;
 	static void mpbPollCallback(TimerHandle_t mpbTmrCbArg);
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	void _setIsEnabled(const bool &newEnabledValue);
@@ -200,11 +204,7 @@ protected:
 	virtual void updFdaState();
 	bool updIsPressed();
 	virtual bool updValidPressesStatus();
-	const bool getOutputsChngTskTrggr() const;
 
-	//-------------------------------------
-	PressSignalSource* _signalSource{nullptr};	// Base class pointer (strategy pattern interface class) to the input signal source (concrete strategy) to calculate the _isPressed attribute flag value.
-	//-------------------------------------
 
 public:    
 	/** 
@@ -237,6 +237,8 @@ public:
 	DbncdMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0);
 	 /**
      * @brief Copy constructor
+	  * 
+	  * This copy constructor creates a new DbncdMPBttn object as a copy of an existing one. The new object will have some of the same attribute values as the original one, but some of them will be reset to their default values to ensure the proper functioning of the new object. The attributes that are copied from the original object are the original signal source, the standard attribute values and the functions and tasks to be executed and unblocked when the object enters the On and Off states. The attributes that are reset to their default values are the attribute flags, the timers and counters, and the task triggers. The new object will be created as any other new object, so it will be assigned a new serial number and it will not be attached to any timer or task until the begin() method is called. This copy constructor is useful to create new objects with the same configuration as an existing one, but with independent state and behavior. It can be used, for example, to create multiple objects with the same signal source and behavior, but with different states and timers, or to create a backup of an existing object before making changes to it. A method will be provided to change the signal source of an existing object, so the copy constructor can be used to create a new object with the same configuration as an existing one, and then change the signal source of the new object to use a different one.
 	  * 
 	  * @param other DbncdMPBttn object to copy
      */

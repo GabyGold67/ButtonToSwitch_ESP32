@@ -1,0 +1,5 @@
+<map id="PressSignalSource" name="PressSignalSource">
+<area shape="rect" id="Node000001" title="Strategy Pattern interface class." alt="" coords="5,5,138,32"/>
+<area shape="rect" id="Node000002" href="$class_mcu_input_pin.html" title="Concrete Strategy class for MCU GPIO pin input as signal source." alt="" coords="24,80,119,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,48,74,80,69,80,69,48"/>
+</map>

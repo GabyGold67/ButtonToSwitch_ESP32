@@ -1,12 +1,12 @@
 <map id="C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/src/ButtonToSwitch_ESP32.cpp" name="C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/src/ButtonToSwitch_ESP32.cpp">
 <area shape="rect" id="Node000001" title=": Source file for the ButtonToSwitch_ESP32 library classes" alt="" coords="18,5,206,112"/>
-<area shape="rect" id="Node000002" href="$_button_to_switch___e_s_p32_8h.html" title=": Header file for the ButtonToSwitch_ESP32 library classes" alt="" coords="26,160,198,187"/>
+<area shape="rect" id="Node000002" href="$_button_to_switch___e_s_p32_8h.html" title="Header file for the ButtonToSwitch_ESP32 library classes." alt="" coords="26,160,198,187"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,112,115,144,109,144,109,112"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="18,325,94,352"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="73,190,39,208,25,221,13,236,8,255,12,275,22,295,35,312,31,315,18,298,7,277,3,255,8,234,21,217,36,204,71,185"/>
 <area shape="rect" id="Node000004" title=" " alt="" coords="134,325,199,352"/>
 <area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="153,185,188,204,203,217,216,234,221,255,217,277,206,298,192,315,188,312,201,295,212,275,216,255,211,236,199,221,184,208,151,190"/>
-<area shape="rect" id="Node000005" href="$_prss_sgnl_src__esp32_8h.html" title=": Header file for the ButtonToSwitch_ESP32 library&#39;s PressSignalSource interface implementation class..." alt="" coords="23,235,201,277"/>
+<area shape="rect" id="Node000005" href="$_prss_sgnl_src___e_s_p32_8h.html" title=": Header file for the ButtonToSwitch_ESP32 library&#39;s PressSignalSource interface implementation class..." alt="" coords="23,235,201,277"/>
 <area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="115,187,115,219,109,219,109,187"/>
 <area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="100,279,76,314,71,311,95,276"/>
 <area shape="poly" id="edge6_Node000005_Node000004" title=" " alt="" coords="128,276,152,311,147,314,124,279"/>
