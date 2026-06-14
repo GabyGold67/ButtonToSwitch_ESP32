@@ -80,9 +80,13 @@ bool McuInputPin::begin(){
    return result;
 }
 
-bool McuInputPin::updIsPressed()
-{
+bool McuInputPin::end(){
+   bool result{true};
 
+   return result;
+}
+
+bool McuInputPin::updIsPressed(){
 	/*To be 'pressed' the conditions are:
 	1) For NO == true
 		a)  _pulledUp == false ==> digitalRead == HIGH
@@ -137,6 +141,12 @@ bool MethodInputPin::begin(){
    return false;
 }
 
+bool MethodInputPin::end(){
+   bool result{true};
+
+   return result;
+}
+
 void MethodInputPin::vPress(const bool &newVal)
 {
 	if(_isVrtlPressed != newVal)
@@ -171,6 +181,12 @@ SRGPIOXpInputPin::~SRGPIOXpInputPin()
 bool SRGPIOXpInputPin::begin()
 {
    return false;
+}
+
+bool SRGPIOXpInputPin::end(){
+   bool result{true};
+
+   return result;
 }
 
 bool SRGPIOXpInputPin::updIsPressed()

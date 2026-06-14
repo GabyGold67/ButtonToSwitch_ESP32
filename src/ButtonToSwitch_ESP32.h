@@ -151,6 +151,7 @@ protected:
 	unsigned long int _dbncTimeOrigSett{0};
 
 	bool _beginDisabled{false};
+	bool _begun{false};
 	static uint8_t _btsLastSerialNum;
 	uint8_t _btsSerialNum{0};
 	unsigned long int _dbncRlsTimerStrt{0};
@@ -205,7 +206,6 @@ protected:
 	bool updIsPressed();
 	virtual bool updValidPressesStatus();
 
-
 public:    
 	/** 
 	 * @brief Default class constructor
@@ -244,8 +244,9 @@ public:
      */
     DbncdMPBttn(const DbncdMPBttn& other);
 	/**
- * @brief Default virtual destructor
- *
+ * @brief Class destructor
+ * 
+ * @attention This destructor does not handle the signal source object accessed through the PressSignalSource interface class object provided. That object must be handled independently, as it might be in the interest of the developer to keep using it for other purposes.  
  */
 	virtual ~DbncdMPBttn();
 	/**
@@ -351,6 +352,9 @@ public:
 	 * @warning The function code execution will become part of the list of procedures the object executes when it entering the **On State**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOn();
+	//-------------------------------------
+	bool getFrcdOtptLvlWhnDsbld();
+	//-------------------------------------
 	/**
 	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Off State**.
 	 * 
@@ -536,6 +540,9 @@ public:
 	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
 	void setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn);  	
+	//-------------------------------------
+	void setFrcdOtptLvlWhnDsbld(const bool &newVal);
+	//-------------------------------------
 	/**
 	 * @brief Sets a function to be executed every time the object **enters** the **Off State**.
 	 *
@@ -615,11 +622,6 @@ public:
     * @warning Take special consideration about the implications of the execution **priority** of the task to be executed while the MPB is in **On state** and its relation to the priority of the calling task, as it might affect the normal execution of the application.
 	 */    
 	virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
-
-	//-------------------------------------
-	bool getFrcdOtptLvlWhnDsbld();
-	void setFrcdOtptLvlWhnDsbld(const bool &newVal);
-	//-------------------------------------
 
 };
 

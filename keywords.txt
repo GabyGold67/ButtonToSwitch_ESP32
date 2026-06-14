@@ -27,10 +27,12 @@ clrStatus   KEYWORD2
 disable  KEYWORD2
 enable   KEYWORD2
 end KEYWORD2
+getBeginDisabled
 getBtsSerialNum   KEYWORD2
 getCurDbncTime  KEYWORD2
 getFnWhnTrnOff KEYWORD2
 getFnWhnTrnOn  KEYWORD2
+getFrcdOtptLvlWhnDsbld
 getFVPPWhnTrnOff  KEYWORD2
 getFVPPWhnTrnOffArgPtr  KEYWORD2
 getFVPPWhnTrnOn   KEYWORD2
@@ -51,6 +53,7 @@ resetFda KEYWORD2
 resume  KEYWORD2
 setBeginDisabled  KEYWORD2
 setDbncTime KEYWORD2
+setFrcdOtptLvlWhnDsbld
 setFnWhnTrnOffPtr KEYWORD2
 setFnWhnTrnOnPtr  KEYWORD2
 setFVPPWhnTrnOff  KEYWORD2
