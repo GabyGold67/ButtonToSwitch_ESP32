@@ -54,7 +54,7 @@
 
 #include <Arduino.h>
 #include <stdint.h>
-#include <./IntrfcsImplmntd/PrssSgnlSrc_ESP32.h>
+#include "./IntrfcsImplmntd/PrssSgnlSrc_ESP32.h"
 
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
@@ -229,10 +229,10 @@ public:
 	/**
 	 * @brief Class constructor
 	 *
-	 * @param newSignalSource Pointer to a PressSignalSource class object that will be used as the input signal source for the MPB signal. The PressSignalSource class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a PressSignalSource subclass can be used as the input signal source for the DbncdMPBttn class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to MCU GPIO pins.
+	 * @param newSignalSource Pointer to a PressSignalSource class object that will be used as the input signal source for the MPB signal. The PressSignalSource class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a PressSignalSource subclass can be used as the input signal source for the DbncdMPBttn class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to the MCU GPIO pins.
 	 * @param dbncTimeOrigSett (Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.
 	 *
-	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn class. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
 	 */
 	DbncdMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0);
 	 /**
@@ -622,7 +622,6 @@ public:
     * @warning Take special consideration about the implications of the execution **priority** of the task to be executed while the MPB is in **On state** and its relation to the priority of the calling task, as it might affect the normal execution of the application.
 	 */    
 	virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
-
 };
 
 //==========================================================>>
@@ -653,9 +652,16 @@ public:
      * @note If the **delay** attribute is set to 0, the resulting object is equivalent in functionality to a **DbncdMPBttn** class object.
      */
 	DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-
+	/**
+	 * @brief Class constructor
+	 *
+	 * @param newSignalSource Pointer to a PressSignalSource class object that will be used as the input signal source for the MPB signal. The PressSignalSource class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a PressSignalSource subclass can be used as the input signal source for the DbncdMPBttn class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to the MCU GPIO pins.
+	 * @param dbncTimeOrigSett (Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.
+ 	 * @param strtDelay Sets the initial value for the **strtDelay** attribute.
+	 * 
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
 	DbncdDlydMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-
 	/**
      * @brief Copy constructor
 	  * 
@@ -746,15 +752,24 @@ public:
     * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
 	LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-
-	LtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-
 	/**
-     * @brief Copy constructor
-	  * 
-	  * @param other Reference to an existing LtchMPBttn object to be copied.
-     */
-	LtchMPBttn(const LtchMPBttn& other);	//FFDR Check new code implemented and uncomment
+	 * @brief Class constructor
+	 *
+	 * @param newSignalSource Pointer to a PressSignalSource class object that will be used as the input signal source for the MPB signal. The PressSignalSource class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a PressSignalSource subclass can be used as the input signal source for the DbncdMPBttn class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to the MCU GPIO pins.
+	 * @param dbncTimeOrigSett (Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.
+ 	 * @param strtDelay Sets the initial value for the **strtDelay** attribute.
+	 * 
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
+	LtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
+	 * @brief Copy constructor
+	 * 
+	 * @param other Reference to an existing LtchMPBttn object to be copied.
+	 * 
+	 * This copy constructor creates a new LtchMPBttn object as a copy of an existing one. The new object will have some of the same attribute values as the original one, but some of them will be reset to their default values to ensure the proper functioning of the new object. The attributes that are copied from the original object are the original signal source, the standard attribute values and the functions and tasks to be executed and unblocked when the object enters the On and Off states. The attributes that are reset to their default values are the attribute flags, the timers and counters, and the task triggers. The new object will be created as any other new object, so it will be assigned a new serial number and it will not be attached to any timer or task until the begin() method is called. This copy constructor is useful to create new objects with the same configuration as an existing one, but with independent state and behavior. It can be used, for example, to create multiple objects with the same signal source and behavior, but with different states and timers, or to create a backup of an existing object before making changes to it. A method will be provided to change the signal source of an existing object, so the copy constructor can be used to create a new object with the same configuration as an existing one, and then change the signal source of the new object to use a different one.
+	*/
+	LtchMPBttn(const LtchMPBttn& other);
 	/**
 	 * @brief Class virtual destructor
 	 */

@@ -980,8 +980,6 @@ void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
 
 //=========================================================================> Class methods delimiter
 
-//TODO Start code revision from here on
-
 LtchMPBttn::LtchMPBttn()
 :DbncdDlydMPBttn()
 {
@@ -989,7 +987,7 @@ LtchMPBttn::LtchMPBttn()
 
 LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 {
-	if(mpbttnPin != _InvalidPinNum){
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
 		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
@@ -1003,13 +1001,14 @@ LtchMPBttn::LtchMPBttn(PressSignalSource *newSignalSource, const unsigned long i
 {
 }
 
-LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	//FFDR Check new code implemented and uncomment
+LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	
 : DbncdDlydMPBttn(other) // Call base class copy constructor
 {
-	this->_isLatched = other._isLatched;
-	this->_trnOffASAP = other._trnOffASAP;
-	this->_validUnlatchPend = other._validUnlatchPend;
-	this->_validUnlatchRlsPend = other._validUnlatchRlsPend;
+	_validPressPend = false;
+	_isLatched = false;
+	_trnOffASAP = other._trnOffASAP;
+	_validUnlatchPend = false;
+	_validUnlatchRlsPend = false;
 }
 
 LtchMPBttn::~LtchMPBttn()
@@ -1017,34 +1016,38 @@ LtchMPBttn::~LtchMPBttn()
 }
 
 bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
-   bool result {false};
-   BaseType_t tmrModResult {pdFAIL};
+	bool result {false};
+	BaseType_t tmrModResult {pdFAIL};
 
-	//-Modified for v5.0.0 refactoring--------------------------------------
-	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	_signalSource->begin();
-	//----------------------------------------------------------------------
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								result = true;
+								_begun = true;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
-	
-   if (pollDelayMs > 0){
-      if (!_mpbPollTmrHndl){        
-         _mpbPollTmrHndl = xTimerCreate(
-            _mpbPollTmrName.c_str(),  // Timer name
-            pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-            pdTRUE,     // Autoreload true
-            this,       // TimerID: data passed to the callback function to work                
-            mpbPollCallback   // LtchMPBttn::mpbPollCallback   //Callback function
-         );
-         if (_mpbPollTmrHndl != NULL){
-            tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-            if (tmrModResult == pdPASS)
-               result = true;
-         }
-      }
-   }
 
 	return result;
 }
@@ -1399,6 +1402,8 @@ void LtchMPBttn::updFdaState(){
 
 //=========================================================================> Class methods delimiter
 
+//TODO Start code revision from here on
+
 TgglLtchMPBttn::TgglLtchMPBttn()
 :LtchMPBttn()
 {
@@ -1406,7 +1411,7 @@ TgglLtchMPBttn::TgglLtchMPBttn()
 
 TgglLtchMPBttn::TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 {
-	if(mpbttnPin != _InvalidPinNum){
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
 		TgglLtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
@@ -1469,7 +1474,7 @@ TmLtchMPBttn::TmLtchMPBttn()
 
 TmLtchMPBttn::TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &actTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 {
-	if(mpbttnPin != _InvalidPinNum){
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
 		TmLtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), actTime, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
@@ -1578,7 +1583,7 @@ HntdTmLtchMPBttn::HntdTmLtchMPBttn()
 
 HntdTmLtchMPBttn::HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 {
-	if(mpbttnPin != _InvalidPinNum){
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
 		HntdTmLtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), actTime, wrnngPrctg, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
@@ -2179,7 +2184,7 @@ XtrnUnltchMPBttn::XtrnUnltchMPBttn()
 XtrnUnltchMPBttn::XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
         										const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
 {
-	if(mpbttnPin != _InvalidPinNum){
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
 		if(unLtchBttn != nullptr){
 			XtrnUnltchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), unLtchBttn, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
 		}
@@ -2313,7 +2318,7 @@ DblActnLtchMPBttn::DblActnLtchMPBttn()
 DblActnLtchMPBttn::DblActnLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 // :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
-	if(mpbttnPin != _InvalidPinNum){
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
 		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
@@ -2897,7 +2902,7 @@ DDlydDALtchMPBttn::DDlydDALtchMPBttn()
 DDlydDALtchMPBttn::DDlydDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 // :DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
-	if(mpbttnPin != _InvalidPinNum){
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
 		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
