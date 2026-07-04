@@ -988,7 +988,7 @@ LtchMPBttn::LtchMPBttn()
 LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 {
 	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
-		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to this class base constructor (as this is an abstract class) to complete the object instantiation, using the new McuInputPin object created in the heap memory, and passing the pointer to it to the base class constructor
 	}
 	else{
 		// The object creation failed due to invalid pin number
@@ -1402,8 +1402,6 @@ void LtchMPBttn::updFdaState(){
 
 //=========================================================================> Class methods delimiter
 
-//TODO Start code revision from here on
-
 TgglLtchMPBttn::TgglLtchMPBttn()
 :LtchMPBttn()
 {
@@ -1492,10 +1490,9 @@ TmLtchMPBttn::TmLtchMPBttn(PressSignalSource *newSignalSource, const unsigned lo
 }
 
 TmLtchMPBttn::TmLtchMPBttn(const TmLtchMPBttn &other)
-: LtchMPBttn(other), _srvcTime{other._srvcTime}
+: LtchMPBttn(other), _srvcTime{other._srvcTime}, _tmRstbl{other._tmRstbl}
 {
-	this->_srvcTimerStrt = other._srvcTimerStrt;
-	this->_tmRstbl = other._tmRstbl;
+	_srvcTimerStrt = 0;
 }
 
 TmLtchMPBttn::~TmLtchMPBttn()
@@ -1602,17 +1599,29 @@ HntdTmLtchMPBttn::HntdTmLtchMPBttn(const HntdTmLtchMPBttn &other)
 : TmLtchMPBttn(other), _wrnngPrctg{other._wrnngPrctg}
 {
 	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;
+
+	_fnVdPtrPrmWhnTrnOffPilot = other._fnVdPtrPrmWhnTrnOffPilot;
+	_fnVdPtrPrmWhnTrnOffPilotArgPtr = other._fnVdPtrPrmWhnTrnOffPilotArgPtr;
+	_fnVdPtrPrmWhnTrnOnPilot = other._fnVdPtrPrmWhnTrnOnPilot;
+	_fnVdPtrPrmWhnTrnOnPilotArgPtr = other._fnVdPtrPrmWhnTrnOnPilotArgPtr;
+
+	_fnVdPtrPrmWhnTrnOffWrnng = other._fnVdPtrPrmWhnTrnOffWrnng;
+	_fnVdPtrPrmWhnTrnOffWrnngArgPtr = other._fnVdPtrPrmWhnTrnOffWrnngArgPtr;
+	_fnVdPtrPrmWhnTrnOnWrnng = other._fnVdPtrPrmWhnTrnOnWrnng;
+	_fnVdPtrPrmWhnTrnOnWrnngArgPtr = other._fnVdPtrPrmWhnTrnOnWrnngArgPtr;
+
 	_fnWhnTrnOffPilot = other._fnWhnTrnOffPilot;
 	_fnWhnTrnOffWrnng = other._fnWhnTrnOffWrnng;
 	_fnWhnTrnOnPilot = other._fnWhnTrnOnPilot;
 	_fnWhnTrnOnWrnng = other._fnWhnTrnOnWrnng;
+
 	_keepPilot = other._keepPilot;
-	_pilotOn = other._pilotOn;
-	_wrnngOn = other._wrnngOn;
-	_validWrnngSetPend = other._validWrnngSetPend;
-	_validWrnngResetPend = other._validWrnngResetPend;
-	_validPilotSetPend = other._validPilotSetPend;
-	_validPilotResetPend = other._validPilotResetPend;
+	_pilotOn = false;
+	_wrnngOn = false;
+	_validWrnngSetPend = false;
+	_validWrnngResetPend = false;
+	_validPilotSetPend = false;
+	_validPilotResetPend = false;
 }
 
 HntdTmLtchMPBttn::~HntdTmLtchMPBttn()
@@ -1623,33 +1632,37 @@ bool HntdTmLtchMPBttn::begin(const unsigned long int &pollDelayMs){
 	bool result {false};
 	BaseType_t tmrModResult {pdFAIL};
 
-	//-Modified for v5.0.0 refactoring--------------------------------------
-	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	_signalSource->begin();
-	//----------------------------------------------------------------------
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-	
-	if (pollDelayMs > 0){
-		if (!_mpbPollTmrHndl){
-			_mpbPollTmrHndl = xTimerCreate(
-				_mpbPollTmrName.c_str(),  // Timer name
-				pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-				pdTRUE,     // Autoreload true
-				this,       // TimerID: data passed to the callback function to work
-				mpbPollCallback // HntdTmLtchMPBttn::mpbPollCallback   //Callback function
-			);
-			if (_mpbPollTmrHndl != NULL){
-				tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-				if (tmrModResult == pdPASS)
-					result = true;
-	   	}
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // HntdTmLtchMPBttn::mpbPollCallback Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								result = true;
+								_begun = true;
+							}
+						}
+					}
+				}
+			}
 		}
-   }
+	}
 
-   return result;
+	return result;
 }
 
 void HntdTmLtchMPBttn::clrStatus(bool clrIsOn){
@@ -2175,6 +2188,8 @@ bool HntdTmLtchMPBttn::updWrnngOn(){
 }
 
 //=========================================================================> Class methods delimiter
+
+//TODO Start code revision from here on
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn()
 :LtchMPBttn()
