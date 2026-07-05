@@ -1511,6 +1511,8 @@ public:
 
 	DblActnLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
 
+	DblActnLtchMPBttn(const DblActnLtchMPBttn& other);
+	
 	/**
 	 * @brief Virtual destructor
     */
