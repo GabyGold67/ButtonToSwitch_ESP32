@@ -2333,15 +2333,8 @@ DblActnLtchMPBttn::DblActnLtchMPBttn()
 }
 
 DblActnLtchMPBttn::DblActnLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-// :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
-	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
-		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
-	}
-	else{
-		// The object creation failed due to invalid pin number
-		DbncdDlydMPBttn();
-	}
 }
 
 DblActnLtchMPBttn::DblActnLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
@@ -2356,9 +2349,13 @@ DblActnLtchMPBttn::DblActnLtchMPBttn(const DblActnLtchMPBttn &other)
 	_scndModActvDly = other._scndModActvDly;
 	_scndModTmrStrt = 0;
 	_validScndModPend = false;
-
-
-//TODO Start code revision from here on
+	_fnVdPtrPrmWhnTrnOffScndry = other._fnVdPtrPrmWhnTrnOffScndry;
+	_fnVdPtrPrmWhnTrnOffScndryArgPtr = other._fnVdPtrPrmWhnTrnOffScndryArgPtr;
+	_fnVdPtrPrmWhnTrnOnScndry = other._fnVdPtrPrmWhnTrnOnScndry;
+	_fnVdPtrPrmWhnTrnOnScndryArgPtr = other._fnVdPtrPrmWhnTrnOnScndryArgPtr;
+	_fnWhnTrnOffScndry = other._fnWhnTrnOffScndry;
+	_fnWhnTrnOnScndry = other._fnWhnTrnOnScndry;
+	_taskWhileOnScndryHndl = other._taskWhileOnScndryHndl;
 }
 
 DblActnLtchMPBttn::~DblActnLtchMPBttn()
@@ -2369,28 +2366,32 @@ bool DblActnLtchMPBttn::begin(const unsigned long int &pollDelayMs) {
 	BaseType_t tmrModResult {pdFAIL};
 	bool result {false};
 
-	//-Modified for v5.0.0 refactoring--------------------------------------
-	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	_signalSource->begin();
-	//----------------------------------------------------------------------
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-	
-	if (pollDelayMs > 0){
-		if (!_mpbPollTmrHndl){
-			_mpbPollTmrHndl = xTimerCreate(
-				_mpbPollTmrName.c_str(),  // Timer name
-				pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-				pdTRUE,     // Auto-reload true
-				this,       // TimerID: data passed to the callback function to work
-				mpbPollCallback	  // Callback function
-			);
-			if (_mpbPollTmrHndl != NULL){
-				tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-				if (tmrModResult == pdPASS)
-					result = true;
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								result = true;
+								_begun = true;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2929,19 +2930,23 @@ DDlydDALtchMPBttn::DDlydDALtchMPBttn()
 }
 
 DDlydDALtchMPBttn::DDlydDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-// :DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
-		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+		DDlydDALtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
 		// The object creation failed due to invalid pin number
-		DbncdDlydMPBttn();
+		DDlydDALtchMPBttn();
 	}
 }
 
 DDlydDALtchMPBttn::DDlydDALtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :DblActnLtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
+{
+}
+
+DDlydDALtchMPBttn::DDlydDALtchMPBttn(const DDlydDALtchMPBttn &other)
+:DblActnLtchMPBttn(other)
 {
 }
 
@@ -2987,9 +2992,56 @@ SldrDALtchMPBttn::SldrDALtchMPBttn()
 }
 
 SldrDALtchMPBttn::SldrDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const uint16_t initVal)
-:DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _initOtptCurVal{initVal}
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		SldrDALtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay, initVal);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		SldrDALtchMPBttn();
+	}	
+}
+
+SldrDALtchMPBttn::SldrDALtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const uint16_t initVal)
+:DblActnLtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay), _initOtptCurVal{initVal}
 {
 	_otptCurVal = _initOtptCurVal;
+}
+
+SldrDALtchMPBttn::SldrDALtchMPBttn(const SldrDALtchMPBttn &other)
+: DblActnLtchMPBttn(other), _initOtptCurVal{other._initOtptCurVal}
+{
+	_otptCurVal = _initOtptCurVal;
+	_autoSwpDirOnEnd = other._autoSwpDirOnEnd;
+	_autoSwpDirOnPrss = other._autoSwpDirOnPrss;
+	_curSldrDirUp = true;
+	_otptCurValIsMax = false;
+	_otptCurValIsMin = false;
+	_otptSldrSpd = other._otptSldrSpd;
+	_otptSldrStpSize = other._otptSldrStpSize;
+	_otptValMax = other._otptValMax;
+	_otptValMin = other._otptValMin;
+
+	_fnVdPtrPrmWhnTrnOffSldrMax = other._fnVdPtrPrmWhnTrnOffSldrMax;
+	_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr = other._fnVdPtrPrmWhnTrnOffSldrMaxArgPtr;
+	_fnVdPtrPrmWhnTrnOnSldrMax = other._fnVdPtrPrmWhnTrnOnSldrMax;
+	_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr = other._fnVdPtrPrmWhnTrnOnSldrMaxArgPtr;
+	_fnWhnTrnOffSldrMax = other._fnWhnTrnOffSldrMax;
+	_fnWhnTrnOnSldrMax = other._fnWhnTrnOnSldrMax;
+
+	_fnVdPtrPrmWhnTrnOffSldrMin = other._fnVdPtrPrmWhnTrnOffSldrMin;
+	_fnVdPtrPrmWhnTrnOffSldrMinArgPtr = other._fnVdPtrPrmWhnTrnOffSldrMinArgPtr;
+	_fnVdPtrPrmWhnTrnOnSldrMin = other._fnVdPtrPrmWhnTrnOnSldrMin;
+	_fnVdPtrPrmWhnTrnOnSldrMinArgPtr = other._fnVdPtrPrmWhnTrnOnSldrMinArgPtr;
+	_fnWhnTrnOffSldrMin = other._fnWhnTrnOffSldrMin;
+	_fnWhnTrnOnSldrMin = other._fnWhnTrnOnSldrMin;
+
+	_fnVdPtrPrmWhnTrnOffSldrDirUp = other._fnVdPtrPrmWhnTrnOffSldrDirUp;
+	_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr = other._fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr;
+	_fnVdPtrPrmWhnTrnOnSldrDirUp = other._fnVdPtrPrmWhnTrnOnSldrDirUp;
+	_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr = other._fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr;
+	_fnWhnTrnOffSldrDirUp = other._fnWhnTrnOffSldrDirUp;
+	_fnWhnTrnOnSldrDirUp = other._fnWhnTrnOnSldrDirUp;
 }
 
 SldrDALtchMPBttn::~SldrDALtchMPBttn()
@@ -3000,7 +3052,7 @@ void SldrDALtchMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
 	portENTER_CRITICAL(&mux);
-	// Might the option to return the _otpCurVal to the initVal be added? To one the extreme values?
+	//TODO Might the option to return the _otpCurVal to the initVal be added? To one the extreme values?
 	if(clrIsOn && _isOnScndry)
 		_turnOffScndry();
 	DblActnLtchMPBttn::clrStatus(clrIsOn);
@@ -3620,6 +3672,8 @@ void SldrDALtchMPBttn::_turnOnSldrMin(){
 
 //=========================================================================> Class methods delimiter
 
+//TODO Start code revision from here on
+
 VdblMPBttn::VdblMPBttn()
 {
 }
@@ -3628,6 +3682,10 @@ VdblMPBttn::VdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool
 :DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
 	_isOnDisabled = isOnDisabled;
+}
+
+VdblMPBttn::VdblMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+{
 }
 
 VdblMPBttn::~VdblMPBttn()
