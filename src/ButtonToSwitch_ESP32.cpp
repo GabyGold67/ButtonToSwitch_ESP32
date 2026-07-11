@@ -23,7 +23,7 @@
   * @version v5.0.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   07/06/2026 18:00 (GMT+0200) DST  
+  *       Last update:   11/07/2026 22:20 (GMT+0200) DST  
   * 
   * @copyright Copyright (c) 2023  GPL-3.0 license  
   *******************************************************************************
