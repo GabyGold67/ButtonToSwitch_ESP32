@@ -3718,6 +3718,43 @@ VdblMPBttn::~VdblMPBttn()
 {
 }
 
+bool VdblMPBttn::begin(const unsigned long int &pollDelayMs) {
+	BaseType_t tmrModResult {pdFAIL};
+	bool result {false};
+
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								result = true;
+								_begun = true;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
 void VdblMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
@@ -4252,37 +4289,6 @@ TmVdblMPBttn::~TmVdblMPBttn()
 {
 }
 
-bool TmVdblMPBttn::begin(const unsigned long int &pollDelayMs){
-   bool result {false};
-   BaseType_t tmrModResult {pdFAIL};
-
-	//-Modified for v5.0.0 refactoring--------------------------------------
-	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	_signalSource->begin();
-	//----------------------------------------------------------------------
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-	
-   if (!_mpbPollTmrHndl){
-		_mpbPollTmrHndl = xTimerCreate(
-			_mpbPollTmrName.c_str(),  // Timer name
-			pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-			pdTRUE,     // Autoreload true
-			this,       // TimerID: data passed to the callback funtion to work
-			mpbPollCallback
-		);
-	}
-   if (_mpbPollTmrHndl != NULL){
-   	tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-		if (tmrModResult == pdPASS)
-			result = true;
-	}
-
-   return result;
-}
-
 void TmVdblMPBttn::clrStatus(){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
@@ -4356,8 +4362,6 @@ bool TmVdblMPBttn::updVoidStatus(){
 
 //=========================================================================> Class methods delimiter
 
-//TODO Start code revision from here on
-
 SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn()
 {
 }
@@ -4376,43 +4380,20 @@ SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const int8_t &mpbttnPin, const bool &pull
 SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :VdblMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay, false)
 {
-	_isOnDisabled = false;	// This attribute value is fixed as a subclass behavior inherent characteristic, the inherited setter provided for it by the VdblMPBttn class will be overridden to avoid any change to it
-	_frcdOtptLvlWhnVdd = true;	// This attribute value is fixed as a subclass behavior inherent characteristic, the inherited setter provided for it by the VdblMPBttn class will be overridden to avoid any change to it
-	_stOnWhnVddOtptLvlFrcd = false;	// This attribute value is fixed as a subclass behavior inherent characteristic, the inherited setter provided for it by the VdblMPBttn class will be overridden to avoid any change to it
+	_isOnDisabled = false;	// This attribute value is fixed as a subclass behavior inherent characteristic, setIsOnDisabled(), is overridden to avoid any change to it
+	_frcdOtptLvlWhnVdd = true;	// This attribute value is fixed as a subclass behavior inherent characteristic, setFrcdOtptLvlWhnVdd(), is overridden to avoid any change to it
+	_stOnWhnVddOtptLvlFrcd = false;	// This attribute value is fixed as a subclass behavior inherent characteristic, setStOnWhnVddOtpFrcd(), is overridden to avoid any change to it
 }
+SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const SnglSrvcVdblMPBttn &other)
+:VdblMPBttn(other)
+{
+	_isOnDisabled = false;
+	_frcdOtptLvlWhnVdd = true;
+	_stOnWhnVddOtptLvlFrcd = false;
+}
+
 SnglSrvcVdblMPBttn::~SnglSrvcVdblMPBttn()
 {
-}
-
-bool SnglSrvcVdblMPBttn::begin(const unsigned long int &pollDelayMs){
-   BaseType_t tmrModResult {pdFAIL};
-   bool result {false};
-
-	//-Modified for v5.0.0 refactoring--------------------------------------
-	// pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	_signalSource->begin();
-	//----------------------------------------------------------------------
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-	
-   if (!_mpbPollTmrHndl){
-		_mpbPollTmrHndl = xTimerCreate(
-			_mpbPollTmrName.c_str(),  // Timer name
-			pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-			pdTRUE,     // Autoreload true
-			this,       // TimerID: data passed to the callback funtion to work
-			mpbPollCallback
-		);
-	}
-   if (_mpbPollTmrHndl != NULL){
-   	tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-		if (tmrModResult == pdPASS)
-			result = true;
-	}
-
-   return result;
 }
 
 void SnglSrvcVdblMPBttn::setFrcdOtptLvlWhnVdd(const bool &newVal)

@@ -2440,6 +2440,18 @@ public:
      * @brief Default virtual destructor
      */
 	virtual ~VdblMPBttn();
+	/**
+	 * @brief Attaches the instantiated object to a timer that monitors the input pins and updates the object status.
+	 *
+	 * The frequency of the periodic monitoring is passed as a parameter in milliseconds, and is a value that must be small (frequent) enough to keep the object updated, but not so frequent that wastes resources from other tasks. A default value is provided based on empirical results obtained in various published tests.
+	 *
+	 * @param pollDelayMs (Optional) unsigned long integer (ulong), the time between polls in milliseconds.
+	 *
+	 * @return Boolean indicating if the object could be attached to a timer.
+	 * @retval true: the object could be attached to a timer -or it was already attached to a timer when the method was invoked-.
+	 * @retval false: the object could not create the needed timer, or the object could not be attached to it.
+	 */
+	virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
     /**
      * @brief See DbncdMPBttn::clrStatus(bool)
      */
@@ -2644,10 +2656,7 @@ public:
      * @brief Class virtual destructor
      */
 	virtual ~TmVdblMPBttn();
-    /**
-     * @brief See DbncdMPBttn::begin(const unsigned long int)
-     */
-	virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+// virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
     /**
      * @brief See DbncdMPBttn::clrStatus(bool)
      */
@@ -2687,7 +2696,9 @@ public:
  * @note Due to the short time the **isOn** flag will be raised, as described above, the  resuming of the **taskWhileOn** activation mechanism is disabled in this class. For that purpose the setTaskWhileOn(const TaskHandle_t) is made not accessible by setting it's accessibility to **protected**.
  *
  * @note Due to the short time the **isOn** flag will be raised, as described above, the short time between the **fnWhnTrnOn** function and the **fnWhnTrnOff** function callings must also need to be evaluated by the user.
- *
+ * 
+ * @attention The class generates objects that requires for it's behavior to be consistent with the modeled switch to keep the **isOnDisabled** attribute flag set to **false**, the **frcdOtptLvlWhnVdd** attribute flag set to **true** and the **stOnWhnVddOtptFrcd** attribute flag set to **false**. The class constructor sets those attributes, and to ensure the consistency of the modeled switch behavior, the setIsOnDisabled(), setFrcdOtptLvlWhnVdd() and setStOnWhnVddOtptFrcd() methods are made **_not accessible_**
+ * 
  * @class SnglSrvcVdblMPBttn
  */
 class SnglSrvcVdblMPBttn: public VdblMPBttn{
@@ -2723,15 +2734,10 @@ public:
 	  * @param other Reference to an existing SnglSrvcVdblMPBttn object to be copied.
 	 */
 	SnglSrvcVdblMPBttn(const SnglSrvcVdblMPBttn &other);
-
 	/**
     * @brief Class virtual destructor
     */
    virtual ~SnglSrvcVdblMPBttn();
-   /**
-    * @brief See DbncdMPBttn::begin(const unsigned long int)
-    */
-   virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
 };
 
 //==========================================================>> END Classes declarations 
