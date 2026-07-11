@@ -1827,7 +1827,7 @@ public:
 	/**
      * @brief Copy constructor
 	  * 
-	  * @param other Reference to an existing DDlydDALtchMPBttn object to be copied.
+	  * @param other Reference to an existing SldrDALtchMPBttn object to be copied.
      */
 	SldrDALtchMPBttn(const SldrDALtchMPBttn& other);
    /**
@@ -2420,8 +2420,6 @@ public:
 	  * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
      */
 	VdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
-
-	//TODO: Add constructor with PressSignalSource* parameter
 	/**
 	 * @brief Class constructor
 	 *
@@ -2431,7 +2429,13 @@ public:
 	 * 
 	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
 	 */
-	VdblMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
+	VdblMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);	
+	/**
+     * @brief Copy constructor
+	  * 
+	  * @param other Reference to an existing VdblMPBttn object to be copied.
+     */
+	VdblMPBttn(const VdblMPBttn &other);
     /**
      * @brief Default virtual destructor
      */
@@ -2622,10 +2626,21 @@ public:
      * @note For the rest of the parameters see VdblMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int, const bool)
      */
 	TmVdblMPBttn(const int8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
-
-	//TODO: Add constructor with PressSignalSource* parameter
-
     /**
+     * @brief Class constructor
+     *
+     * @param voidTime The time -in milliseconds- the MPB must be pressed to enter the **voided state**.
+     *
+     * @note For the rest of the parameters see VdblMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int, const bool)
+     */
+	TmVdblMPBttn(PressSignalSource* newSignalSource, unsigned long int voidTime, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
+	/**
+     * @brief Copy constructor
+	  * 
+	  * @param other Reference to an existing TmVdblMPBttn object to be copied.
+     */
+	TmVdblMPBttn(const TmVdblMPBttn &other);
+	/**
      * @brief Class virtual destructor
      */
 	virtual ~TmVdblMPBttn();
@@ -2680,6 +2695,10 @@ protected:
 	virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
    virtual void stOffVddNVUP_Do();	// This provides the calculation for the _validUnvoidPend
    virtual bool updVoidStatus();
+
+	void setIsOnDisabled(const bool &newIsOnDisabled);
+	void setFrcdOtptLvlWhnVdd(const bool &newVal);
+   void setStOnWhnVddOtpFrcd(const bool &newVal);
 public:
    /**
     * @brief Default constructor
@@ -2692,8 +2711,18 @@ public:
     * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
 	SnglSrvcVdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-
-	//TODO: Add constructor with PressSignalSource* parameter
+    /**
+     * @brief Class constructor
+     *
+     * @note For the parameters see VdblMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int, const bool)
+     */
+	SnglSrvcVdblMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
+	 * @brief Copy constructor
+	 * 
+	  * @param other Reference to an existing SnglSrvcVdblMPBttn object to be copied.
+	 */
+	SnglSrvcVdblMPBttn(const SnglSrvcVdblMPBttn &other);
 
 	/**
     * @brief Class virtual destructor

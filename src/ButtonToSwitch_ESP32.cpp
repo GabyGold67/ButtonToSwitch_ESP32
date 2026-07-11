@@ -3675,17 +3675,45 @@ void SldrDALtchMPBttn::_turnOnSldrMin(){
 //TODO Start code revision from here on
 
 VdblMPBttn::VdblMPBttn()
+:DbncdDlydMPBttn()
 {
 }
 
 VdblMPBttn::VdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
-:DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to this class base constructor (as this is an abstract class) to complete the object instantiation, using the new McuInputPin object created in the heap memory, and passing the pointer to it to the base class constructor
+		_isOnDisabled = isOnDisabled;
+
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		DbncdDlydMPBttn();
+	}
+}
+
+VdblMPBttn::VdblMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+:DbncdDlydMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
 {
 	_isOnDisabled = isOnDisabled;
 }
 
-VdblMPBttn::VdblMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+VdblMPBttn::VdblMPBttn(const VdblMPBttn &other)
+:DbncdDlydMPBttn(other)
 {
+	_fnVdPtrPrmWhnTrnOffVdd = other._fnVdPtrPrmWhnTrnOffVdd;
+	_fnVdPtrPrmWhnTrnOffVddArgPtr = other._fnVdPtrPrmWhnTrnOffVddArgPtr;
+	_fnVdPtrPrmWhnTrnOnVdd = other._fnVdPtrPrmWhnTrnOnVdd;
+	_fnVdPtrPrmWhnTrnOnVddArgPtr = other._fnVdPtrPrmWhnTrnOnVddArgPtr;
+
+	_fnWhnTrnOffVdd = other._fnWhnTrnOffVdd;
+	_fnWhnTrnOnVdd = other._fnWhnTrnOnVdd;
+	_frcdOtptLvlWhnVdd = other._frcdOtptLvlWhnVdd;
+
+	_isVoided = false;
+	_stOnWhnVddOtptLvlFrcd = other._stOnWhnVddOtptLvlFrcd;
+	_validVoidPend = false;
+	_validUnvoidPend = false;
 }
 
 VdblMPBttn::~VdblMPBttn()
@@ -4195,12 +4223,31 @@ void VdblMPBttn::updFdaState(){
 //=========================================================================> Class methods delimiter
 
 TmVdblMPBttn::TmVdblMPBttn()
+:VdblMPBttn()
 {
 }
 
 TmVdblMPBttn::TmVdblMPBttn(const int8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
-:VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, isOnDisabled), _voidTime{voidTime}
 {
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		TmVdblMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), voidTime, dbncTimeOrigSett, strtDelay, isOnDisabled);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		TmVdblMPBttn();
+	}
+}
+
+TmVdblMPBttn::TmVdblMPBttn(PressSignalSource* newSignalSource, unsigned long int voidTime, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+:VdblMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay, isOnDisabled), _voidTime{voidTime}
+{
+}
+
+TmVdblMPBttn::TmVdblMPBttn(const TmVdblMPBttn &other)
+:VdblMPBttn(other)
+{
+	_voidTime = other._voidTime;
+	_voidTmrStrt = 0;
 }
 
 TmVdblMPBttn::~TmVdblMPBttn()
@@ -4311,18 +4358,30 @@ bool TmVdblMPBttn::updVoidStatus(){
 
 //=========================================================================> Class methods delimiter
 
+//TODO Start code revision from here on
+
 SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn()
 {
 }
 
 SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, false)
 {
-	_isOnDisabled = false;
-   _frcdOtptLvlWhnVdd = true;	// This attribute is subclass inherent characteristic, no setter will be provided for it
-   _stOnWhnVddOtptLvlFrcd = false;	// This attribute is subclass inherent characteristic, no setter will be provided for it
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		SnglSrvcVdblMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		SnglSrvcVdblMPBttn();
+	}
 }
 
+SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:VdblMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay, false)
+{
+	_isOnDisabled = false;	// This attribute is subclass inherent characteristic, no setter will be provided for it
+	_frcdOtptLvlWhnVdd = true;	// This attribute is subclass inherent characteristic, no setter will be provided for it
+	_stOnWhnVddOtptLvlFrcd = false;	// This attribute is subclass inherent characteristic, no setter will be provided for it
+}
 SnglSrvcVdblMPBttn::~SnglSrvcVdblMPBttn()
 {
 }
