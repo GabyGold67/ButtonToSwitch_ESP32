@@ -2696,8 +2696,8 @@ protected:
    virtual void stOffVddNVUP_Do();	// This provides the calculation for the _validUnvoidPend
    virtual bool updVoidStatus();
 
-	void setIsOnDisabled(const bool &newIsOnDisabled);
 	void setFrcdOtptLvlWhnVdd(const bool &newVal);
+	void setIsOnDisabled(const bool &newIsOnDisabled);
    void setStOnWhnVddOtpFrcd(const bool &newVal);
 public:
    /**

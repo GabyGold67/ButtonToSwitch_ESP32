@@ -3672,8 +3672,6 @@ void SldrDALtchMPBttn::_turnOnSldrMin(){
 
 //=========================================================================> Class methods delimiter
 
-//TODO Start code revision from here on
-
 VdblMPBttn::VdblMPBttn()
 :DbncdDlydMPBttn()
 {
@@ -4378,9 +4376,9 @@ SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const int8_t &mpbttnPin, const bool &pull
 SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :VdblMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay, false)
 {
-	_isOnDisabled = false;	// This attribute is subclass inherent characteristic, no setter will be provided for it
-	_frcdOtptLvlWhnVdd = true;	// This attribute is subclass inherent characteristic, no setter will be provided for it
-	_stOnWhnVddOtptLvlFrcd = false;	// This attribute is subclass inherent characteristic, no setter will be provided for it
+	_isOnDisabled = false;	// This attribute value is fixed as a subclass behavior inherent characteristic, the inherited setter provided for it by the VdblMPBttn class will be overridden to avoid any change to it
+	_frcdOtptLvlWhnVdd = true;	// This attribute value is fixed as a subclass behavior inherent characteristic, the inherited setter provided for it by the VdblMPBttn class will be overridden to avoid any change to it
+	_stOnWhnVddOtptLvlFrcd = false;	// This attribute value is fixed as a subclass behavior inherent characteristic, the inherited setter provided for it by the VdblMPBttn class will be overridden to avoid any change to it
 }
 SnglSrvcVdblMPBttn::~SnglSrvcVdblMPBttn()
 {
@@ -4417,6 +4415,24 @@ bool SnglSrvcVdblMPBttn::begin(const unsigned long int &pollDelayMs){
    return result;
 }
 
+void SnglSrvcVdblMPBttn::setFrcdOtptLvlWhnVdd(const bool &newVal)
+{
+
+	return;
+}
+
+void SnglSrvcVdblMPBttn::setIsOnDisabled(const bool &newIsOnDisabled)
+{
+
+	return;
+}
+
+void SnglSrvcVdblMPBttn::setStOnWhnVddOtpFrcd(const bool &newVal)
+{
+
+	return;
+}
+
 void SnglSrvcVdblMPBttn::setTaskWhileOn(const TaskHandle_t &newTaskHandle){
 
 	return;
@@ -4440,6 +4456,7 @@ bool SnglSrvcVdblMPBttn::updVoidStatus(){
 
 	return _validVoidPend;
 }
+
 
 /**
  * @brief Unpackages a 32-bit value into a DbncdMPBttn object status
