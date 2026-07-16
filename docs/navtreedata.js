@@ -25,6 +25,7 @@
 var NAVTREE =
 [
   [ "ButtonToSwitch Library for ESP32 (Arduino)", "index.html", [
+    [ "Buttons to Switches Library (ButtonToSwitch_ESP32)", "index.html", "index" ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -47,7 +48,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_bts_fda_states___e_s_p32_8h.html",
-"class_vdbl_m_p_bttn.html#ae868643c7398bc5e351f8a70eb47201c"
+"class_vdbl_m_p_bttn.html#a604c2ef47f632dac7a0310b57e102433"
 ];
 
 const SYNCONMSG = 'click to disable panel synchronization';

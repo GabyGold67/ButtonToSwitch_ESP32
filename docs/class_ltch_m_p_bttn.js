@@ -2,6 +2,7 @@ var class_ltch_m_p_bttn =
 [
     [ "LtchMPBttn", "class_ltch_m_p_bttn.html#ab1856959f1318126a6370a04b2cd9782", null ],
     [ "LtchMPBttn", "class_ltch_m_p_bttn.html#a4ce98361389a5c5c5b7a8aee638ccc9c", null ],
+    [ "LtchMPBttn", "class_ltch_m_p_bttn.html#ae3fbd6ff303f246f3cbc32abf42f68f4", null ],
     [ "LtchMPBttn", "class_ltch_m_p_bttn.html#a41e826688b0cd221275ed14f90c19bb4", null ],
     [ "~LtchMPBttn", "class_ltch_m_p_bttn.html#a504174fb6c928c040ffbc05ba1ef7da0", null ],
     [ "begin", "class_ltch_m_p_bttn.html#aa15f59d4fa5b3d57d6884914399bfa4d", null ],

@@ -11,5 +11,6 @@ var searchData=
   ['_7etgglltchmpbttn_8',['~TgglLtchMPBttn',['../class_tggl_ltch_m_p_bttn.html#ade2a9fdf953d0e4708cf0208cadd31e8',1,'TgglLtchMPBttn']]],
   ['_7etmltchmpbttn_9',['~TmLtchMPBttn',['../class_tm_ltch_m_p_bttn.html#ad6439e2eb19c1f1ea2bb49c53ad70d11',1,'TmLtchMPBttn']]],
   ['_7etmvdblmpbttn_10',['~TmVdblMPBttn',['../class_tm_vdbl_m_p_bttn.html#a2ece84b47468d7804c5d4c0238195aee',1,'TmVdblMPBttn']]],
-  ['_7evdblmpbttn_11',['~VdblMPBttn',['../class_vdbl_m_p_bttn.html#a99c75dd8225c791015dcdbc8b1c9a07e',1,'VdblMPBttn']]]
+  ['_7evdblmpbttn_11',['~VdblMPBttn',['../class_vdbl_m_p_bttn.html#a99c75dd8225c791015dcdbc8b1c9a07e',1,'VdblMPBttn']]],
+  ['_7extrnunltchmpbttn_12',['~XtrnUnltchMPBttn',['../class_xtrn_unltch_m_p_bttn.html#a9879daf23b50e0081a05e877cc392873',1,'XtrnUnltchMPBttn']]]
 ];

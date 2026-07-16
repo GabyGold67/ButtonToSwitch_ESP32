@@ -352,9 +352,15 @@ public:
 	 * @warning The function code execution will become part of the list of procedures the object executes when it entering the **On State**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOn();
-	//-------------------------------------
+	/**
+	 * @brief Returns the value of the _frcdOtptLvlWhnDsbld attribute.
+	 *
+	 * The _frcdOtptLvlWhnDsbld attribute indicates if the object is configured to force the output level (**_isOn** = true or **_isOn** = false) when the object is in **Disabled state**. The _isOnDisabled attribute indicates the value of the output level to be forced when the object is in **Disabled state**. The _frcdOtptLvlWhnDsbld attribute is set to true by default, so the output level will be forced when the object is in **Disabled state**. If the attribute is set to false, the output level will not be forced and it will remain in its last state before entering **Disabled state**.
+	 * The _frcdOtptLvlWhnDsbld attribute value might be modified by the setFrcdOtptLvlWhnDsbld() method.
+	 *
+	 * @return bool The value of the _frcdOtptLvlWhnDsbld  attribute.
+	 */
 	bool getFrcdOtptLvlWhnDsbld();
-	//-------------------------------------
 	/**
 	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Off State**.
 	 * 
@@ -540,9 +546,14 @@ public:
 	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
 	void setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn);  	
-	//-------------------------------------
+	/**
+	 * @brief Sets the value of the _frcdOtptLvlWhnDsbld attribute.
+	 * 
+	 * The _frcdOtptLvlWhnDsbld attribute indicates if the object is configured to force the output level (**_isOn** = true or **_isOn** = false) when the object is in **Disabled state**. The _isOnDisabled attribute indicates the value of the output level to be forced when the object is in **Disabled state**. The _frcdOtptLvlWhnDsbld attribute is set to true by default, so the output level will be forced when the object is in **Disabled state**. If the attribute is set to false, the output level will not be forced and it will remain in its last state before entering **Disabled state**.
+	 * 
+	 * @param newVal Indicates if the output level must be forced when the object is in **Disabled state**. If true, the output level will be forced to the value of the **isOnDisabled** attribute. If false, the output level will not be forced and it will remain in its last state before entering **Disabled state**.
+	 */
 	void setFrcdOtptLvlWhnDsbld(const bool &newVal);
-	//-------------------------------------
 	/**
 	 * @brief Sets a function to be executed every time the object **enters** the **Off State**.
 	 *
@@ -1368,8 +1379,8 @@ public:
  	 *
  	 * @note Other unlatch signal origins might be developed through the unlatch() method provided.
  	 */
-    XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
-        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+   XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
+      const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
  	/**
 	 * @brief Class constructor
 	 *
@@ -1383,8 +1394,8 @@ public:
  	 *
  	 * @note Other unlatch signal origins might be developed through the unlatch() method provided.
  	 */
-    XtrnUnltchMPBttn(PressSignalSource* newSignalSource,  DbncdDlydMPBttn* unLtchBttn,
-        const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+   XtrnUnltchMPBttn(PressSignalSource* newSignalSource,  DbncdDlydMPBttn* unLtchBttn,
+      const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
 	/**
     * @brief Class constructor
     *
@@ -1392,8 +1403,8 @@ public:
     *
     * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
-    XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
-        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+   XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
+      const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
 	/**
     * @brief Class constructor
     *
@@ -1401,16 +1412,26 @@ public:
     *
     * @note For the parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int)
     */
-    XtrnUnltchMPBttn(PressSignalSource* newSignalSource,
-        const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+   XtrnUnltchMPBttn(PressSignalSource* newSignalSource,
+      const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+	/**
+    * @brief Copy constructor
+	 * 
+	 * @param other Reference to an existing XtrnUnltchMPBttn object to be copied.
+   */
+	XtrnUnltchMPBttn(const XtrnUnltchMPBttn &other);
+	/**
+	 * @brief Class virtual destructor
+	*/
+	virtual ~XtrnUnltchMPBttn();
     /**
      * @brief See DbncdMPBttn::begin(const unsigned long int)
      */
-    virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+   virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
     /**
      * @brief See DbncdMPBttn::clrStatus(bool)
      */
-    void clrStatus(bool clrIsOn = true);
+   void clrStatus(bool clrIsOn = true);
 };
 
 //==========================================================>>

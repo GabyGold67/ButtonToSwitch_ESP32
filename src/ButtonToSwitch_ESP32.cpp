@@ -2239,6 +2239,17 @@ XtrnUnltchMPBttn::XtrnUnltchMPBttn(PressSignalSource *newSignalSource, const uns
 {
 }
 
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(const XtrnUnltchMPBttn &other)
+:LtchMPBttn(other)
+{
+	_unLtchBttn = other._unLtchBttn;
+	_xtrnUnltchPRlsCcl = false;
+}
+
+XtrnUnltchMPBttn::~XtrnUnltchMPBttn()
+{
+}
+
 bool XtrnUnltchMPBttn::begin(const unsigned long int &pollDelayMs){
    BaseType_t tmrModResult {pdFAIL};
    bool result {false};
@@ -4384,6 +4395,7 @@ SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(PressSignalSource* newSignalSource, const
 	_frcdOtptLvlWhnVdd = true;	// This attribute value is fixed as a subclass behavior inherent characteristic, setFrcdOtptLvlWhnVdd(), is overridden to avoid any change to it
 	_stOnWhnVddOtptLvlFrcd = false;	// This attribute value is fixed as a subclass behavior inherent characteristic, setStOnWhnVddOtpFrcd(), is overridden to avoid any change to it
 }
+
 SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const SnglSrvcVdblMPBttn &other)
 :VdblMPBttn(other)
 {

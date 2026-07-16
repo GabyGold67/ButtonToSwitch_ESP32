@@ -6,6 +6,7 @@
 <meta name="generator" content="Doxygen 1.17.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>ButtonToSwitch Library for ESP32 (Arduino): DbncdMPBttn Class Reference</title>
+<link rel="icon" href="Complex_Switch_Sq_Sm_Color_In.jpg" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
 <script type="text/javascript" src="clipboard.js"></script>
@@ -180,9 +181,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:af5c038cae0cb88c96cb7c842c24cc56c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
 <tr class="memitem:a4edb1d237123c0c4548aebb1402561e3" id="r_a4edb1d237123c0c4548aebb1402561e3"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a4edb1d237123c0c4548aebb1402561e3">DbncdMPBttn</a> (const <a class="el" href="class_dbncd_m_p_bttn.html">DbncdMPBttn</a> &amp;other)</td></tr>
 <tr class="memdesc:a4edb1d237123c0c4548aebb1402561e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
-<tr class="memitem:a3f0f4c1a3b122541031fecaf9bb93101" id="r_a3f0f4c1a3b122541031fecaf9bb93101"><td class="memItemLeft"><a id="a3f0f4c1a3b122541031fecaf9bb93101" name="a3f0f4c1a3b122541031fecaf9bb93101"></a>
-virtual&#160;</td><td class="memItemRight"><b>~DbncdMPBttn</b> ()</td></tr>
-<tr class="memdesc:a3f0f4c1a3b122541031fecaf9bb93101"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor. <br /></td></tr>
+<tr class="memitem:a3f0f4c1a3b122541031fecaf9bb93101" id="r_a3f0f4c1a3b122541031fecaf9bb93101"><td class="memItemLeft">virtual&#160;</td><td class="memItemRight"><a class="el" href="#a3f0f4c1a3b122541031fecaf9bb93101">~DbncdMPBttn</a> ()</td></tr>
+<tr class="memdesc:a3f0f4c1a3b122541031fecaf9bb93101"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class destructor.  <br /></td></tr>
 <tr class="memitem:a5b4061687a017d5db4a62298b7278cb8" id="r_a5b4061687a017d5db4a62298b7278cb8"><td class="memItemLeft">virtual bool&#160;</td><td class="memItemRight"><a class="el" href="#a5b4061687a017d5db4a62298b7278cb8">begin</a> (const unsigned long int &amp;pollDelayMs=_StdPollDelay)</td></tr>
 <tr class="memdesc:a5b4061687a017d5db4a62298b7278cb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches the instantiated object to a timer that monitors the input pins and updates the object status.  <br /></td></tr>
 <tr class="memitem:a3009725646aeb160884b8109d180b530" id="r_a3009725646aeb160884b8109d180b530"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a3009725646aeb160884b8109d180b530">clrStatus</a> (bool clrIsOn=true)</td></tr>
@@ -347,12 +347,12 @@ Here is the call graph for this function:</div>
 <p>Class constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">newSignalSource</td><td>Pointer to a <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> class object that will be used as the input signal source for the MPB signal. The <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> subclass can be used as the input signal source for the <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to MCU GPIO pins. </td></tr>
+    <tr><td class="paramname">newSignalSource</td><td>Pointer to a <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> class object that will be used as the input signal source for the MPB signal. The <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> subclass can be used as the input signal source for the <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to the MCU GPIO pins. </td></tr>
     <tr><td class="paramname">dbncTimeOrigSett</td><td>(Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section attention"><dt>Attention</dt><dd>The <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> class. The library provides a <a class="el" href="class_mcu_input_pin.html" title="Concrete Strategy class for MCU GPIO pin input as signal source.">McuInputPin</a> subclass of <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> subclass can be used as long as it provides the expected behavior for the MPB signal processing. </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>The <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> objects. The library provides a <a class="el" href="class_mcu_input_pin.html" title="Concrete Strategy class for MCU GPIO pin input as signal source.">McuInputPin</a> subclass of <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> subclass can be used as long as it provides the expected behavior for the MPB signal processing. </dd></dl>
 
 </div>
 </div>
@@ -388,6 +388,40 @@ Here is the call graph for this function:</div>
 <area shape="rect" href="class_dbncd_m_p_bttn.html#a6b610f28298f925ce4672bf5891e843b" title="Default class constructor." alt="" coords="247,5,440,32"/>
 <area shape="poly" title=" " alt="" coords="199,16,231,16,231,21,199,21"/>
 </map>
+</div>
+
+</div>
+</div>
+<a id="a3f0f4c1a3b122541031fecaf9bb93101" name="a3f0f4c1a3b122541031fecaf9bb93101"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f0f4c1a3b122541031fecaf9bb93101">&#9670;&#160;</a></span>~DbncdMPBttn()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DbncdMPBttn::~DbncdMPBttn </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Class destructor. </p>
+<dl class="section attention"><dt>Attention</dt><dd>This destructor does not handle the signal source object accessed through the <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> interface class object provided. That object must be handled independently, as it might be in the interest of the developer to keep using it for other purposes. </dd></dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_dbncd_m_p_bttn_a3f0f4c1a3b122541031fecaf9bb93101_cgraph.png" border="0" usemap="#aclass_dbncd_m_p_bttn_a3f0f4c1a3b122541031fecaf9bb93101_cgraph" loading="lazy" alt=""/></div>
+<!-- MAP 0 -->
 </div>
 
 </div>
@@ -433,7 +467,7 @@ Here is the call graph for this function:</div>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="class_dbl_actn_ltch_m_p_bttn.html#abbe944688e0b7402905d2c88d5d670de">DblActnLtchMPBttn</a>, <a class="el" href="class_hntd_tm_ltch_m_p_bttn.html#aef2d66789885135fd35547a535b6e344">HntdTmLtchMPBttn</a>, <a class="el" href="class_ltch_m_p_bttn.html#aa15f59d4fa5b3d57d6884914399bfa4d">LtchMPBttn</a>, <a class="el" href="class_sngl_srvc_vdbl_m_p_bttn.html#a0962f2abece8fef8a1584914c0de187a">SnglSrvcVdblMPBttn</a>, <a class="el" href="class_tm_vdbl_m_p_bttn.html#a7221cdab31148a94a938702af54b3e50">TmVdblMPBttn</a>, and <a class="el" href="class_xtrn_unltch_m_p_bttn.html#abbaefe6ef9be66f2d45cc29a339a9b11">XtrnUnltchMPBttn</a>.</p>
+<p>Reimplemented in <a class="el" href="class_dbl_actn_ltch_m_p_bttn.html#abbe944688e0b7402905d2c88d5d670de">DblActnLtchMPBttn</a>, <a class="el" href="class_hntd_tm_ltch_m_p_bttn.html#aef2d66789885135fd35547a535b6e344">HntdTmLtchMPBttn</a>, <a class="el" href="class_ltch_m_p_bttn.html#aa15f59d4fa5b3d57d6884914399bfa4d">LtchMPBttn</a>, <a class="el" href="class_vdbl_m_p_bttn.html#a5828364362ff0920177dc6bf15329ffb">VdblMPBttn</a>, and <a class="el" href="class_xtrn_unltch_m_p_bttn.html#abbaefe6ef9be66f2d45cc29a339a9b11">XtrnUnltchMPBttn</a>.</p>
 
 </div>
 </div>
@@ -586,11 +620,7 @@ Here is the call graph for this function:</div>
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_dbncd_m_p_bttn_a58c55f2713734a81ef7ac01249973731_icgraph.png" border="0" usemap="#aclass_dbncd_m_p_bttn_a58c55f2713734a81ef7ac01249973731_icgraph" loading="lazy" alt=""/></div>
-<map name="aclass_dbncd_m_p_bttn_a58c55f2713734a81ef7ac01249973731_icgraph" id="aclass_dbncd_m_p_bttn_a58c55f2713734a81ef7ac01249973731_icgraph">
-<area shape="rect" title="Detaches the object from the timer that monitors the input pins, compute and updates the object&#39;s sta..." alt="" coords="255,5,387,32"/>
-<area shape="rect" href="class_dbncd_m_p_bttn.html#a3f0f4c1a3b122541031fecaf9bb93101" title="Default virtual destructor." alt="" coords="5,5,207,32"/>
-<area shape="poly" title=" " alt="" coords="239,21,207,21,207,16,239,16"/>
-</map>
+<!-- MAP 1 -->
 </div>
 
 </div>
@@ -1077,13 +1107,7 @@ Here is the call graph for this function:</div>
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_dbncd_m_p_bttn_a3cf51be801e6024cc3ca6b984deb52c6_icgraph.png" border="0" usemap="#aclass_dbncd_m_p_bttn_a3cf51be801e6024cc3ca6b984deb52c6_icgraph" loading="lazy" alt=""/></div>
-<map name="aclass_dbncd_m_p_bttn_a3cf51be801e6024cc3ca6b984deb52c6_icgraph" id="aclass_dbncd_m_p_bttn_a3cf51be801e6024cc3ca6b984deb52c6_icgraph">
-<area shape="rect" title="Pauses the software timer updating the computation of the object&#39;s internal flags value." alt="" coords="435,5,581,32"/>
-<area shape="rect" href="class_dbncd_m_p_bttn.html#a58c55f2713734a81ef7ac01249973731" title="Detaches the object from the timer that monitors the input pins, compute and updates the object&#39;s sta..." alt="" coords="255,5,387,32"/>
-<area shape="poly" title=" " alt="" coords="419,21,387,21,387,16,419,16"/>
-<area shape="rect" href="class_dbncd_m_p_bttn.html#a3f0f4c1a3b122541031fecaf9bb93101" title="Default virtual destructor." alt="" coords="5,5,207,32"/>
-<area shape="poly" title=" " alt="" coords="239,21,207,21,207,16,239,16"/>
-</map>
+<!-- MAP 2 -->
 </div>
 
 </div>
@@ -1571,7 +1595,7 @@ Consider the implications of the task that's going to get suspended every time t
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a href="class_dbncd_m_p_bttn.html">DbncdMPBttn</a></li>
-    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
+    <li class="footer">Generated on <span class="timestamp"></span> for ButtonToSwitch Library for ESP32 (Arduino) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
   </ul>
 </div>
 </body>

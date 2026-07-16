@@ -6,6 +6,7 @@
 <meta name="generator" content="Doxygen 1.17.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>ButtonToSwitch Library for ESP32 (Arduino): XtrnUnltchMPBttn Class Reference</title>
+<link rel="icon" href="Complex_Switch_Sq_Sm_Color_In.jpg" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
 <script type="text/javascript" src="clipboard.js"></script>
@@ -165,8 +166,17 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aa3f83df3f20443674823d997fd3985b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="memitem:a062525015159624acded883de8d6de67" id="r_a062525015159624acded883de8d6de67"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a062525015159624acded883de8d6de67">XtrnUnltchMPBttn</a> (const int8_t &amp;mpbttnPin, <a class="el" href="class_dbncd_dlyd_m_p_bttn.html">DbncdDlydMPBttn</a> *unLtchBttn, const bool &amp;pulledUp, const bool &amp;typeNO, const unsigned long int &amp;dbncTimeOrigSett, const unsigned long int &amp;strtDelay)</td></tr>
 <tr class="memdesc:a062525015159624acded883de8d6de67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:a2ef4e648d3c029fee7652463bbac8161" id="r_a2ef4e648d3c029fee7652463bbac8161"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a2ef4e648d3c029fee7652463bbac8161">XtrnUnltchMPBttn</a> (<a class="el" href="class_press_signal_source.html">PressSignalSource</a> *newSignalSource, <a class="el" href="class_dbncd_dlyd_m_p_bttn.html">DbncdDlydMPBttn</a> *unLtchBttn, const unsigned long int &amp;dbncTimeOrigSett, const unsigned long int &amp;strtDelay)</td></tr>
+<tr class="memdesc:a2ef4e648d3c029fee7652463bbac8161"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
 <tr class="memitem:ab33826dd6bbc5fdba42a1dcb06319a0b" id="r_ab33826dd6bbc5fdba42a1dcb06319a0b"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ab33826dd6bbc5fdba42a1dcb06319a0b">XtrnUnltchMPBttn</a> (const int8_t &amp;mpbttnPin, const bool &amp;pulledUp, const bool &amp;typeNO, const unsigned long int &amp;dbncTimeOrigSett, const unsigned long int &amp;strtDelay)</td></tr>
 <tr class="memdesc:ab33826dd6bbc5fdba42a1dcb06319a0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:a5d5d92bb4798f345df463e2157299615" id="r_a5d5d92bb4798f345df463e2157299615"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a5d5d92bb4798f345df463e2157299615">XtrnUnltchMPBttn</a> (<a class="el" href="class_press_signal_source.html">PressSignalSource</a> *newSignalSource, const unsigned long int &amp;dbncTimeOrigSett, const unsigned long int &amp;strtDelay)</td></tr>
+<tr class="memdesc:a5d5d92bb4798f345df463e2157299615"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:a7ae7719fd9daec952a2e119ece2cb08e" id="r_a7ae7719fd9daec952a2e119ece2cb08e"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a7ae7719fd9daec952a2e119ece2cb08e">XtrnUnltchMPBttn</a> (const <a class="el" href="class_xtrn_unltch_m_p_bttn.html">XtrnUnltchMPBttn</a> &amp;other)</td></tr>
+<tr class="memdesc:a7ae7719fd9daec952a2e119ece2cb08e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
+<tr class="memitem:a9879daf23b50e0081a05e877cc392873" id="r_a9879daf23b50e0081a05e877cc392873"><td class="memItemLeft"><a id="a9879daf23b50e0081a05e877cc392873" name="a9879daf23b50e0081a05e877cc392873"></a>
+virtual&#160;</td><td class="memItemRight"><b>~XtrnUnltchMPBttn</b> ()</td></tr>
+<tr class="memdesc:a9879daf23b50e0081a05e877cc392873"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class virtual destructor. <br /></td></tr>
 <tr class="memitem:abbaefe6ef9be66f2d45cc29a339a9b11" id="r_abbaefe6ef9be66f2d45cc29a339a9b11"><td class="memItemLeft"><a id="abbaefe6ef9be66f2d45cc29a339a9b11" name="abbaefe6ef9be66f2d45cc29a339a9b11"></a>
 virtual bool&#160;</td><td class="memItemRight"><b>begin</b> (const unsigned long int &amp;pollDelayMs=_StdPollDelay)</td></tr>
 <tr class="memdesc:abbaefe6ef9be66f2d45cc29a339a9b11"><td class="mdescLeft">&#160;</td><td class="mdescRight">See DbncdMPBttn::begin(const unsigned long int). <br /></td></tr>
@@ -179,6 +189,8 @@ void&#160;</td><td class="memItemRight"><b>clrStatus</b> (bool clrIsOn=true)</td
 <tr class="memdesc:ab1856959f1318126a6370a04b2cd9782 pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="memitem:a4ce98361389a5c5c5b7a8aee638ccc9c pub_methods_class_ltch_m_p_bttn" id="r_a4ce98361389a5c5c5b7a8aee638ccc9c"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_ltch_m_p_bttn.html#a4ce98361389a5c5c5b7a8aee638ccc9c">LtchMPBttn</a> (const int8_t &amp;mpbttnPin, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)</td></tr>
 <tr class="memdesc:a4ce98361389a5c5c5b7a8aee638ccc9c pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:ae3fbd6ff303f246f3cbc32abf42f68f4 pub_methods_class_ltch_m_p_bttn" id="r_ae3fbd6ff303f246f3cbc32abf42f68f4"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_ltch_m_p_bttn.html#ae3fbd6ff303f246f3cbc32abf42f68f4">LtchMPBttn</a> (<a class="el" href="class_press_signal_source.html">PressSignalSource</a> *newSignalSource, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)</td></tr>
+<tr class="memdesc:ae3fbd6ff303f246f3cbc32abf42f68f4 pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
 <tr class="memitem:a41e826688b0cd221275ed14f90c19bb4 pub_methods_class_ltch_m_p_bttn" id="r_a41e826688b0cd221275ed14f90c19bb4"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_ltch_m_p_bttn.html#a41e826688b0cd221275ed14f90c19bb4">LtchMPBttn</a> (const <a class="el" href="class_ltch_m_p_bttn.html">LtchMPBttn</a> &amp;other)</td></tr>
 <tr class="memdesc:a41e826688b0cd221275ed14f90c19bb4 pub_methods_class_ltch_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="memitem:a504174fb6c928c040ffbc05ba1ef7da0 pub_methods_class_ltch_m_p_bttn" id="r_a504174fb6c928c040ffbc05ba1ef7da0"><td class="memItemLeft">
@@ -209,6 +221,8 @@ void&#160;</td><td class="memItemRight"><b>clrStatus</b> (bool clrIsOn=true)</td
 <tr class="memdesc:a6b28f4f72471deb4a48b4dee9083e884 pub_methods_class_dbncd_dlyd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="memitem:a3b2d46a9f87d6de382afa7f6da1d1ada pub_methods_class_dbncd_dlyd_m_p_bttn" id="r_a3b2d46a9f87d6de382afa7f6da1d1ada"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_dlyd_m_p_bttn.html#a3b2d46a9f87d6de382afa7f6da1d1ada">DbncdDlydMPBttn</a> (const int8_t &amp;mpbttnPin, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)</td></tr>
 <tr class="memdesc:a3b2d46a9f87d6de382afa7f6da1d1ada pub_methods_class_dbncd_dlyd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:a73f82dfe4f3d2396192d4d64b6b79122 pub_methods_class_dbncd_dlyd_m_p_bttn" id="r_a73f82dfe4f3d2396192d4d64b6b79122"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_dlyd_m_p_bttn.html#a73f82dfe4f3d2396192d4d64b6b79122">DbncdDlydMPBttn</a> (<a class="el" href="class_press_signal_source.html">PressSignalSource</a> *newSignalSource, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)</td></tr>
+<tr class="memdesc:a73f82dfe4f3d2396192d4d64b6b79122 pub_methods_class_dbncd_dlyd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
 <tr class="memitem:a9f36752670dd9dde4a040beb8e325415 pub_methods_class_dbncd_dlyd_m_p_bttn" id="r_a9f36752670dd9dde4a040beb8e325415"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_dlyd_m_p_bttn.html#a9f36752670dd9dde4a040beb8e325415">DbncdDlydMPBttn</a> (const <a class="el" href="class_dbncd_dlyd_m_p_bttn.html">DbncdDlydMPBttn</a> &amp;other)</td></tr>
 <tr class="memdesc:a9f36752670dd9dde4a040beb8e325415 pub_methods_class_dbncd_dlyd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="memitem:a54fffb2df6988577dc2fb5d0e2abe897 pub_methods_class_dbncd_dlyd_m_p_bttn" id="r_a54fffb2df6988577dc2fb5d0e2abe897"><td class="memItemLeft">
@@ -226,9 +240,8 @@ virtual&#160;</td><td class="memItemRight"><b>~DbncdDlydMPBttn</b> ()</td></tr>
 <tr class="memdesc:af5c038cae0cb88c96cb7c842c24cc56c pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
 <tr class="memitem:a4edb1d237123c0c4548aebb1402561e3 pub_methods_class_dbncd_m_p_bttn" id="r_a4edb1d237123c0c4548aebb1402561e3"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_m_p_bttn.html#a4edb1d237123c0c4548aebb1402561e3">DbncdMPBttn</a> (const <a class="el" href="class_dbncd_m_p_bttn.html">DbncdMPBttn</a> &amp;other)</td></tr>
 <tr class="memdesc:a4edb1d237123c0c4548aebb1402561e3 pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
-<tr class="memitem:a3f0f4c1a3b122541031fecaf9bb93101 pub_methods_class_dbncd_m_p_bttn" id="r_a3f0f4c1a3b122541031fecaf9bb93101"><td class="memItemLeft">
-virtual&#160;</td><td class="memItemRight"><b>~DbncdMPBttn</b> ()</td></tr>
-<tr class="memdesc:a3f0f4c1a3b122541031fecaf9bb93101 pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor. <br /></td></tr>
+<tr class="memitem:a3f0f4c1a3b122541031fecaf9bb93101 pub_methods_class_dbncd_m_p_bttn" id="r_a3f0f4c1a3b122541031fecaf9bb93101"><td class="memItemLeft">virtual&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_m_p_bttn.html#a3f0f4c1a3b122541031fecaf9bb93101">~DbncdMPBttn</a> ()</td></tr>
+<tr class="memdesc:a3f0f4c1a3b122541031fecaf9bb93101 pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class destructor.  <br /></td></tr>
 <tr class="memitem:a3009725646aeb160884b8109d180b530 pub_methods_class_dbncd_m_p_bttn" id="r_a3009725646aeb160884b8109d180b530"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_m_p_bttn.html#a3009725646aeb160884b8109d180b530">clrStatus</a> (bool clrIsOn=true)</td></tr>
 <tr class="memdesc:a3009725646aeb160884b8109d180b530 pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears and resets flags, timers and counters modified through the object's signals processing.  <br /></td></tr>
 <tr class="memitem:a881f9e15d1bf8da14edc77e2bcc63953 pub_methods_class_dbncd_m_p_bttn" id="r_a881f9e15d1bf8da14edc77e2bcc63953"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_m_p_bttn.html#a881f9e15d1bf8da14edc77e2bcc63953">disable</a> ()</td></tr>
@@ -312,7 +325,7 @@ virtual&#160;</td><td class="memItemRight"><b>~DbncdMPBttn</b> ()</td></tr>
 <p>class <a class="el" href="class_xtrn_unltch_m_p_bttn.html" title="Models an External Unlatch LDD-MPB, a.k.a. Emergency Latched Switch (XULDD-MPB).">XtrnUnltchMPBttn</a> </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a062525015159624acded883de8d6de67" name="a062525015159624acded883de8d6de67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a062525015159624acded883de8d6de67">&#9670;&#160;</a></span>XtrnUnltchMPBttn() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a062525015159624acded883de8d6de67">&#9670;&#160;</a></span>XtrnUnltchMPBttn() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -381,8 +394,58 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
+<a id="a2ef4e648d3c029fee7652463bbac8161" name="a2ef4e648d3c029fee7652463bbac8161"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ef4e648d3c029fee7652463bbac8161">&#9670;&#160;</a></span>XtrnUnltchMPBttn() <span class="overload">[2/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">XtrnUnltchMPBttn::XtrnUnltchMPBttn </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_press_signal_source.html">PressSignalSource</a> *</td>          <td class="paramname"><span class="paramname"><em>newSignalSource</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_dbncd_dlyd_m_p_bttn.html">DbncdDlydMPBttn</a> *</td>          <td class="paramname"><span class="paramname"><em>unLtchBttn</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned long int &amp;</td>          <td class="paramname"><span class="paramname"><em>dbncTimeOrigSett</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned long int &amp;</td>          <td class="paramname"><span class="paramname"><em>strtDelay</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Class constructor. </p>
+<p>This class constructor makes specific reference to a source for the unlatch signal by including a parameter referencing an object that implements the needed <a class="el" href="class_dbncd_m_p_bttn.html#ac78bb12cb1d9bdb43b4e4e593812b300" title="Returns the value of the isOn attribute flag.">getIsOn()</a> method to get the external unlatch signal.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">unLtchBttn</td><td>Pointer to a <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn</a> object that will provide the unlatch source signal through it's <b><a class="el" href="class_dbncd_m_p_bttn.html#ac78bb12cb1d9bdb43b4e4e593812b300" title="Returns the value of the isOn attribute flag.">getIsOn()</a></b> method.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Referencing a <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn</a> subclass object that keeps the isOn flag set for a preset time period might affect the latching/unlatching process, as this class's objects don't check for the isOn condition of the unlatching object prior to setting it's own isOn flag.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For the other parameters see <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int)</a></dd>
+<dd>
+Other unlatch signal origins might be developed through the <a class="el" href="class_ltch_m_p_bttn.html#a25933288a98bd0a2efc406e7a009fbc1" title="Sets the values of the flags needed to unlatch a latched MPB.">unlatch()</a> method provided. </dd></dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_xtrn_unltch_m_p_bttn_a2ef4e648d3c029fee7652463bbac8161_cgraph.png" border="0" usemap="#aclass_xtrn_unltch_m_p_bttn_a2ef4e648d3c029fee7652463bbac8161_cgraph" loading="lazy" alt=""/></div>
+<!-- MAP 0 -->
+</div>
+
+</div>
+</div>
 <a id="ab33826dd6bbc5fdba42a1dcb06319a0b" name="ab33826dd6bbc5fdba42a1dcb06319a0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab33826dd6bbc5fdba42a1dcb06319a0b">&#9670;&#160;</a></span>XtrnUnltchMPBttn() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab33826dd6bbc5fdba42a1dcb06319a0b">&#9670;&#160;</a></span>XtrnUnltchMPBttn() <span class="overload">[3/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -437,6 +500,73 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
+<a id="a5d5d92bb4798f345df463e2157299615" name="a5d5d92bb4798f345df463e2157299615"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d5d92bb4798f345df463e2157299615">&#9670;&#160;</a></span>XtrnUnltchMPBttn() <span class="overload">[4/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">XtrnUnltchMPBttn::XtrnUnltchMPBttn </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_press_signal_source.html">PressSignalSource</a> *</td>          <td class="paramname"><span class="paramname"><em>newSignalSource</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned long int &amp;</td>          <td class="paramname"><span class="paramname"><em>dbncTimeOrigSett</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned long int &amp;</td>          <td class="paramname"><span class="paramname"><em>strtDelay</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Class constructor. </p>
+<p>This class constructor instantiates an object that relies on the <b><a class="el" href="class_ltch_m_p_bttn.html#a25933288a98bd0a2efc406e7a009fbc1" title="Sets the values of the flags needed to unlatch a latched MPB.">unlatch()</a></b> method invocation to release the latched MPB</p>
+<dl class="section note"><dt>Note</dt><dd>For the parameters see <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int)</a> </dd></dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_xtrn_unltch_m_p_bttn_a5d5d92bb4798f345df463e2157299615_cgraph.png" border="0" usemap="#aclass_xtrn_unltch_m_p_bttn_a5d5d92bb4798f345df463e2157299615_cgraph" loading="lazy" alt=""/></div>
+<!-- MAP 1 -->
+</div>
+
+</div>
+</div>
+<a id="a7ae7719fd9daec952a2e119ece2cb08e" name="a7ae7719fd9daec952a2e119ece2cb08e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ae7719fd9daec952a2e119ece2cb08e">&#9670;&#160;</a></span>XtrnUnltchMPBttn() <span class="overload">[5/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">XtrnUnltchMPBttn::XtrnUnltchMPBttn </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_xtrn_unltch_m_p_bttn.html">XtrnUnltchMPBttn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>Reference to an existing <a class="el" href="class_xtrn_unltch_m_p_bttn.html" title="Models an External Unlatch LDD-MPB, a.k.a. Emergency Latched Switch (XULDD-MPB).">XtrnUnltchMPBttn</a> object to be copied. </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_xtrn_unltch_m_p_bttn_a7ae7719fd9daec952a2e119ece2cb08e_cgraph.png" border="0" usemap="#aclass_xtrn_unltch_m_p_bttn_a7ae7719fd9daec952a2e119ece2cb08e_cgraph" loading="lazy" alt=""/></div>
+<!-- MAP 2 -->
+</div>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
@@ -451,7 +581,7 @@ Here is the call graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a href="class_xtrn_unltch_m_p_bttn.html">XtrnUnltchMPBttn</a></li>
-    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
+    <li class="footer">Generated on <span class="timestamp"></span> for ButtonToSwitch Library for ESP32 (Arduino) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
   </ul>
 </div>
 </body>

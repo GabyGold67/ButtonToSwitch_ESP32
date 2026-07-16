@@ -6,6 +6,7 @@
 <meta name="generator" content="Doxygen 1.17.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>ButtonToSwitch Library for ESP32 (Arduino): VdblMPBttn Class Reference</title>
+<link rel="icon" href="Complex_Switch_Sq_Sm_Color_In.jpg" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
 <script type="text/javascript" src="clipboard.js"></script>
@@ -164,9 +165,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a9a66706295d3de374cba43fdf82ec88d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="memitem:a73c4a6007b5ef15752d264bf0a317a03" id="r_a73c4a6007b5ef15752d264bf0a317a03"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a73c4a6007b5ef15752d264bf0a317a03">VdblMPBttn</a> (const int8_t &amp;mpbttnPin, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0, const bool &amp;isOnDisabled=false)</td></tr>
 <tr class="memdesc:a73c4a6007b5ef15752d264bf0a317a03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:a46cbc44d147d5e57738c820418662faa" id="r_a46cbc44d147d5e57738c820418662faa"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a46cbc44d147d5e57738c820418662faa">VdblMPBttn</a> (<a class="el" href="class_press_signal_source.html">PressSignalSource</a> *newSignalSource, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0, const bool &amp;isOnDisabled=false)</td></tr>
+<tr class="memdesc:a46cbc44d147d5e57738c820418662faa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:a586e377e9291a8509ad0b0c5d80d1499" id="r_a586e377e9291a8509ad0b0c5d80d1499"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a586e377e9291a8509ad0b0c5d80d1499">VdblMPBttn</a> (const <a class="el" href="class_vdbl_m_p_bttn.html">VdblMPBttn</a> &amp;other)</td></tr>
+<tr class="memdesc:a586e377e9291a8509ad0b0c5d80d1499"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="memitem:a99c75dd8225c791015dcdbc8b1c9a07e" id="r_a99c75dd8225c791015dcdbc8b1c9a07e"><td class="memItemLeft"><a id="a99c75dd8225c791015dcdbc8b1c9a07e" name="a99c75dd8225c791015dcdbc8b1c9a07e"></a>
 virtual&#160;</td><td class="memItemRight"><b>~VdblMPBttn</b> ()</td></tr>
 <tr class="memdesc:a99c75dd8225c791015dcdbc8b1c9a07e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor. <br /></td></tr>
+<tr class="memitem:a5828364362ff0920177dc6bf15329ffb" id="r_a5828364362ff0920177dc6bf15329ffb"><td class="memItemLeft">virtual bool&#160;</td><td class="memItemRight"><a class="el" href="#a5828364362ff0920177dc6bf15329ffb">begin</a> (const unsigned long int &amp;pollDelayMs=_StdPollDelay)</td></tr>
+<tr class="memdesc:a5828364362ff0920177dc6bf15329ffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches the instantiated object to a timer that monitors the input pins and updates the object status.  <br /></td></tr>
 <tr class="memitem:a7ea82534da6a8f39d9715a3126387d30" id="r_a7ea82534da6a8f39d9715a3126387d30"><td class="memItemLeft"><a id="a7ea82534da6a8f39d9715a3126387d30" name="a7ea82534da6a8f39d9715a3126387d30"></a>
 void&#160;</td><td class="memItemRight"><b>clrStatus</b> (bool clrIsOn=true)</td></tr>
 <tr class="memdesc:a7ea82534da6a8f39d9715a3126387d30"><td class="mdescLeft">&#160;</td><td class="mdescRight">See <a class="el" href="class_dbncd_m_p_bttn.html#a3009725646aeb160884b8109d180b530" title="Clears and resets flags, timers and counters modified through the object&#39;s signals processing.">DbncdMPBttn::clrStatus(bool)</a>. <br /></td></tr>
@@ -210,6 +217,8 @@ void&#160;</td><td class="memItemRight"><b>clrStatus</b> (bool clrIsOn=true)</td
 <tr class="memdesc:a6b28f4f72471deb4a48b4dee9083e884 pub_methods_class_dbncd_dlyd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="memitem:a3b2d46a9f87d6de382afa7f6da1d1ada pub_methods_class_dbncd_dlyd_m_p_bttn" id="r_a3b2d46a9f87d6de382afa7f6da1d1ada"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_dlyd_m_p_bttn.html#a3b2d46a9f87d6de382afa7f6da1d1ada">DbncdDlydMPBttn</a> (const int8_t &amp;mpbttnPin, const bool &amp;pulledUp=true, const bool &amp;typeNO=true, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)</td></tr>
 <tr class="memdesc:a3b2d46a9f87d6de382afa7f6da1d1ada pub_methods_class_dbncd_dlyd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
+<tr class="memitem:a73f82dfe4f3d2396192d4d64b6b79122 pub_methods_class_dbncd_dlyd_m_p_bttn" id="r_a73f82dfe4f3d2396192d4d64b6b79122"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_dlyd_m_p_bttn.html#a73f82dfe4f3d2396192d4d64b6b79122">DbncdDlydMPBttn</a> (<a class="el" href="class_press_signal_source.html">PressSignalSource</a> *newSignalSource, const unsigned long int &amp;dbncTimeOrigSett=0, const unsigned long int &amp;strtDelay=0)</td></tr>
+<tr class="memdesc:a73f82dfe4f3d2396192d4d64b6b79122 pub_methods_class_dbncd_dlyd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
 <tr class="memitem:a9f36752670dd9dde4a040beb8e325415 pub_methods_class_dbncd_dlyd_m_p_bttn" id="r_a9f36752670dd9dde4a040beb8e325415"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_dlyd_m_p_bttn.html#a9f36752670dd9dde4a040beb8e325415">DbncdDlydMPBttn</a> (const <a class="el" href="class_dbncd_dlyd_m_p_bttn.html">DbncdDlydMPBttn</a> &amp;other)</td></tr>
 <tr class="memdesc:a9f36752670dd9dde4a040beb8e325415 pub_methods_class_dbncd_dlyd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="memitem:a54fffb2df6988577dc2fb5d0e2abe897 pub_methods_class_dbncd_dlyd_m_p_bttn" id="r_a54fffb2df6988577dc2fb5d0e2abe897"><td class="memItemLeft">
@@ -227,11 +236,8 @@ virtual&#160;</td><td class="memItemRight"><b>~DbncdDlydMPBttn</b> ()</td></tr>
 <tr class="memdesc:af5c038cae0cb88c96cb7c842c24cc56c pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
 <tr class="memitem:a4edb1d237123c0c4548aebb1402561e3 pub_methods_class_dbncd_m_p_bttn" id="r_a4edb1d237123c0c4548aebb1402561e3"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_m_p_bttn.html#a4edb1d237123c0c4548aebb1402561e3">DbncdMPBttn</a> (const <a class="el" href="class_dbncd_m_p_bttn.html">DbncdMPBttn</a> &amp;other)</td></tr>
 <tr class="memdesc:a4edb1d237123c0c4548aebb1402561e3 pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
-<tr class="memitem:a3f0f4c1a3b122541031fecaf9bb93101 pub_methods_class_dbncd_m_p_bttn" id="r_a3f0f4c1a3b122541031fecaf9bb93101"><td class="memItemLeft">
-virtual&#160;</td><td class="memItemRight"><b>~DbncdMPBttn</b> ()</td></tr>
-<tr class="memdesc:a3f0f4c1a3b122541031fecaf9bb93101 pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default virtual destructor. <br /></td></tr>
-<tr class="memitem:a5b4061687a017d5db4a62298b7278cb8 pub_methods_class_dbncd_m_p_bttn" id="r_a5b4061687a017d5db4a62298b7278cb8"><td class="memItemLeft">virtual bool&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_m_p_bttn.html#a5b4061687a017d5db4a62298b7278cb8">begin</a> (const unsigned long int &amp;pollDelayMs=_StdPollDelay)</td></tr>
-<tr class="memdesc:a5b4061687a017d5db4a62298b7278cb8 pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches the instantiated object to a timer that monitors the input pins and updates the object status.  <br /></td></tr>
+<tr class="memitem:a3f0f4c1a3b122541031fecaf9bb93101 pub_methods_class_dbncd_m_p_bttn" id="r_a3f0f4c1a3b122541031fecaf9bb93101"><td class="memItemLeft">virtual&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_m_p_bttn.html#a3f0f4c1a3b122541031fecaf9bb93101">~DbncdMPBttn</a> ()</td></tr>
+<tr class="memdesc:a3f0f4c1a3b122541031fecaf9bb93101 pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class destructor.  <br /></td></tr>
 <tr class="memitem:a3009725646aeb160884b8109d180b530 pub_methods_class_dbncd_m_p_bttn" id="r_a3009725646aeb160884b8109d180b530"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_m_p_bttn.html#a3009725646aeb160884b8109d180b530">clrStatus</a> (bool clrIsOn=true)</td></tr>
 <tr class="memdesc:a3009725646aeb160884b8109d180b530 pub_methods_class_dbncd_m_p_bttn"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears and resets flags, timers and counters modified through the object's signals processing.  <br /></td></tr>
 <tr class="memitem:a881f9e15d1bf8da14edc77e2bcc63953 pub_methods_class_dbncd_m_p_bttn" id="r_a881f9e15d1bf8da14edc77e2bcc63953"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="class_dbncd_m_p_bttn.html#a881f9e15d1bf8da14edc77e2bcc63953">disable</a> ()</td></tr>
@@ -324,7 +330,7 @@ virtual&#160;</td><td class="memItemRight"><b>~DbncdMPBttn</b> ()</td></tr>
 <p>The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclasses. </p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a73c4a6007b5ef15752d264bf0a317a03" name="a73c4a6007b5ef15752d264bf0a317a03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a73c4a6007b5ef15752d264bf0a317a03">&#9670;&#160;</a></span>VdblMPBttn()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a73c4a6007b5ef15752d264bf0a317a03">&#9670;&#160;</a></span>VdblMPBttn() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -369,7 +375,7 @@ virtual&#160;</td><td class="memItemRight"><b>~DbncdMPBttn</b> ()</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>For the other parameters see <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn(GPIO_TypeDef*, const uint16_t, const bool, const bool, const unsigned long int, const unsigned long int)</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For the parameters see <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)</a> </dd></dl>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -385,7 +391,129 @@ Here is the call graph for this function:</div>
 
 </div>
 </div>
+<a id="a46cbc44d147d5e57738c820418662faa" name="a46cbc44d147d5e57738c820418662faa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46cbc44d147d5e57738c820418662faa">&#9670;&#160;</a></span>VdblMPBttn() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VdblMPBttn::VdblMPBttn </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_press_signal_source.html">PressSignalSource</a> *</td>          <td class="paramname"><span class="paramname"><em>newSignalSource</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned long int &amp;</td>          <td class="paramname"><span class="paramname"><em>dbncTimeOrigSett</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned long int &amp;</td>          <td class="paramname"><span class="paramname"><em>strtDelay</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool &amp;</td>          <td class="paramname"><span class="paramname"><em>isOnDisabled</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Class constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">isOnDisabled</td><td>(Optional) Sets the instantiation value for the isOnDisabled flag attribute.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>For the other parameters see <a class="el" href="class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD-MPB).">DbncdDlydMPBttn(PressSignalSource*, const unsigned long int)</a></dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>The <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the <a class="el" href="class_dbncd_m_p_bttn.html" title="Base class, models a Debounced Momentary Push Button (D-MPB).">DbncdMPBttn</a> objects. The library provides a <a class="el" href="class_mcu_input_pin.html" title="Concrete Strategy class for MCU GPIO pin input as signal source.">McuInputPin</a> subclass of <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other <a class="el" href="class_press_signal_source.html" title="Strategy Pattern interface class.">PressSignalSource</a> subclass can be used as long as it provides the expected behavior for the MPB signal processing. </dd></dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_vdbl_m_p_bttn_a46cbc44d147d5e57738c820418662faa_cgraph.png" border="0" usemap="#aclass_vdbl_m_p_bttn_a46cbc44d147d5e57738c820418662faa_cgraph" loading="lazy" alt=""/></div>
+<!-- MAP 0 -->
+</div>
+
+</div>
+</div>
+<a id="a586e377e9291a8509ad0b0c5d80d1499" name="a586e377e9291a8509ad0b0c5d80d1499"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a586e377e9291a8509ad0b0c5d80d1499">&#9670;&#160;</a></span>VdblMPBttn() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">VdblMPBttn::VdblMPBttn </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_vdbl_m_p_bttn.html">VdblMPBttn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>Reference to an existing <a class="el" href="class_vdbl_m_p_bttn.html" title="Abstract class, base to model Voidable DD-MPBs (VDD-MPB).">VdblMPBttn</a> object to be copied. </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_vdbl_m_p_bttn_a586e377e9291a8509ad0b0c5d80d1499_cgraph.png" border="0" usemap="#aclass_vdbl_m_p_bttn_a586e377e9291a8509ad0b0c5d80d1499_cgraph" loading="lazy" alt=""/></div>
+<!-- MAP 1 -->
+</div>
+
+</div>
+</div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a5828364362ff0920177dc6bf15329ffb" name="a5828364362ff0920177dc6bf15329ffb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5828364362ff0920177dc6bf15329ffb">&#9670;&#160;</a></span>begin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool VdblMPBttn::begin </td>
+          <td>(</td>
+          <td class="paramtype">const unsigned long int &amp;</td>          <td class="paramname"><span class="paramname"><em>pollDelayMs</em></span><span class="paramdefsep"> = </span><span class="paramdefval">_StdPollDelay</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel virtual">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Attaches the instantiated object to a timer that monitors the input pins and updates the object status. </p>
+<p>The frequency of the periodic monitoring is passed as a parameter in milliseconds, and is a value that must be small (frequent) enough to keep the object updated, but not so frequent that wastes resources from other tasks. A default value is provided based on empirical results obtained in various published tests.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pollDelayMs</td><td>(Optional) unsigned long integer (ulong), the time between polls in milliseconds.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Boolean indicating if the object could be attached to a timer. </dd></dl>
+<dl class="retval"><dt>Return values</dt><dd>
+  <table class="retval">
+    <tr><td class="paramname">true</td><td>the object could be attached to a timer -or it was already attached to a timer when the method was invoked-. </td></tr>
+    <tr><td class="paramname">false</td><td>the object could not create the needed timer, or the object could not be attached to it. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_dbncd_m_p_bttn.html#a5b4061687a017d5db4a62298b7278cb8">DbncdMPBttn</a>.</p>
+
+</div>
+</div>
 <a id="a9d2d6568745db4c67e326af0ef93e531" name="a9d2d6568745db4c67e326af0ef93e531"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9d2d6568745db4c67e326af0ef93e531">&#9670;&#160;</a></span>getFnWhnTrnOffVdd()</h2>
 
@@ -857,7 +985,7 @@ Here is the caller graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a href="class_vdbl_m_p_bttn.html">VdblMPBttn</a></li>
-    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
+    <li class="footer">Generated on <span class="timestamp"></span> for ButtonToSwitch Library for ESP32 (Arduino) by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.17.0 </li>
   </ul>
 </div>
 </body>
