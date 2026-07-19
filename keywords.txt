@@ -27,7 +27,7 @@ clrStatus   KEYWORD2
 disable  KEYWORD2
 enable   KEYWORD2
 end KEYWORD2
-getBeginDisabled
+getBeginDisabled  KEYWORD2
 getBtsSerialNum   KEYWORD2
 getCurDbncTime  KEYWORD2
 getFnWhnTrnOff KEYWORD2
@@ -53,9 +53,9 @@ resetFda KEYWORD2
 resume  KEYWORD2
 setBeginDisabled  KEYWORD2
 setDbncTime KEYWORD2
-setFrcdOtptLvlWhnDsbld
 setFnWhnTrnOffPtr KEYWORD2
 setFnWhnTrnOnPtr  KEYWORD2
+setFrcdOtptLvlWhnDsbld  KEYWORD2
 setFVPPWhnTrnOff  KEYWORD2
 setFVPPWhnTrnOffArgPtr  KEYWORD2
 setFVPPWhnTrnOn   KEYWORD2
@@ -136,9 +136,6 @@ setFVPPWhnTrnOnScndry   KEYWORD2
 setFVPPWhnTrnOnScndryArgPtr   KEYWORD2
 setScndModActvDly KEYWORD2
 setTaskWhileOnScndry KEYWORD2
-##################
-#DDlydDALtchMPBttn
-##################
 #################
 #SldrDALtchMPBttn
 #################
@@ -174,6 +171,10 @@ setFnWhnTrnOffSldrMaxPtr   KEYWORD2
 setFnWhnTrnOffSldrMinPtr   KEYWORD2
 setFnWhnTrnOnSldrMaxPtr KEYWORD2
 setFnWhnTrnOnSldrMinPtr KEYWORD2
+setFVPPWhnTrnOffSldrDirUp  KEYWORD2
+setFVPPWhnTrnOffSldrDirUpArgPtr  KEYWORD2
+setFVPPWhnTrnOnSldrDirUp   KEYWORD2
+setFVPPWhnTrnOnSldrDirUpArgPtr   KEYWORD2
 setFVPPWhnTrnOffSldrMax KEYWORD2
 setFVPPWhnTrnOffSldrMaxArgPtr KEYWORD2
 setFVPPWhnTrnOnSldrMax  KEYWORD2
@@ -203,7 +204,7 @@ getFVPPWhnTrnOffVddArgPtr  KEYWORD2
 getFVPPWhnTrnOnVdd   KEYWORD2
 getFVPPWhnTrnOnVddArgPtr   KEYWORD2
 getIsVoided KEYWORD2
-getStOnWhnOtpFrcd KEYWORD2
+getStOnWhnVddOtpLvlFrcd KEYWORD2
 setFnWhnTrnOffVddPtr KEYWORD2
 setFnWhnTrnOnVddtPtr KEYWORD2
 setFVPPWhnTrnOffVdd  KEYWORD2

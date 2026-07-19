@@ -145,9 +145,6 @@ protected:
 	};
 	const unsigned long int _stdMinDbncTime {_HwMinDbncTime};
 
-	// int8_t _mpbttnPin{_InvalidPinNum};	// Important v5.0.0 implementation change, the constructor for a mpb with MCUPin signal will change this value, if it persists the signal source is an alternative to an MCU GPIO pin, like a GPIO expander or other.
-	// bool _pulledUp{true};
-	// bool _typeNO{true};
 	unsigned long int _dbncTimeOrigSett{0};
 
 	bool _beginDisabled{false};
@@ -715,7 +712,7 @@ public:
  */
 class LtchMPBttn: public DbncdDlydMPBttn{
 protected:
-    enum fdaLmpbStts {
+   enum fdaLmpbStts {
 		stStart,
 		stSetup,
 		//--------
