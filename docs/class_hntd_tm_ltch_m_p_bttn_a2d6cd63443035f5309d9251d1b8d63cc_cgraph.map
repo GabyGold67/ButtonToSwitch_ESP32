@@ -1,7 +1,14 @@
 <map id="HntdTmLtchMPBttn::HntdTmLtchMPBttn" name="HntdTmLtchMPBttn::HntdTmLtchMPBttn">
 <area shape="rect" id="Node000001" title="Copy constructor." alt="" coords="5,35,198,77"/>
-<area shape="rect" id="Node000002" href="$class_hntd_tm_ltch_m_p_bttn.html#ac1fb61a16863333b718aa650fc407e11" title="Default constructor." alt="" coords="252,5,444,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="198,42,236,37,237,43,199,47"/>
-<area shape="rect" id="Node000003" href="$class_tm_ltch_m_p_bttn.html#a246985e9366d3a2e16805d0b5565c543" title="Default constructor." alt="" coords="246,72,451,99"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="199,65,230,69,230,74,198,70"/>
+<area shape="rect" id="Node000002" href="$class_hntd_tm_ltch_m_p_bttn.html#ac1fb61a16863333b718aa650fc407e11" title="Default constructor." alt="" coords="246,5,438,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="198,42,230,38,230,43,198,47"/>
+<area shape="rect" id="Node000003" href="$class_tm_ltch_m_p_bttn.html#a246985e9366d3a2e16805d0b5565c543" title="Default constructor." alt="" coords="486,43,691,69"/>
+<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="198,56,246,57,438,57,471,57,471,62,438,63,246,63,198,62"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="439,35,471,39,470,45,438,41"/>
+<area shape="rect" id="Node000004" href="$class_ltch_m_p_bttn.html#ab1856959f1318126a6370a04b2cd9782" title="Default constructor." alt="" coords="739,43,907,69"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="692,53,724,53,724,59,692,59"/>
+<area shape="rect" id="Node000005" href="$class_dbncd_dlyd_m_p_bttn.html#a6b28f4f72471deb4a48b4dee9083e884" title="Default constructor." alt="" coords="955,35,1158,77"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="907,53,939,53,939,59,907,59"/>
+<area shape="rect" id="Node000006" href="$class_dbncd_m_p_bttn.html#a6b610f28298f925ce4672bf5891e843b" title="Default class constructor." alt="" coords="1206,43,1399,69"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1159,53,1191,53,1191,59,1159,59"/>
 </map>

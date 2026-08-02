@@ -1,0 +1,222 @@
+---
+references:
+  - "File: /d:/Mis Proyectos
+    R&D/MyLibs_ESP32/ButtonToSwitch_ESP32/src/ButtonToSwitch_ESP32.h"
+generationTime: 2026-07-16T14:53:19.583Z
+---
+classDiagram
+    %% Data structures and interfaces
+    class MpbOtpts_t {
+        +bool isOn
+        +bool isEnabled
+        +bool pilotOn
+        +bool wrnngOn
+        +bool isVoided
+        +bool isOnScndry
+        +uint16_t otptCurVal
+    }
+
+    class PressSignalSource {
+        <<interface>>
+        +getIsOn()* bool
+    }
+
+    %% Base class
+    class DbncdMPBttn {
+        <<abstract>>
+        #enum fdaDmpbStts
+        #unsigned long int _dbncTimeOrigSett
+        #bool _beginDisabled
+        #bool _isEnabled
+        #volatile bool _isOn
+        #volatile bool _isPressed
+        #fdaDmpbStts _mpbFdaState
+        #TimerHandle_t _mpbPollTmrHndl
+        #PressSignalSource* _signalSource
+        #TaskHandle_t _taskToNotifyHndl
+        #TaskHandle_t _taskWhileOnHndl
+        #SemaphoreHandle_t _isOnMutex
+        +DbncdMPBttn()
+        +DbncdMPBttn(int8_t mpbttnPin, bool pulledUp, bool typeNO, unsigned long int dbncTime)
+        +DbncdMPBttn(PressSignalSource* newSignalSource, unsigned long int dbncTime)
+        +begin(unsigned long int pollDelayMs)* bool
+        +end() bool
+        +pause() bool
+        +resume() bool
+        +getIsOn() bool
+        +getIsEnabled() bool
+        +enable() void
+        +disable() void
+        +setDbncTime(unsigned long int newDbncTime) bool
+        +setTaskToNotify(TaskHandle_t newTaskHandle) void
+        +setTaskWhileOn(TaskHandle_t newTaskHandle)* void
+    }
+
+    %% Delayed variant
+    class DbncdDlydMPBttn {
+        <<abstract>>
+        #unsigned long int _strtDelay
+        +DbncdDlydMPBttn()
+        +DbncdDlydMPBttn(int8_t mpbttnPin, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay)
+        +setStrtDelay(unsigned long int newStrtDelay) void
+        +getStrtDelay() unsigned long int
+    }
+
+    %% Latched base class
+    class LtchMPBttn {
+        <<abstract>>
+        #enum fdaLmpbStts
+        #bool _isLatched
+        #volatile bool _validUnlatchPend
+        #volatile bool _validUnlatchRlsPend
+        #bool _trnOffASAP
+        +LtchMPBttn()
+        +LtchMPBttn(int8_t mpbttnPin, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay)
+        +getIsLatched() bool
+        +getTrnOffASAP() bool
+        +setTrnOffASAP(bool newVal) void
+        +unlatch() bool
+    }
+
+    %% Toggle switch
+    class TgglLtchMPBttn {
+        +TgglLtchMPBttn()
+        +TgglLtchMPBttn(int8_t mpbttnPin, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay)
+    }
+
+    %% Timer-based switch
+    class TmLtchMPBttn {
+        #bool _tmRstbl
+        #unsigned long int _srvcTime
+        #unsigned long int _srvcTimerStrt
+        +TmLtchMPBttn()
+        +TmLtchMPBttn(int8_t mpbttnPin, unsigned long int svcTime, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay)
+        +getSrvcTime() unsigned long int
+        +setSrvcTime(unsigned long int newSrvcTime) bool
+        +setTmerRstbl(bool newIsRstbl) void
+    }
+
+    %% Hinted timer (staircase) switch
+    class HntdTmLtchMPBttn {
+        #unsigned long int _wrnngMs
+        #unsigned int _wrnngPrctg
+        #volatile bool _pilotOn
+        #volatile bool _wrnngOn
+        #bool _keepPilot
+        +HntdTmLtchMPBttn()
+        +HntdTmLtchMPBttn(int8_t mpbttnPin, unsigned long int svcTime, unsigned int wrnngPrctg, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay)
+        +begin(unsigned long int pollDelayMs)* bool
+        +getPilotOn() bool
+        +getWrnngOn() bool
+        +setKeepPilot(bool newKeepPilot) void
+        +setWrnngPrctg(unsigned int newWrnngPrctg) bool
+    }
+
+    %% External unlatch
+    class XtrnUnltchMPBttn {
+        #DbncdDlydMPBttn* _unLtchBttn
+        +XtrnUnltchMPBttn()
+        +XtrnUnltchMPBttn(int8_t mpbttnPin, DbncdDlydMPBttn* unLtchBttn, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay)
+    }
+
+    %% Double action base class
+    class DblActnLtchMPBttn {
+        <<abstract>>
+        #enum fdaDALmpbStts
+        #volatile bool _isOnScndry
+        #unsigned long _scndModActvDly
+        #unsigned long _scndModTmrStrt
+        #TaskHandle_t _taskWhileOnScndryHndl
+        +DblActnLtchMPBttn()
+        +DblActnLtchMPBttn(int8_t mpbttnPin, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay)
+        +begin(unsigned long int pollDelayMs)* bool
+        +getIsOnScndry() bool
+        +getScndModActvDly() unsigned long
+        +setScndModActvDly(unsigned long newVal) bool
+        +getTaskWhileOnScndry() TaskHandle_t
+        +setTaskWhileOnScndry(TaskHandle_t newTaskHandle) void
+    }
+
+    %% Double action delayed
+    class DDlydDALtchMPBttn {
+        +DDlydDALtchMPBttn()
+        +DDlydDALtchMPBttn(int8_t mpbttnPin, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay)
+    }
+
+    %% Slider double action
+    class SldrDALtchMPBttn {
+        #bool _autoSwpDirOnEnd
+        #bool _autoSwpDirOnPrss
+        #bool _curSldrDirUp
+        #uint16_t _otptCurVal
+        #uint16_t _otptValMax
+        #uint16_t _otptValMin
+        #unsigned long _otptSldrSpd
+        #uint16_t _otptSldrStpSize
+        +SldrDALtchMPBttn()
+        +SldrDALtchMPBttn(int8_t mpbttnPin, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay, uint16_t initVal)
+        +getOtptCurVal() uint16_t
+        +setOtptCurVal(uint16_t newVal) bool
+        +getOtptSldrSpd() unsigned long
+        +setOtptSldrSpd(uint16_t newVal) bool
+        +getOtptValMax() uint16_t
+        +setOtptValMax(uint16_t newVal) bool
+        +getOtptValMin() uint16_t
+        +setOtptValMin(uint16_t newVal) bool
+        +getSldrDirUp() bool
+        +setSldrDirUp() bool
+        +setSldrDirDn() bool
+        +swapSldrDir() bool
+    }
+
+    %% Voidable base class
+    class VdblMPBttn {
+        <<abstract>>
+        #enum fdaVmpbStts
+        #bool _isVoided
+        #bool _frcdOtptLvlWhnVdd
+        #volatile bool _validVoidPend
+        #volatile bool _validUnvoidPend
+        #fdaVmpbStts _mpbFdaState
+        +VdblMPBttn()
+        +VdblMPBttn(int8_t mpbttnPin, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay, bool isOnDisabled)
+        +begin(unsigned long int pollDelayMs)* bool
+        +getIsVoided() bool
+        +setIsVoided() bool
+        +setIsNotVoided() bool
+    }
+
+    %% Time voidable (anti-tampering)
+    class TmVdblMPBttn {
+        #unsigned long int _voidTime
+        #unsigned long int _voidTmrStrt
+        +TmVdblMPBttn()
+        +TmVdblMPBttn(int8_t mpbttnPin, unsigned long int voidTime, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay, bool isOnDisabled)
+        +getVoidTime() unsigned long int
+        +setVoidTime(unsigned long int newVoidTime) bool
+    }
+
+    %% Single service voidable (trigger)
+    class SnglSrvcVdblMPBttn {
+        +SnglSrvcVdblMPBttn()
+        +SnglSrvcVdblMPBttn(int8_t mpbttnPin, bool pulledUp, bool typeNO, unsigned long int dbncTime, unsigned long int strtDelay)
+    }
+
+    %% Relationships - Inheritance
+    DbncdMPBttn <|-- DbncdDlydMPBttn
+    DbncdDlydMPBttn <|-- LtchMPBttn
+    LtchMPBttn <|-- TgglLtchMPBttn
+    LtchMPBttn <|-- TmLtchMPBttn
+    LtchMPBttn <|-- XtrnUnltchMPBttn
+    LtchMPBttn <|-- DblActnLtchMPBttn
+    TmLtchMPBttn <|-- HntdTmLtchMPBttn
+    DblActnLtchMPBttn <|-- DDlydDALtchMPBttn
+    DblActnLtchMPBttn <|-- SldrDALtchMPBttn
+    DbncdDlydMPBttn <|-- VdblMPBttn
+    VdblMPBttn <|-- TmVdblMPBttn
+    VdblMPBttn <|-- SnglSrvcVdblMPBttn
+
+    %% Associations
+    DbncdMPBttn --> PressSignalSource : uses
+    XtrnUnltchMPBttn --> DbncdDlydMPBttn : unlatches via
+    DbncdMPBttn --> MpbOtpts_t : outputs

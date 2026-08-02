@@ -12,7 +12,7 @@
 <area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="440,125,500,106,501,111,442,130"/>
 <area shape="rect" id="Node000008" href="$class_tm_ltch_m_p_bttn.html" title="Models a Timer Latch DD&#45;MPB, a.k.a. Timer Switch (TiLDD&#45;MPB)." alt="" coords="492,132,601,159"/>
 <area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="441,143,492,143,492,148,441,148"/>
-<area shape="rect" id="Node000010" href="$class_xtrn_unltch_m_p_bttn.html" title="Models an External Unlatch LDD&#45;MPB, a.k.a. Emergency Latched Switch (XULDD&#45;MPB)" alt="" coords="483,183,610,209"/>
+<area shape="rect" id="Node000010" href="$class_xtrn_unltch_m_p_bttn.html" title="Models an External Unlatch LDD&#45;MPB, a.k.a. Emergency Latched Switch (XULDD&#45;MPB)." alt="" coords="483,183,610,209"/>
 <area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="442,161,501,180,500,185,440,166"/>
 <area shape="rect" id="Node000005" href="$class_d_dlyd_d_a_ltch_m_p_bttn.html" title="Models a Debounced Delayed Double Action Latched MPB combo switch (Debounced Delayed DALDD&#45;MPB &#45; DD&#45;D..." alt="" coords="667,5,813,32"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="630,30,666,26,667,31,631,36"/>
@@ -20,8 +20,8 @@
 <area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="631,52,674,58,673,63,630,58"/>
 <area shape="rect" id="Node000009" href="$class_hntd_tm_ltch_m_p_bttn.html" title="Models a Hinted Timer Latch DD&#45;MPB, a.k.a. Staircase Switch (HTiLDD&#45;MPB)." alt="" coords="671,132,808,159"/>
 <area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="617,143,671,143,671,148,617,148"/>
-<area shape="rect" id="Node000012" href="$class_sngl_srvc_vdbl_m_p_bttn.html" title="Models a Single Service Voidable DD&#45;MPB a.k.a. Trigger switch (SSVDD&#45;MPB)" alt="" coords="474,233,619,260"/>
+<area shape="rect" id="Node000012" href="$class_sngl_srvc_vdbl_m_p_bttn.html" title="Models a Single Service Voidable DD&#45;MPB a.k.a. Trigger switch (SSVDD&#45;MPB)." alt="" coords="474,233,619,260"/>
 <area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="442,244,474,244,474,249,442,249"/>
-<area shape="rect" id="Node000013" href="$class_tm_vdbl_m_p_bttn.html" title="Models a Time Voidable DD&#45;MPB, a.k.a. Anti&#45;tampering switch (TVDD&#45;MPB)" alt="" coords="491,284,602,311"/>
+<area shape="rect" id="Node000013" href="$class_tm_vdbl_m_p_bttn.html" title="Models a Time Voidable DD&#45;MPB, a.k.a. Anti&#45;tampering switch (TVDD&#45;MPB)." alt="" coords="491,284,602,311"/>
 <area shape="poly" id="edge12_Node000011_Node000013" title=" " alt="" coords="442,262,501,281,500,286,440,268"/>
 </map>

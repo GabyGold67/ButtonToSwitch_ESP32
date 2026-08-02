@@ -1,7 +1,11 @@
 <map id="C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/src/ButtonToSwitch_ESP32.h" name="C:/Users/DevPadawan/Documents/My Projects/Training Projects/LibsDev_ESP32/lib/ButtonToSwitch_ESP32/src/ButtonToSwitch_ESP32.h">
-<area shape="rect" id="Node000001" title=": Header file for the ButtonToSwitch_ESP32 library classes" alt="" coords="5,5,252,96"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="44,144,120,171"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,97,96,131,91,129,106,95"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="144,144,209,171"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="151,95,167,129,162,131,146,97"/>
+<area shape="rect" id="Node000001" title="Header file for the ButtonToSwitch_ESP32 library classes." alt="" coords="5,5,252,96"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="34,235,111,261"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="65,98,45,120,30,145,25,165,30,186,39,205,51,222,47,225,34,207,25,188,19,165,25,143,41,117,61,95"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="151,235,215,261"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="196,95,216,117,232,143,238,165,232,188,222,208,209,225,205,222,218,205,227,186,232,165,227,145,212,120,192,98"/>
+<area shape="rect" id="Node000004" href="$_prss_sgnl_src___e_s_p32_8h.html" title=": Header file for the ButtonToSwitch_ESP32 library&#39;s PressSignalSource interface implementation class..." alt="" coords="40,144,217,187"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="131,96,131,129,126,129,126,96"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="116,189,92,223,88,220,112,186"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="145,186,168,220,164,223,140,189"/>
 </map>

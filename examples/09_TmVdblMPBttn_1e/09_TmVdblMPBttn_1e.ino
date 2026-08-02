@@ -96,6 +96,7 @@ TimerHandle_t enableSwpTmrHndl{NULL};
 //===============================>> User Tasks & Timers related declarations END
 
 void setup() {
+   delay(10);  //FTPO Part of the WOKWI simulator additions, for simulation startup needs
    pinMode(dmpbFnWhnTrnOnOffPin, OUTPUT);
 
   //Create the Main control task to keep, the MPBs outputs updated and set the Callback task function

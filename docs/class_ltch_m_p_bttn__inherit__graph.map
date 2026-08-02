@@ -6,7 +6,7 @@
 <area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="377,195,343,231,339,227,373,191"/>
 <area shape="rect" id="Node000008" href="$class_tm_ltch_m_p_bttn.html" title="Models a Timer Latch DD&#45;MPB, a.k.a. Timer Switch (TiLDD&#45;MPB)." alt="" coords="410,229,520,256"/>
 <area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="421,191,455,227,452,231,418,195"/>
-<area shape="rect" id="Node000010" href="$class_xtrn_unltch_m_p_bttn.html" title="Models an External Unlatch LDD&#45;MPB, a.k.a. Emergency Latched Switch (XULDD&#45;MPB)" alt="" coords="544,229,672,256"/>
+<area shape="rect" id="Node000010" href="$class_xtrn_unltch_m_p_bttn.html" title="Models an External Unlatch LDD&#45;MPB, a.k.a. Emergency Latched Switch (XULDD&#45;MPB)." alt="" coords="544,229,672,256"/>
 <area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="449,184,572,226,570,231,447,189"/>
 <area shape="rect" id="Node000002" href="$class_dbncd_dlyd_m_p_bttn.html" title="Models a Debounced Delayed MPB (DD&#45;MPB)." alt="" coords="332,80,462,107"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="400,122,400,154,394,154,394,122"/>

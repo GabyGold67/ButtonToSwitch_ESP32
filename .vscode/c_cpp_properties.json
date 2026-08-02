@@ -1,0 +1,43 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/cores/esp32",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/variants/uPesy_esp32_wroom_devkit",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/driver/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_common/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_hw_support/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_hw_support/include/soc",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_rom/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_system/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_timer/include",                
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions/freertos",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/port/xtensa/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/esp32/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/heap/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/log/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/esp32/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/soc/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/spi_flash/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/xtensa/esp32/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/xtensa/include",
+                "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/qio_qspi/include/**",
+                ""
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:/Users/Gaby/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcc.exe",
+            "intelliSenseMode": "windows-gcc-x86"
+        }
+    ],
+    "version": 4
+}

@@ -4,28 +4,28 @@
   * @brief	: Source file for the ButtonToSwitch_ESP32 library classes
   *
   * @details The library implements classes that model several switch mechanisms
-  * replacements out of simple push buttons or similar equivalent digital signal 
-  * inputs.
+  * replacements out of simple momentary push buttons or similar equivalent
+  * digital signal inputs.
   * By using just a button (a.k.a. momentary switches or momentary push buttons,
   * _**MPB**_ for short from here on) the classes implemented in this library will 
   * manage, calculate and update several parameters to **generate the embedded 
   * behavior of standard electromechanical switches**.
   *
-  * Repository: https://github.com/GabyGold67/ButtonToSwitch_ESP32
+  * repository https://github.com/GabyGold67/ButtonToSwitch_ESP32
   * 
   * Framework: Arduino  
   * Platform: ESP32  
   * 
   * @author Gabriel D. Goldman  
   * mail <gdgoldman67@hotmail.com>  
-  * Github <https://github.com/GabyGold67>  
+  * github <https://github.com/GabyGold67>  
   * 
-  * @version v4.6.1
+  * @version v5.0.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   30/07/2025 17:30 (GMT+0200) DST  
+  *       Last update:   11/07/2026 22:20 (GMT+0200) DST  
   * 
-  * @copyright Copyright (c) 2025  GPL-3.0 license  
+  * @copyright Copyright (c) 2023  GPL-3.0 license  
   *******************************************************************************
   * @attention	This library was originally developed as part of the refactoring
   * process for an industrial machines security enforcement and productivity control
@@ -45,35 +45,46 @@
   * If I promised you the moon and the stars, would you believe it?  
  *******************************************************************************
  */
+// Better Comments extension additional tags:
+	//FFDR For Future Development Reminder!!
+	//FTPO For Testing Purposes Only code!!
 
- #include "ButtonToSwitch_ESP32.h"
+#include "ButtonToSwitch_ESP32.h"
 //===========================>> BEGIN General use Global variables
 static BaseType_t errorFlag {pdFALSE};
+uint8_t DbncdMPBttn::_btsLastSerialNum = 0;
 //===========================>> END General use Global variables
 
 DbncdMPBttn::DbncdMPBttn()
-: _mpbttnPin{_InvalidPinNum}, _pulledUp{true}, _typeNO{true}, _dbncTimeOrigSett{0}
+:_signalSource{nullptr}
 {
 }
 
 DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett)
-: _mpbttnPin{mpbttnPin}, _pulledUp{pulledUp}, _typeNO{typeNO}, _dbncTimeOrigSett{dbncTimeOrigSett}
+:_dbncTimeOrigSett{dbncTimeOrigSett}
 {
-
-	if(mpbttnPin != _InvalidPinNum){
-		String mpbPinNumStr {"00" + String(_mpbttnPin)};
-		mpbPinNumStr = mpbPinNumStr.substring(mpbPinNumStr.length() - 2, 2);
-		_mpbPollTmrName = "PollMpbPin" + mpbPinNumStr + "_tmr";
-
-		if(_dbncTimeOrigSett < _stdMinDbncTime) // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
-			_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
-		_dbncTimeTempSett = _dbncTimeOrigSett;
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		DbncdMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), _dbncTimeOrigSett);	// Call to the other constructor to complete the object instantiation
 	}
 	else{
-		_pulledUp = true;
-		_typeNO = true;
-		_dbncTimeOrigSett = 0;
+		// The object creation failed due to invalid pin number
+		DbncdMPBttn();
 	}
+	
+}
+
+DbncdMPBttn::DbncdMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett)
+:_signalSource{newSignalSource}, _dbncTimeOrigSett{dbncTimeOrigSett}
+{
+	++_btsLastSerialNum;
+	_btsSerialNum = _btsLastSerialNum;
+	String _btsSerialNumStr {"000" + String(_btsSerialNum)};
+	_btsSerialNumStr = _btsSerialNumStr.substring(_btsSerialNumStr.length() - 3, 3);
+	_mpbPollTmrName = "PollBtsNum" + _btsSerialNumStr + "_tmr";
+
+	if(_dbncTimeOrigSett < _stdMinDbncTime) // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
+		_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
+	_dbncTimeTempSett = _dbncTimeOrigSett;
 	
 	_mpbInstnc = this;
 	_isOnMutex = xSemaphoreCreateMutex();
@@ -82,45 +93,57 @@ DbncdMPBttn::DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bo
 }
 
 DbncdMPBttn::DbncdMPBttn(const DbncdMPBttn& other)
-: _mpbttnPin{other._mpbttnPin}, _pulledUp{other._pulledUp},	_typeNO{other._typeNO},	_dbncTimeOrigSett{other._dbncTimeOrigSett}
 {
-		_mpbPollTmrName = other._mpbPollTmrName;	//FFDR A new timer name must be created based on the  constructor implemented mechanism
-		_dbncTimeTempSett = other._dbncTimeTempSett;
-		_isOn = other._isOn;
-		_isEnabled = other._isEnabled;
-		_isOnDisabled = other._isOnDisabled;
-		_isPressed = other._isPressed;
-		_outputsChange = other._outputsChange;
-		_outputsChangeCnt = other._outputsChangeCnt;
-		_outputsChngTskTrggr = other._outputsChngTskTrggr;
-		_taskToNotifyHndl = other._taskToNotifyHndl;	//FFDR The logic dictates that the task to notify must be different for each object, remove this line and document the need to set the task to notify after the object is created
-		_taskWhileOnHndl = other._taskWhileOnHndl;	//FFDR The logic dictates that the task to notify must be different for each object, remove this line and document the need to set the task to notify after the object is created
-		_fnWhnTrnOn = other._fnWhnTrnOn;		//FFDR The logic dictates that the function to execute must be different for each object, remove this line and document the need to set the function to call after the object is created
-		_fnWhnTrnOff = other._fnWhnTrnOff;	//FFDR The logic dictates that the function to execute must be different for each object, remove this line and document the need to set the function to call after the object is created
+	_signalSource = other._signalSource;
+	if(_signalSource != nullptr){	// The source of the copy object is an implemented object, copy or generate the rest of the attributes
+		_dbncTimeOrigSett = other._dbncTimeOrigSett;
 		_beginDisabled = other._beginDisabled;
-		_validDisablePend = other._validDisablePend;
-		_validEnablePend = other._validEnablePend;
-		_validPressPend = other._validPressPend;
-		_validReleasePend = other._validReleasePend;
-		_dbncTimerStrt = other._dbncTimerStrt;
-		_dbncRlsTimerStrt = other._dbncRlsTimerStrt;
+		//! BEGIN Taken from the class constructor
+			++_btsLastSerialNum;	
+			_btsSerialNum = _btsLastSerialNum;	//! Taken from the class constructor
+			String _btsSerialNumStr {"000" + String(_btsSerialNum)};
+			_btsSerialNumStr = _btsSerialNumStr.substring(_btsSerialNumStr.length() - 3, 3);
+			_mpbPollTmrName = "PollBtsNum" + _btsSerialNumStr + "_tmr";
+		//! END Taken from the class constructor
 		_dbncRlsTimeTempSett = other._dbncRlsTimeTempSett;
-		_prssRlsCcl = other._prssRlsCcl;
-		_mpbFdaState = other._mpbFdaState;
-		_sttChng = other._sttChng;
+		_dbncTimeTempSett = other._dbncTimeTempSett;
+		_fnVdPtrPrmWhnTrnOff = other._fnVdPtrPrmWhnTrnOff;
+		_fnVdPtrPrmWhnTrnOffArgPtr = other._fnVdPtrPrmWhnTrnOffArgPtr;
+		_fnVdPtrPrmWhnTrnOn = other._fnVdPtrPrmWhnTrnOn;
+		_fnVdPtrPrmWhnTrnOnArgPtr = other._fnVdPtrPrmWhnTrnOnArgPtr;
+		_fnWhnTrnOff = other._fnWhnTrnOff;
+		_fnWhnTrnOn = other._fnWhnTrnOn;
+		_frcdOtptLvlWhnDsbld = other._frcdOtptLvlWhnDsbld;
+		_isEnabled = true;
+		_isOn = false;
+		_isOnDisabled = other._isOnDisabled;
+		_isPressed = false;	// The _isPressed attribute is not copied, as it is a value that depends on the state of the input signal source, and the copy object might be used in a different context with a different signal source state. The FDA state is also not copied for the same reason, as it depends on the _isPressed value and other attributes that are not copied. The FDA state will be set to "Start" in the copy object, and the first call to updFdaState() will update it according to the new context. The same applies to the timers and related attributes, as they depend on the FDA state and the _isPressed value.
+		_mpbFdaState = stStart;
+		_mpbInstnc = this; 
+		_mpbPollTmrHndl = NULL;   //FreeRTOS returns NULL if creation fails (not nullptr)
+		_mpbPollTmrName = "";
+		_outputsChange = false;
+		_outputsChangeCnt = 0;
+		_outputsChngTskTrggr = false;
+		_prssRlsCcl  = false;
 		_strtDelay = other._strtDelay;
-
-		// Mutexes must be created anew, not copied
-		_isOnMutex = xSemaphoreCreateMutex();
-		_strtDelayMutex = xSemaphoreCreateMutex();
-		_updFdaMutex = xSemaphoreCreateMutex();
-
-		// Timer handle should not be copied (timers are not duplicated)
-		_mpbPollTmrHndl = nullptr;	//FFDR create a new timer handle with the same name as the original object, so the timer can be started and stopped independently of the original object
+		_sttChng = true;
+		_taskToNotifyHndl = other._taskToNotifyHndl;
+		_taskWhileOnHndl = other._taskWhileOnHndl;
+		_validDisablePend = false;
+		_validEnablePend = false;
+		_validPressPend = false;
+		_validReleasePend = false;
+		// _isOnMutex = other._isOnMutex;
+		_isOnMutex = xSemaphoreCreateMutex();	//! Mutexes must be created anew, not copied
+		// _strtDelayMutex = other._strtDelayMutex;
+		_strtDelayMutex = xSemaphoreCreateMutex();	//! Mutexes must be created anew, not copied
+		// _updFdaMutex = other._updFdaMutex;
+		_updFdaMutex = xSemaphoreCreateMutex();	//! Mutexes must be created anew, not copied
+	}
 }
 
-DbncdMPBttn::~DbncdMPBttn(){
-    
+DbncdMPBttn::~DbncdMPBttn(){    
 	end();  // Stops the software timer associated to the object, deletes it's entry and nullyfies the handle to it before destructing the object
 }
 
@@ -128,26 +151,33 @@ bool DbncdMPBttn::begin(const unsigned long int &pollDelayMs) {
 	bool result {false};
 	BaseType_t tmrModResult {pdFAIL};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-
-	if (pollDelayMs > 0){
-		if (!_mpbPollTmrHndl){        
-			_mpbPollTmrHndl = xTimerCreate(
-				_mpbPollTmrName.c_str(),  // Timer name
-				pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-				pdTRUE,     // Auto-reload true
-				this,       // TimerID: data passed to the callback function to work
-				mpbPollCallback	  // Callback function
-			);
-        	if (_mpbPollTmrHndl != NULL){
-				tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-            if (tmrModResult == pdPASS)
-					result = true;
-        	}
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								result = true;
+								_begun = true;
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -160,7 +190,7 @@ void DbncdMPBttn::clrStatus(bool clrIsOn){
 	several attributes must be resetted to "Start" values.
 	The only important value not reseted is the _mpbFdaState, to do it call resetFda() INSTEAD of this method*/
 
-	taskENTER_CRITICAL(&mux);   //ESP-IDF FreeRTOS taskENTER_CRITICAL requires a mutex to avoid core to core interruptions
+	portENTER_CRITICAL(&mux);   //ESP-IDF FreeRTOS portENTER_CRITICAL requires a mutex to avoid core to core interruptions
 	_isPressed = false;
 	_validPressPend = false;
 	_validReleasePend = false;
@@ -170,8 +200,7 @@ void DbncdMPBttn::clrStatus(bool clrIsOn){
 		if(_isOn)
 			_turnOff();
 	//_outputsChangeCnt = 0;
-	taskEXIT_CRITICAL(&mux);
-
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -196,18 +225,32 @@ bool DbncdMPBttn::end(){
    bool result {false};
    BaseType_t tmrModResult {pdFAIL};
 
-   if (_mpbPollTmrHndl){
-   	result = pause();
-      if (result){
-      	tmrModResult = xTimerDelete(_mpbPollTmrHndl, portMAX_DELAY);
-			if (tmrModResult == pdPASS)
-				_mpbPollTmrHndl = NULL;
-			else
-				result = false;
-      }
-   }
+	if(_begun){
+		if (_mpbPollTmrHndl){
+			result = pause();
+			if (result){
+				tmrModResult = xTimerDelete(_mpbPollTmrHndl, portMAX_DELAY);
+				if (tmrModResult == pdPASS){
+					_mpbPollTmrHndl = NULL;
+					_begun = false;
+				}
+				else
+					result = false;
+			}
+		}
+	}
 
    return result;
+}
+
+bool DbncdMPBttn::getBeginDisabled(){
+
+   return _beginDisabled;
+}
+
+uint8_t DbncdMPBttn::getBtsSerialNum() const{
+
+   return _btsSerialNum;
 }
 
 const unsigned long int DbncdMPBttn::getCurDbncTime() const{
@@ -243,6 +286,11 @@ fncVdPtrPrmPtrType DbncdMPBttn::getFVPPWhnTrnOn(){
 void* DbncdMPBttn::getFVPPWhnTrnOnArgPtr(){
 
 	return _fnVdPtrPrmWhnTrnOnArgPtr;
+}
+
+bool DbncdMPBttn::getFrcdOtptLvlWhnDsbld(){
+   
+	return _frcdOtptLvlWhnDsbld;
 }
 
 const bool DbncdMPBttn::getIsEnabled() const{
@@ -300,42 +348,12 @@ const TaskHandle_t DbncdMPBttn::getTaskWhileOn(){
 	return _taskWhileOnHndl;
 }
 
-bool DbncdMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett){
-	bool result {false};
-
-	if(_mpbttnPin == _InvalidPinNum){
-		if (_mpbPollTmrName == ""){
-			_mpbttnPin = mpbttnPin;
-			_pulledUp = pulledUp;
-			_typeNO = typeNO;
-			_dbncTimeOrigSett = dbncTimeOrigSett;
-
-			String mpbPinNumStr {"00" + String(_mpbttnPin)};
-			mpbPinNumStr = mpbPinNumStr.substring(mpbPinNumStr.length() - 2, 2);
-			_mpbPollTmrName = "PollMpbPin" + mpbPinNumStr + "_tmr";
-
-			if(_dbncTimeOrigSett < _stdMinDbncTime) // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
-				_dbncTimeOrigSett = _stdMinDbncTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
-			_dbncTimeTempSett = _dbncTimeOrigSett;
-			// pinMode(mpbttnPin, (pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-			result = true;
-		}
-		else{
-			_pulledUp = true;
-			_typeNO = true;
-			_dbncTimeOrigSett = 0;
-		}
-	}
-    
-	return result;
-}
-
 void DbncdMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	DbncdMPBttn* mpbObj = (DbncdMPBttn*)pvTimerGetTimerID(mpbTmrCbArg);
 	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 	BaseType_t xReturned;
     
-	taskENTER_CRITICAL(&mux);   //ESP-IDF FreeRTOS modifies the taskENTER_CRITICAL of vanilla FreeRTOS to require a mutex as argument to avoid core to core interruptions
+	portENTER_CRITICAL(&mux);
 	if(mpbObj->getIsEnabled()){
 		// Input/Output signals update
 		mpbObj->updIsPressed();
@@ -349,7 +367,7 @@ void DbncdMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	- Attribute flags related tasks Resume/Pause
 	*/
 	mpbObj->updFdaState();
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	/*
 	The change of values of attribute flags not related to the State machine status changes, that are generated by the developer using the provided setters have no associated specific tasks to resume nor functions to execute.
@@ -413,20 +431,14 @@ void DbncdMPBttn::resetDbncTime(){
 void DbncdMPBttn::resetFda(){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	clrStatus(true);
 	setSttChng();
 	_mpbFdaState = stOffNotVPP;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
-
-/* void DbncdMPBttn::resetOutputsChngTskTrggr(){
- 	_outputsChngTskTrggr = false;
-
- 	return;
-} */
 
 bool DbncdMPBttn::resume(){
    bool result {false};
@@ -455,14 +467,14 @@ bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
 	bool result {true};
 	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_dbncTimeTempSett != newDbncTime){
 		if (newDbncTime >= _stdMinDbncTime)
 			_dbncTimeTempSett = newDbncTime;
 		else
 			result = false;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -470,10 +482,10 @@ bool DbncdMPBttn::setDbncTime(const unsigned long int &newDbncTime){
 void DbncdMPBttn::setFnWhnTrnOffPtr(fncPtrType newFnWhnTrnOff){
 	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOff != newFnWhnTrnOff)
 		_fnWhnTrnOff = newFnWhnTrnOff;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -481,10 +493,10 @@ void DbncdMPBttn::setFnWhnTrnOffPtr(fncPtrType newFnWhnTrnOff){
 void DbncdMPBttn::setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOn != newFnWhnTrnOn)
 		_fnWhnTrnOn = newFnWhnTrnOn;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -492,12 +504,12 @@ void DbncdMPBttn::setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn){
 void DbncdMPBttn::setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOff != newFVPPWhnTrnOff){
 		_fnVdPtrPrmWhnTrnOff = newFVPPWhnTrnOff;
 		_fnVdPtrPrmWhnTrnOffArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -505,11 +517,11 @@ void DbncdMPBttn::setFVPPWhnTrnOff(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *ar
 void DbncdMPBttn::setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOffArgPtr != newFVPPWhnTrnOffArgPtr){
 		_fnVdPtrPrmWhnTrnOffArgPtr = newFVPPWhnTrnOffArgPtr;	
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -517,12 +529,12 @@ void DbncdMPBttn::setFVPPWhnTrnOffArgPtr(void* newFVPPWhnTrnOffArgPtr){
 void DbncdMPBttn::setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOn != newFVPPWhnTrnOn){
 		_fnVdPtrPrmWhnTrnOn = newFVPPWhnTrnOn;
 		_fnVdPtrPrmWhnTrnOnArgPtr = argPtr;	//FFDR The argument pointer is set to the function pointer, so it can be used when the function is called
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -530,11 +542,31 @@ void DbncdMPBttn::setFVPPWhnTrnOn(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argP
 void DbncdMPBttn::setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr){
 	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOnArgPtr != newFVPPWhnTrnOnArgPtr){
 		_fnVdPtrPrmWhnTrnOnArgPtr = newFVPPWhnTrnOnArgPtr;	
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
+
+	return;
+}
+
+void DbncdMPBttn::setFrcdOtptLvlWhnDsbld(const bool &newVal){
+	portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+	portENTER_CRITICAL(&mux);
+	if(_frcdOtptLvlWhnDsbld != newVal){
+		_frcdOtptLvlWhnDsbld = newVal;
+		if(!_isEnabled && _frcdOtptLvlWhnDsbld){
+			if(_isOn != _isOnDisabled){
+				if(_isOnDisabled)
+					_turnOn();
+				else
+					_turnOff();
+			}
+		}
+	}
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -542,7 +574,7 @@ void DbncdMPBttn::setFVPPWhnTrnOnArgPtr(void* newFVPPWhnTrnOnArgPtr){
 void DbncdMPBttn::_setIsEnabled(const bool &newEnabledValue){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_isEnabled != newEnabledValue){
 		if (newEnabledValue){  // Change to isEnabled = true (i.e. Enabled)
 			_validEnablePend = true;
@@ -555,7 +587,7 @@ void DbncdMPBttn::_setIsEnabled(const bool &newEnabledValue){
 				_validEnablePend = false;
 		}
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -563,7 +595,7 @@ void DbncdMPBttn::_setIsEnabled(const bool &newEnabledValue){
 void DbncdMPBttn::setIsOnDisabled(const bool &newIsOnDisabled){
    portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_isOnDisabled != newIsOnDisabled){
 		_isOnDisabled = newIsOnDisabled;
 		if(!_isEnabled){
@@ -575,7 +607,7 @@ void DbncdMPBttn::setIsOnDisabled(const bool &newIsOnDisabled){
 			}
 		}
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -583,7 +615,7 @@ void DbncdMPBttn::setIsOnDisabled(const bool &newIsOnDisabled){
 void DbncdMPBttn::setOutputsChange(bool newOutputsChange){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(newOutputsChange)
 		++_outputsChangeCnt;
 	else
@@ -597,7 +629,7 @@ void DbncdMPBttn::setOutputsChange(bool newOutputsChange){
 
 	if((_taskToNotifyHndl != NULL) && newOutputsChange)
 		_outputsChngTskTrggr = true;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
    return;
 }
@@ -612,7 +644,7 @@ void DbncdMPBttn::setTaskToNotify(const TaskHandle_t &newTaskHandle){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	eTaskState taskWhileOnStts{};
 
-   taskENTER_CRITICAL(&mux);
+   portENTER_CRITICAL(&mux);
    if(_taskToNotifyHndl != newTaskHandle){
       if(_taskToNotifyHndl != NULL){
          taskWhileOnStts = eTaskGetState(_taskToNotifyHndl);
@@ -626,7 +658,7 @@ void DbncdMPBttn::setTaskToNotify(const TaskHandle_t &newTaskHandle){
       if (newTaskHandle != NULL)
          _taskToNotifyHndl = newTaskHandle;
    }
-   taskEXIT_CRITICAL(&mux);
+   portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -635,7 +667,7 @@ void DbncdMPBttn::setTaskWhileOn(const TaskHandle_t &newTaskHandle){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	eTaskState taskWhileOnStts{};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_taskWhileOnHndl != newTaskHandle){
 		if(_taskWhileOnHndl != NULL){
 			taskWhileOnStts = eTaskGetState(_taskWhileOnHndl);
@@ -649,7 +681,7 @@ void DbncdMPBttn::setTaskWhileOn(const TaskHandle_t &newTaskHandle){
 		if (newTaskHandle != NULL)
 			_taskWhileOnHndl = newTaskHandle;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -711,6 +743,26 @@ void DbncdMPBttn::_turnOn(){
 void DbncdMPBttn::updFdaState(){
 	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
 		switch(_mpbFdaState){
+			case stStart:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stSetup;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stSetup:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
 			case stOffNotVPP:
 				// In: >>---------------------------------->>
 				if(_sttChng){
@@ -775,11 +827,13 @@ void DbncdMPBttn::updFdaState(){
 			case stDisabled:
 				// In: >>---------------------------------->>
 				if(_sttChng){
-					if(_isOn != _isOnDisabled){
-						if(_isOn)
-							_turnOff();
-						else
-							_turnOn();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn != _isOnDisabled){
+							if(_isOn)
+								_turnOff();
+							else
+								_turnOn();
+						}
 					}
 					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 					_isEnabled = false;
@@ -789,8 +843,10 @@ void DbncdMPBttn::updFdaState(){
 				}	// Execute this code only ONCE, when entering this state
 				// Do: >>---------------------------------->>
 				if(_validEnablePend){
-					if(_isOn)
-						_turnOff();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn)
+							_turnOff();
+					}
 					_isEnabled = true;
 					_validEnablePend = false;
 					setOutputsChange(true);
@@ -805,8 +861,27 @@ void DbncdMPBttn::updFdaState(){
 				}	// Execute this code only ONCE, when exiting this state
 				break;
 
-		default:
-			break;
+			case stStndby:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stStop;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stStop:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			default:
+				break;
 		}
 		xSemaphoreGive(_updFdaMutex);
 	}	
@@ -814,51 +889,8 @@ void DbncdMPBttn::updFdaState(){
 	return;
 }
 
-bool DbncdMPBttn::updIsPressed(){	//FFDR - Refactor to a Strategy Pattern design
-	/*	
-	This method will be changed to accomodate different sources of detection signals. 
-	The current MPB state will come from a PressSignalGenerator class that might include subclasses for:
-	- McuInpPin: For MCU input pins, like the current implementation.
-	- ExpInpPin: For external inputs, like a I2C GPIO expander, SPI GPIO expander.
-	- SRGXInpPin: For shift register inputs, like a 74HC165 or similar.
-	- WiFiInpPin: For WiFi inputs, like a web server or a MQTT client.
-	- BLEInpPin: For BLE inputs, like a BLE server or a BLE client.
-	*/
-
-	/*To be 'pressed' the conditions are:
-	1) For NO == true
-		a)  _pulledUp == false ==> digitalRead == HIGH
-		b)  _pulledUp == true ==> digitalRead == LOW
-	2) For NO == false
-		a)  _pulledUp == false ==> digitalRead == LOW
-		b)  _pulledUp == true ==> digitalRead == HIGH
-	*/
-	bool result {false};
-	bool tmpPinLvl {digitalRead(_mpbttnPin)};
-    
-	if (_typeNO == true){
-		//For NO MPBs
-		if (_pulledUp == false){
-			if (tmpPinLvl == HIGH)
-				result = true;
-		}
-		else{
-			if (tmpPinLvl == LOW)
-				result = true;
-		}
-	}
-    else{
-		//For NC MPBs
-		if (_pulledUp == false){
-			if (tmpPinLvl == LOW)
-				result = true;
-		}
-		else{
-			if (tmpPinLvl == HIGH)
-				result = true;
-		}
-	}    
-	_isPressed = result;
+bool DbncdMPBttn::updIsPressed(){
+	_isPressed = _signalSource->updIsPressed();
 
 	return _isPressed;
 }
@@ -907,7 +939,18 @@ DbncdDlydMPBttn::DbncdDlydMPBttn()
 }
 
 DbncdDlydMPBttn::DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:DbncdMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett)
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		DbncdDlydMPBttn();
+	}
+}
+
+DbncdDlydMPBttn::DbncdDlydMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:DbncdMPBttn(newSignalSource, dbncTimeOrigSett)
 {
 	_strtDelay = strtDelay;
 }
@@ -918,22 +961,11 @@ DbncdDlydMPBttn::DbncdDlydMPBttn(const DbncdDlydMPBttn& other)
 	this->_strtDelay = other._strtDelay;		// Copy the strtDelay attribute
 }
 
-DbncdDlydMPBttn::~DbncdDlydMPBttn()
-{
+DbncdDlydMPBttn::~DbncdDlydMPBttn(){
 	if(_strtDelayMutex != NULL){
 		vSemaphoreDelete(_strtDelayMutex);
 		_strtDelayMutex = NULL;
 	}
-}
-
-bool DbncdDlydMPBttn::init(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay){
-	bool result {false};
-
-	result = DbncdMPBttn::init(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett);
-	if (result)
-		setStrtDelay(strtDelay);
-
-	return result;
 }
 
 void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
@@ -949,21 +981,34 @@ void DbncdDlydMPBttn::setStrtDelay(const unsigned long int &newStrtDelay){
 //=========================================================================> Class methods delimiter
 
 LtchMPBttn::LtchMPBttn()
+:DbncdDlydMPBttn()
 {
 }
 
 LtchMPBttn::LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to this class base constructor (as this is an abstract class) to complete the object instantiation, using the new McuInputPin object created in the heap memory, and passing the pointer to it to the base class constructor
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		DbncdDlydMPBttn();
+	}
+}
+
+LtchMPBttn::LtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:DbncdDlydMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
 {
 }
 
-LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	//FFDR Check new code implemented and uncomment
+LtchMPBttn::LtchMPBttn(const LtchMPBttn& other)	
 : DbncdDlydMPBttn(other) // Call base class copy constructor
 {
-	this->_isLatched = other._isLatched;
-	this->_trnOffASAP = other._trnOffASAP;
-	this->_validUnlatchPend = other._validUnlatchPend;
-	this->_validUnlatchRlsPend = other._validUnlatchRlsPend;
+	_validPressPend = false;
+	_isLatched = false;
+	_trnOffASAP = other._trnOffASAP;
+	_validUnlatchPend = false;
+	_validUnlatchRlsPend = false;
 }
 
 LtchMPBttn::~LtchMPBttn()
@@ -971,31 +1016,38 @@ LtchMPBttn::~LtchMPBttn()
 }
 
 bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
-   bool result {false};
-   BaseType_t tmrModResult {pdFAIL};
+	bool result {false};
+	BaseType_t tmrModResult {pdFAIL};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								result = true;
+								_begun = true;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
-	
-   if (pollDelayMs > 0){
-      if (!_mpbPollTmrHndl){        
-         _mpbPollTmrHndl = xTimerCreate(
-            _mpbPollTmrName.c_str(),  // Timer name
-            pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-            pdTRUE,     // Autoreload true
-            this,       // TimerID: data passed to the callback function to work                
-            mpbPollCallback   // LtchMPBttn::mpbPollCallback   //Callback function
-         );
-         if (_mpbPollTmrHndl != NULL){
-            tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-            if (tmrModResult == pdPASS)
-               result = true;
-         }
-      }
-   }
 
 	return result;
 }
@@ -1003,12 +1055,12 @@ bool LtchMPBttn::begin(const unsigned long int &pollDelayMs){
 void LtchMPBttn::clrStatus(bool clrIsOn){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	_isLatched = false;
 	_validUnlatchPend = false;
 	_validUnlatchRlsPend = false;
 	DbncdMPBttn::clrStatus(clrIsOn);
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1038,7 +1090,7 @@ void LtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	BaseType_t xReturned;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(mpbObj->getIsEnabled()){
 		// Input/Output signals update
 		mpbObj->updIsPressed();
@@ -1048,7 +1100,7 @@ void LtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
  	}
 	// State machine state update
 	mpbObj->updFdaState();
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	//Outputs update, function and tasks executions based on outputs changed generated by the State Machine
 	if (mpbObj->getOutputsChngTskTrggr()){
@@ -1070,10 +1122,10 @@ void LtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 void LtchMPBttn::setTrnOffASAP(const bool &newVal){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_trnOffASAP != newVal)
 		_trnOffASAP = newVal;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1081,10 +1133,10 @@ void LtchMPBttn::setTrnOffASAP(const bool &newVal){
 void LtchMPBttn::setUnlatchPend(const bool &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_validUnlatchPend != newVal)
 		_validUnlatchPend = newVal;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1092,10 +1144,10 @@ void LtchMPBttn::setUnlatchPend(const bool &newVal){
 void LtchMPBttn::setUnlatchRlsPend(const bool &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_validUnlatchRlsPend != newVal)
 		_validUnlatchRlsPend = newVal;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1104,13 +1156,13 @@ bool LtchMPBttn::unlatch(){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result{false};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_isLatched){
 		setUnlatchPend(true);
 		setUnlatchRlsPend(true);
 		result = true;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -1118,6 +1170,26 @@ bool LtchMPBttn::unlatch(){
 void LtchMPBttn::updFdaState(){
 	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
 		switch(_mpbFdaState){
+			case stStart:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stSetup;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stSetup:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
 			case stOffNotVPP:
 				// In: >>---------------------------------->>
 				if(_sttChng){
@@ -1259,16 +1331,18 @@ void LtchMPBttn::updFdaState(){
 				if(_sttChng){
 					stOffVURP_Out();
 				}	// Execute this code only ONCE, when exiting this state
-				break;
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
 
 			case stDisabled:
 				// In: >>---------------------------------->>
 				if(_sttChng){
-					if(_isOn != _isOnDisabled){
-						if(_isOn)
-							_turnOff();
-						else
-							_turnOn();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn != _isOnDisabled){
+							if(_isOn)
+								_turnOff();
+							else
+								_turnOn();
+						}
 					}
 					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 					stDisabled_In();
@@ -1279,8 +1353,10 @@ void LtchMPBttn::updFdaState(){
 				}	// Execute this code only ONCE, when entering this state
 				// Do: >>---------------------------------->>
 				if(_validEnablePend){
-					if(_isOn)
-						_turnOff();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn)
+							_turnOff();
+					}
 					_isEnabled = true;
 					_validEnablePend = false;
 					setOutputsChange(true);
@@ -1296,6 +1372,25 @@ void LtchMPBttn::updFdaState(){
 				}	// Execute this code only ONCE, when exiting this state
 				break;
 
+			case stStndby:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stStop;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stStop:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
 			default:
 				break;
 		}
@@ -1308,11 +1403,23 @@ void LtchMPBttn::updFdaState(){
 //=========================================================================> Class methods delimiter
 
 TgglLtchMPBttn::TgglLtchMPBttn()
+:LtchMPBttn()
 {
 }
 
 TgglLtchMPBttn::TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		TgglLtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		TgglLtchMPBttn();
+	}
+}
+
+TgglLtchMPBttn::TgglLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
 {
 }
 
@@ -1340,7 +1447,7 @@ void TgglLtchMPBttn::stOffNVURP_Do(){
 void TgglLtchMPBttn::updValidUnlatchStatus(){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_isLatched){
 		if(_validPressPend){
 			_validUnlatchPend = true;
@@ -1351,7 +1458,7 @@ void TgglLtchMPBttn::updValidUnlatchStatus(){
 			_validReleasePend = false;
 		}
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1359,22 +1466,33 @@ void TgglLtchMPBttn::updValidUnlatchStatus(){
 //=========================================================================> Class methods delimiter
 
 TmLtchMPBttn::TmLtchMPBttn()
+:LtchMPBttn()
 {
 }
 
 TmLtchMPBttn::TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &actTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _srvcTime{actTime}
 {
-	if(_srvcTime < _MinSrvcTime)    // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
-		_srvcTime = _MinSrvcTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		TmLtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), actTime, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		TmLtchMPBttn();
+	}
 
 }
 
-TmLtchMPBttn::TmLtchMPBttn(const TmLtchMPBttn &other)
-: LtchMPBttn(other), _srvcTime{other._srvcTime}
+TmLtchMPBttn::TmLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &actTime, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay), _srvcTime{actTime}
 {
-	this->_srvcTimerStrt = other._srvcTimerStrt;
-	this->_tmRstbl = other._tmRstbl;
+	if(_srvcTime < _MinSrvcTime)    // Best practice would impose failing the constructor (throwing an exception or building a "zombie" object)
+		_srvcTime = _MinSrvcTime;    // this tolerant approach taken for developers benefit, but object will be no faithful to the instantiation parameters
+}
+
+TmLtchMPBttn::TmLtchMPBttn(const TmLtchMPBttn &other)
+: LtchMPBttn(other), _srvcTime{other._srvcTime}, _tmRstbl{other._tmRstbl}
+{
+	_srvcTimerStrt = 0;
 }
 
 TmLtchMPBttn::~TmLtchMPBttn()
@@ -1384,10 +1502,10 @@ TmLtchMPBttn::~TmLtchMPBttn()
 void TmLtchMPBttn::clrStatus(bool clrIsOn){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	_srvcTimerStrt = 0;
 	LtchMPBttn::clrStatus(clrIsOn);
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1401,14 +1519,14 @@ bool TmLtchMPBttn::setSrvcTime(const unsigned long int &newSrvcTime){
 	bool result {true};
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-   taskENTER_CRITICAL(&mux);
+   portENTER_CRITICAL(&mux);
 	if (_srvcTime != newSrvcTime){
 		if (newSrvcTime >= _MinSrvcTime)  // The minimum activation time is _minActTime milliseconds
 			_srvcTime = newSrvcTime;
 		else
 			result = false;
    }
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
    return result;
 }
@@ -1416,10 +1534,10 @@ bool TmLtchMPBttn::setSrvcTime(const unsigned long int &newSrvcTime){
 void TmLtchMPBttn::setTmerRstbl(const bool &newIsRstbl){
    portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-   taskENTER_CRITICAL(&mux);
+   portENTER_CRITICAL(&mux);
 	if(_tmRstbl != newIsRstbl)
 		_tmRstbl = newIsRstbl;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1456,11 +1574,23 @@ void TmLtchMPBttn::updValidUnlatchStatus(){
 //=========================================================================> Class methods delimiter
 
 HntdTmLtchMPBttn::HntdTmLtchMPBttn()
+:TmLtchMPBttn()
 {
 }
 
 HntdTmLtchMPBttn::HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:TmLtchMPBttn(mpbttnPin, actTime, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		HntdTmLtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), actTime, wrnngPrctg, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		HntdTmLtchMPBttn();
+	}
+}
+
+HntdTmLtchMPBttn::HntdTmLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &actTime, const unsigned int &wrnngPrctg, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:TmLtchMPBttn(newSignalSource, actTime, dbncTimeOrigSett, strtDelay), _wrnngPrctg{wrnngPrctg}
 {
 	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;   
 }
@@ -1469,17 +1599,29 @@ HntdTmLtchMPBttn::HntdTmLtchMPBttn(const HntdTmLtchMPBttn &other)
 : TmLtchMPBttn(other), _wrnngPrctg{other._wrnngPrctg}
 {
 	_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;
+
+	_fnVdPtrPrmWhnTrnOffPilot = other._fnVdPtrPrmWhnTrnOffPilot;
+	_fnVdPtrPrmWhnTrnOffPilotArgPtr = other._fnVdPtrPrmWhnTrnOffPilotArgPtr;
+	_fnVdPtrPrmWhnTrnOnPilot = other._fnVdPtrPrmWhnTrnOnPilot;
+	_fnVdPtrPrmWhnTrnOnPilotArgPtr = other._fnVdPtrPrmWhnTrnOnPilotArgPtr;
+
+	_fnVdPtrPrmWhnTrnOffWrnng = other._fnVdPtrPrmWhnTrnOffWrnng;
+	_fnVdPtrPrmWhnTrnOffWrnngArgPtr = other._fnVdPtrPrmWhnTrnOffWrnngArgPtr;
+	_fnVdPtrPrmWhnTrnOnWrnng = other._fnVdPtrPrmWhnTrnOnWrnng;
+	_fnVdPtrPrmWhnTrnOnWrnngArgPtr = other._fnVdPtrPrmWhnTrnOnWrnngArgPtr;
+
 	_fnWhnTrnOffPilot = other._fnWhnTrnOffPilot;
 	_fnWhnTrnOffWrnng = other._fnWhnTrnOffWrnng;
 	_fnWhnTrnOnPilot = other._fnWhnTrnOnPilot;
 	_fnWhnTrnOnWrnng = other._fnWhnTrnOnWrnng;
+
 	_keepPilot = other._keepPilot;
-	_pilotOn = other._pilotOn;
-	_wrnngOn = other._wrnngOn;
-	_validWrnngSetPend = other._validWrnngSetPend;
-	_validWrnngResetPend = other._validWrnngResetPend;
-	_validPilotSetPend = other._validPilotSetPend;
-	_validPilotResetPend = other._validPilotResetPend;
+	_pilotOn = false;
+	_wrnngOn = false;
+	_validWrnngSetPend = false;
+	_validWrnngResetPend = false;
+	_validPilotSetPend = false;
+	_validPilotResetPend = false;
 }
 
 HntdTmLtchMPBttn::~HntdTmLtchMPBttn()
@@ -1490,37 +1632,44 @@ bool HntdTmLtchMPBttn::begin(const unsigned long int &pollDelayMs){
 	bool result {false};
 	BaseType_t tmrModResult {pdFAIL};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-	
-	if (pollDelayMs > 0){
-		if (!_mpbPollTmrHndl){
-			_mpbPollTmrHndl = xTimerCreate(
-				_mpbPollTmrName.c_str(),  // Timer name
-				pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-				pdTRUE,     // Autoreload true
-				this,       // TimerID: data passed to the callback function to work
-				mpbPollCallback // HntdTmLtchMPBttn::mpbPollCallback   //Callback function
-			);
-			if (_mpbPollTmrHndl != NULL){
-				tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-				if (tmrModResult == pdPASS)
-					result = true;
-	   	}
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // HntdTmLtchMPBttn::mpbPollCallback Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								result = true;
+								_begun = true;
+							}
+						}
+					}
+				}
+			}
 		}
-   }
+	}
 
-   return result;
+	return result;
 }
 
 void HntdTmLtchMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	
 	//	Put here class specific sets/resets, including pilot and warning
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	_validWrnngSetPend = false;
 	_validWrnngResetPend = false;
 	_wrnngOn = false; // Direct attribute flag unusual manipulation to avoid triggering Tasks and Functions responses
@@ -1531,7 +1680,7 @@ void HntdTmLtchMPBttn::clrStatus(bool clrIsOn){
 	else
 		_pilotOn = false; // Direct attribute flag unusual manipulation to avoid triggering Tasks and Functions responses
 	TmLtchMPBttn::clrStatus(clrIsOn);
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1610,7 +1759,7 @@ void HntdTmLtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	HntdTmLtchMPBttn* mpbObj = (HntdTmLtchMPBttn*)pvTimerGetTimerID(mpbTmrCbArg);
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(mpbObj->getIsEnabled()){
 		// Input/Output signals update
 		mpbObj->updIsPressed();
@@ -1622,7 +1771,7 @@ void HntdTmLtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	}
  	// State machine state update
  	mpbObj->updFdaState();
- 	taskEXIT_CRITICAL(&mux);
+ 	portEXIT_CRITICAL(&mux);
 
 	//Outputs update, function and tasks executions based on outputs changed generated by the State Machine
 	if (mpbObj->getOutputsChange()){
@@ -1656,10 +1805,10 @@ uint32_t HntdTmLtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
 void HntdTmLtchMPBttn::setFnWhnTrnOffPilotPtr(void(*newFnWhnTrnOff)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOffPilot != newFnWhnTrnOff)
 		_fnWhnTrnOffPilot = newFnWhnTrnOff;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -1667,10 +1816,10 @@ void HntdTmLtchMPBttn::setFnWhnTrnOffPilotPtr(void(*newFnWhnTrnOff)()){
 void HntdTmLtchMPBttn::setFnWhnTrnOffWrnngPtr(void(*newFnWhnTrnOff)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOffWrnng != newFnWhnTrnOff)
 		_fnWhnTrnOffWrnng = newFnWhnTrnOff;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1678,10 +1827,10 @@ void HntdTmLtchMPBttn::setFnWhnTrnOffWrnngPtr(void(*newFnWhnTrnOff)()){
 void HntdTmLtchMPBttn::setFnWhnTrnOnPilotPtr(void(*newFnWhnTrnOn)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOnPilot != newFnWhnTrnOn)
 		_fnWhnTrnOnPilot = newFnWhnTrnOn;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1689,10 +1838,10 @@ void HntdTmLtchMPBttn::setFnWhnTrnOnPilotPtr(void(*newFnWhnTrnOn)()){
 void HntdTmLtchMPBttn::setFnWhnTrnOnWrnngPtr(void(*newFnWhnTrnOn)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOnWrnng != newFnWhnTrnOn)
 		_fnWhnTrnOnWrnng = newFnWhnTrnOn;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1700,12 +1849,12 @@ void HntdTmLtchMPBttn::setFnWhnTrnOnWrnngPtr(void(*newFnWhnTrnOn)()){
 void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOffPilot != newFVPPWhnTrnOff){
 		_fnVdPtrPrmWhnTrnOffPilot = newFVPPWhnTrnOff;
 		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -1713,11 +1862,11 @@ void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOff
 void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilotArgPtr(void *argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOffPilotArgPtr != argPtr){
 		_fnVdPtrPrmWhnTrnOffPilotArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -1725,12 +1874,12 @@ void HntdTmLtchMPBttn::setFVPPWhnTrnOffPilotArgPtr(void *argPtr){
 void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOnPilot != newFVPPWhnTrnOn){
 		_fnVdPtrPrmWhnTrnOnPilot = newFVPPWhnTrnOn;
 		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -1738,11 +1887,11 @@ void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilot(fncVdPtrPrmPtrType newFVPPWhnTrnOn, 
 void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilotArgPtr(void *argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOnPilotArgPtr != argPtr){
 		_fnVdPtrPrmWhnTrnOnPilotArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -1750,12 +1899,12 @@ void HntdTmLtchMPBttn::setFVPPWhnTrnOnPilotArgPtr(void *argPtr){
 void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void *argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOffWrnng != newFVPPWhnTrnOff){
 		_fnVdPtrPrmWhnTrnOffWrnng = newFVPPWhnTrnOff;
 		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -1763,11 +1912,11 @@ void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOff
 void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnngArgPtr(void *argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOffWrnngArgPtr != argPtr){
 		_fnVdPtrPrmWhnTrnOffWrnngArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -1775,12 +1924,12 @@ void HntdTmLtchMPBttn::setFVPPWhnTrnOffWrnngArgPtr(void *argPtr){
 void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void *argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOnWrnng != newFVPPWhnTrnOn){
 		_fnVdPtrPrmWhnTrnOnWrnng = newFVPPWhnTrnOn;
 		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -1788,11 +1937,11 @@ void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnng(fncVdPtrPrmPtrType newFVPPWhnTrnOn, 
 void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnngArgPtr(void *argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOnWrnngArgPtr != argPtr){
 		_fnVdPtrPrmWhnTrnOnWrnngArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -1800,10 +1949,10 @@ void HntdTmLtchMPBttn::setFVPPWhnTrnOnWrnngArgPtr(void *argPtr){
 void HntdTmLtchMPBttn::setKeepPilot(const bool &newKeepPilot){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_keepPilot != newKeepPilot)
 		_keepPilot = newKeepPilot;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -1812,13 +1961,13 @@ bool HntdTmLtchMPBttn::setSrvcTime(const unsigned long int &newSrvcTime){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result {true};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (newSrvcTime != _srvcTime){
 		result = TmLtchMPBttn::setSrvcTime(newSrvcTime);
 		if (result)
 			_wrnngMs = (_srvcTime * _wrnngPrctg) / 100;  //If the _srvcTime was changed, the _wrnngMs must be updated as it's a percentage of the first
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -1827,7 +1976,7 @@ bool HntdTmLtchMPBttn::setWrnngPrctg (const unsigned int &newWrnngPrctg){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result{false};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_wrnngPrctg != newWrnngPrctg){
 		if(newWrnngPrctg <= 100){
 			_wrnngPrctg = newWrnngPrctg;
@@ -1835,7 +1984,7 @@ bool HntdTmLtchMPBttn::setWrnngPrctg (const unsigned int &newWrnngPrctg){
 			result = true;
 		}
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -1925,10 +2074,10 @@ void HntdTmLtchMPBttn::_turnOffPilot(){
 			_fnVdPtrPrmWhnTrnOffPilot(_fnVdPtrPrmWhnTrnOffPilotArgPtr);
 		}
 		//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
+		portENTER_CRITICAL(&mux);
 		_pilotOn = false;
 		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		portEXIT_CRITICAL(&mux);
 	}
 
 	return;
@@ -1945,10 +2094,10 @@ void HntdTmLtchMPBttn::_turnOffWrnng(){
 			_fnVdPtrPrmWhnTrnOffWrnng(_fnVdPtrPrmWhnTrnOffWrnngArgPtr);
 		}
 		//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
+		portENTER_CRITICAL(&mux);
 		_wrnngOn = false;
 		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		portEXIT_CRITICAL(&mux);
 	}
 
 	return;
@@ -1965,10 +2114,10 @@ void HntdTmLtchMPBttn::_turnOnPilot(){
 			_fnVdPtrPrmWhnTrnOnPilot(_fnVdPtrPrmWhnTrnOnPilotArgPtr);
 		}
 		//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
+		portENTER_CRITICAL(&mux);
 		_pilotOn = true;
 		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		portEXIT_CRITICAL(&mux);
 	}
 
 	return;
@@ -1985,10 +2134,10 @@ void HntdTmLtchMPBttn::_turnOnWrnng(){
 			_fnVdPtrPrmWhnTrnOnWrnng(_fnVdPtrPrmWhnTrnOnWrnngArgPtr);
 		}
 		//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
+		portENTER_CRITICAL(&mux);
 		_wrnngOn = true;
 		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		portEXIT_CRITICAL(&mux);
 	}
 
 	return;
@@ -2041,18 +2190,63 @@ bool HntdTmLtchMPBttn::updWrnngOn(){
 //=========================================================================> Class methods delimiter
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn()
+:LtchMPBttn()
 {
 }
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
-        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
-:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _unLtchBttn{unLtchBttn}
+        										const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
 {
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		if(unLtchBttn != nullptr){
+			XtrnUnltchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), unLtchBttn, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+		}
+		else{
+			XtrnUnltchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+		}
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		XtrnUnltchMPBttn();
+	}
+}
+
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(PressSignalSource *newSignalSource, DbncdDlydMPBttn *unLtchBttn, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
+{
+	if(unLtchBttn != nullptr){
+		_unLtchBttn = unLtchBttn;
+	}
+	else{
+		XtrnUnltchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
 }
 
 XtrnUnltchMPBttn::XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
         const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay)
-:LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		XtrnUnltchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		XtrnUnltchMPBttn();
+	}
+}
+
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
+{
+}
+
+XtrnUnltchMPBttn::XtrnUnltchMPBttn(const XtrnUnltchMPBttn &other)
+:LtchMPBttn(other)
+{
+	_unLtchBttn = other._unLtchBttn;
+	_xtrnUnltchPRlsCcl = false;
+}
+
+XtrnUnltchMPBttn::~XtrnUnltchMPBttn()
 {
 }
 
@@ -2060,32 +2254,39 @@ bool XtrnUnltchMPBttn::begin(const unsigned long int &pollDelayMs){
    BaseType_t tmrModResult {pdFAIL};
    bool result {false};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-	
-   if (pollDelayMs > 0){
-		if (!_mpbPollTmrHndl){
-			_mpbPollTmrHndl = xTimerCreate(
-				_mpbPollTmrName.c_str(),  // Timer name
-				pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-				pdTRUE,     // Auto-reload true
-				this,       // TimerID: data passed to the callback function to work
-				mpbPollCallback
-			);
-		}
-		if (_mpbPollTmrHndl != NULL){
-			tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-			if (tmrModResult == pdPASS){
-				if(_unLtchBttn != nullptr)
-					result = _unLtchBttn->begin();
-				else
-					result = true;
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // LtchMPBttn::mpbPollCallback Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								if(_unLtchBttn != nullptr)
+									result = _unLtchBttn->begin();
+								else
+									result = true;
+								if(result)
+									_begun = true;
+							}
+						}
+					}
+				}
 			}
 		}
-   }
+	}
 
    return result;
 }
@@ -2093,10 +2294,10 @@ bool XtrnUnltchMPBttn::begin(const unsigned long int &pollDelayMs){
 void XtrnUnltchMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	_xtrnUnltchPRlsCcl = false;
 	LtchMPBttn::clrStatus(clrIsOn);
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -2138,12 +2339,34 @@ void XtrnUnltchMPBttn::updValidUnlatchStatus(){
 //=========================================================================> Class methods delimiter
 
 DblActnLtchMPBttn::DblActnLtchMPBttn()
+:LtchMPBttn()
 {
 }
 
 DblActnLtchMPBttn::DblActnLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
 :LtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
 {
+}
+
+DblActnLtchMPBttn::DblActnLtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:LtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
+{
+}
+
+DblActnLtchMPBttn::DblActnLtchMPBttn(const DblActnLtchMPBttn &other)
+:LtchMPBttn(other)
+{
+	_isOnScndry = false;
+	_scndModActvDly = other._scndModActvDly;
+	_scndModTmrStrt = 0;
+	_validScndModPend = false;
+	_fnVdPtrPrmWhnTrnOffScndry = other._fnVdPtrPrmWhnTrnOffScndry;
+	_fnVdPtrPrmWhnTrnOffScndryArgPtr = other._fnVdPtrPrmWhnTrnOffScndryArgPtr;
+	_fnVdPtrPrmWhnTrnOnScndry = other._fnVdPtrPrmWhnTrnOnScndry;
+	_fnVdPtrPrmWhnTrnOnScndryArgPtr = other._fnVdPtrPrmWhnTrnOnScndryArgPtr;
+	_fnWhnTrnOffScndry = other._fnWhnTrnOffScndry;
+	_fnWhnTrnOnScndry = other._fnWhnTrnOnScndry;
+	_taskWhileOnScndryHndl = other._taskWhileOnScndryHndl;
 }
 
 DblActnLtchMPBttn::~DblActnLtchMPBttn()
@@ -2154,25 +2377,32 @@ bool DblActnLtchMPBttn::begin(const unsigned long int &pollDelayMs) {
 	BaseType_t tmrModResult {pdFAIL};
 	bool result {false};
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-	
-	if (pollDelayMs > 0){
-		if (!_mpbPollTmrHndl){
-			_mpbPollTmrHndl = xTimerCreate(
-				_mpbPollTmrName.c_str(),  // Timer name
-				pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-				pdTRUE,     // Auto-reload true
-				this,       // TimerID: data passed to the callback function to work
-				mpbPollCallback	  // Callback function
-			);
-			if (_mpbPollTmrHndl != NULL){
-				tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-				if (tmrModResult == pdPASS)
-					result = true;
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								result = true;
+								_begun = true;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2183,13 +2413,13 @@ bool DblActnLtchMPBttn::begin(const unsigned long int &pollDelayMs) {
 void DblActnLtchMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	_scndModTmrStrt = 0;
 	_validScndModPend = false;
 	if(clrIsOn && _isOnScndry)
 		_turnOffScndry();
 	LtchMPBttn::clrStatus(clrIsOn);
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -2243,7 +2473,7 @@ void DblActnLtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	DblActnLtchMPBttn* mpbObj = (DblActnLtchMPBttn*)pvTimerGetTimerID(mpbTmrCbArg);
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(mpbObj->getIsEnabled()){
 		// Input/Output signals update
 		mpbObj->updIsPressed();
@@ -2252,7 +2482,7 @@ void DblActnLtchMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	}
  	// State machine state update
 	mpbObj->updFdaState();
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	//Outputs update, function and tasks executions based on outputs changed generated by the State Machine
 	if (mpbObj->getOutputsChange()){
@@ -2282,20 +2512,20 @@ uint32_t DblActnLtchMPBttn::_otptsSttsPkg(uint32_t prevVal){
 void DblActnLtchMPBttn::setFnWhnTrnOffScndryPtr(void (*newFnWhnTrnOff)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOffScndry != newFnWhnTrnOff)
 		_fnWhnTrnOffScndry = newFnWhnTrnOff;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 	return;
 }
 
 void DblActnLtchMPBttn::setFnWhnTrnOnScndryPtr(void (*newFnWhnTrnOn)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOnScndry != newFnWhnTrnOn)
 		_fnWhnTrnOnScndry = newFnWhnTrnOn;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -2303,12 +2533,12 @@ void DblActnLtchMPBttn::setFnWhnTrnOnScndryPtr(void (*newFnWhnTrnOn)()){
 void DblActnLtchMPBttn::setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOffScndry != newFVPPWhnTrnOff){
 		_fnVdPtrPrmWhnTrnOffScndry = newFVPPWhnTrnOff;
 		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -2316,11 +2546,11 @@ void DblActnLtchMPBttn::setFVPPWhnTrnOffScndry(fncVdPtrPrmPtrType newFVPPWhnTrnO
 void DblActnLtchMPBttn::setFVPPWhnTrnOffScndryArgPtr(void* argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOffScndryArgPtr != argPtr){
 		_fnVdPtrPrmWhnTrnOffScndryArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -2328,12 +2558,12 @@ void DblActnLtchMPBttn::setFVPPWhnTrnOffScndryArgPtr(void* argPtr){
 void DblActnLtchMPBttn::setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOnScndry != newFVPPWhnTrnOn){
 		_fnVdPtrPrmWhnTrnOnScndry = newFVPPWhnTrnOn;
 		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -2341,11 +2571,11 @@ void DblActnLtchMPBttn::setFVPPWhnTrnOnScndry(fncVdPtrPrmPtrType newFVPPWhnTrnOn
 void DblActnLtchMPBttn::setFVPPWhnTrnOnScndryArgPtr(void* argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOnScndryArgPtr != argPtr){
 		_fnVdPtrPrmWhnTrnOnScndryArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -2354,14 +2584,14 @@ bool DblActnLtchMPBttn::setScndModActvDly(const unsigned long &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result {true};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(newVal != _scndModActvDly){
 		if (newVal >= _MinSrvcTime)  // The minimum activation time is _minActTime
 			_scndModActvDly = newVal;
 		else
 			result = false;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -2370,7 +2600,7 @@ void DblActnLtchMPBttn::setTaskWhileOnScndry(const TaskHandle_t &newTaskHandle){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	eTaskState taskWhileOnStts{};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_taskWhileOnScndryHndl != newTaskHandle){
 		if(_taskWhileOnScndryHndl != NULL){
 			taskWhileOnStts = eTaskGetState(_taskWhileOnScndryHndl);
@@ -2384,7 +2614,7 @@ void DblActnLtchMPBttn::setTaskWhileOnScndry(const TaskHandle_t &newTaskHandle){
 		if (newTaskHandle != NULL)
 			_taskWhileOnScndryHndl = newTaskHandle;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -2407,10 +2637,10 @@ void DblActnLtchMPBttn::_turnOffScndry(){
 			_fnVdPtrPrmWhnTrnOffScndry(_fnVdPtrPrmWhnTrnOffScndryArgPtr);
 		}
 		//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
+		portENTER_CRITICAL(&mux);
 		_isOnScndry = false;
 		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		portEXIT_CRITICAL(&mux);
 	}
 
 	return;
@@ -2434,10 +2664,10 @@ void DblActnLtchMPBttn::_turnOnScndry(){
 			_fnVdPtrPrmWhnTrnOnScndry(_fnVdPtrPrmWhnTrnOnScndryArgPtr);
 		}
 		//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
+		portENTER_CRITICAL(&mux);
 		_isOnScndry = true;
 		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		portEXIT_CRITICAL(&mux);
 	}
 
 	return;
@@ -2446,6 +2676,26 @@ void DblActnLtchMPBttn::_turnOnScndry(){
 void DblActnLtchMPBttn::updFdaState(){
 	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
 		switch(_mpbFdaState){
+			case stStart:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stSetup;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stSetup:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
 			case stOffNotVPP:
 				// In: >>---------------------------------->>
 				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
@@ -2570,16 +2820,18 @@ void DblActnLtchMPBttn::updFdaState(){
 				// In: >>---------------------------------->>
 				if(_sttChng){
 					stDisabled_In();
-					if(_isOn != _isOnDisabled)
-						if(_isOn)
-							_turnOff();
-						else
-							_turnOn();
-					if(_isOnScndry != _isOnDisabled)
-						if(_isOnScndry)
-							_turnOffScndry();
-						else
-							_turnOnScndry();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOn != _isOnDisabled)
+							if(_isOn)
+								_turnOff();
+							else
+								_turnOn();
+						if(_isOnScndry != _isOnDisabled)
+							if(_isOnScndry)
+								_turnOffScndry();
+							else
+								_turnOnScndry();
+					}
 					clrStatus(false);	//Clears all flags and timers, _isOn value will not be affected
 					_isEnabled = false;
 					_validDisablePend = false;
@@ -2588,10 +2840,12 @@ void DblActnLtchMPBttn::updFdaState(){
 				}	// Execute this code only ONCE, when entering this state
 				// Do: >>---------------------------------->>
 				if(_validEnablePend){
-					if(_isOnScndry)
-						_turnOffScndry();
-					if(_isOn)
-						_turnOff();
+					if(_frcdOtptLvlWhnDsbld){
+						if(_isOnScndry)
+							_turnOffScndry();
+						if(_isOn)
+							_turnOff();
+					}
 					_isEnabled = true;
 					_validEnablePend = false;
 					setOutputsChange(true);
@@ -2606,8 +2860,28 @@ void DblActnLtchMPBttn::updFdaState(){
 					clrStatus(true);
 				}	// Execute this code only ONCE, when exiting this state
 				break;
-		default:
-			break;
+
+			case stStndby:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stStop;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stStop:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			default:
+				break;
 		}
 		xSemaphoreGive(_updFdaMutex);
 	}
@@ -2667,7 +2941,23 @@ DDlydDALtchMPBttn::DDlydDALtchMPBttn()
 }
 
 DDlydDALtchMPBttn::DDlydDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		DDlydDALtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		DDlydDALtchMPBttn();
+	}
+}
+
+DDlydDALtchMPBttn::DDlydDALtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:DblActnLtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
+{
+}
+
+DDlydDALtchMPBttn::DDlydDALtchMPBttn(const DDlydDALtchMPBttn &other)
+:DblActnLtchMPBttn(other)
 {
 }
 
@@ -2678,11 +2968,11 @@ DDlydDALtchMPBttn::~DDlydDALtchMPBttn()
 void DDlydDALtchMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(clrIsOn && _isOnScndry)
 		_turnOffScndry();
 	DblActnLtchMPBttn::clrStatus(clrIsOn);
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -2713,9 +3003,56 @@ SldrDALtchMPBttn::SldrDALtchMPBttn()
 }
 
 SldrDALtchMPBttn::SldrDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const uint16_t initVal)
-:DblActnLtchMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay), _initOtptCurVal{initVal}
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		SldrDALtchMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay, initVal);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		SldrDALtchMPBttn();
+	}	
+}
+
+SldrDALtchMPBttn::SldrDALtchMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const uint16_t initVal)
+:DblActnLtchMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay), _initOtptCurVal{initVal}
 {
 	_otptCurVal = _initOtptCurVal;
+}
+
+SldrDALtchMPBttn::SldrDALtchMPBttn(const SldrDALtchMPBttn &other)
+: DblActnLtchMPBttn(other), _initOtptCurVal{other._initOtptCurVal}
+{
+	_otptCurVal = _initOtptCurVal;
+	_autoSwpDirOnEnd = other._autoSwpDirOnEnd;
+	_autoSwpDirOnPrss = other._autoSwpDirOnPrss;
+	_curSldrDirUp = true;
+	_otptCurValIsMax = false;
+	_otptCurValIsMin = false;
+	_otptSldrSpd = other._otptSldrSpd;
+	_otptSldrStpSize = other._otptSldrStpSize;
+	_otptValMax = other._otptValMax;
+	_otptValMin = other._otptValMin;
+
+	_fnVdPtrPrmWhnTrnOffSldrMax = other._fnVdPtrPrmWhnTrnOffSldrMax;
+	_fnVdPtrPrmWhnTrnOffSldrMaxArgPtr = other._fnVdPtrPrmWhnTrnOffSldrMaxArgPtr;
+	_fnVdPtrPrmWhnTrnOnSldrMax = other._fnVdPtrPrmWhnTrnOnSldrMax;
+	_fnVdPtrPrmWhnTrnOnSldrMaxArgPtr = other._fnVdPtrPrmWhnTrnOnSldrMaxArgPtr;
+	_fnWhnTrnOffSldrMax = other._fnWhnTrnOffSldrMax;
+	_fnWhnTrnOnSldrMax = other._fnWhnTrnOnSldrMax;
+
+	_fnVdPtrPrmWhnTrnOffSldrMin = other._fnVdPtrPrmWhnTrnOffSldrMin;
+	_fnVdPtrPrmWhnTrnOffSldrMinArgPtr = other._fnVdPtrPrmWhnTrnOffSldrMinArgPtr;
+	_fnVdPtrPrmWhnTrnOnSldrMin = other._fnVdPtrPrmWhnTrnOnSldrMin;
+	_fnVdPtrPrmWhnTrnOnSldrMinArgPtr = other._fnVdPtrPrmWhnTrnOnSldrMinArgPtr;
+	_fnWhnTrnOffSldrMin = other._fnWhnTrnOffSldrMin;
+	_fnWhnTrnOnSldrMin = other._fnWhnTrnOnSldrMin;
+
+	_fnVdPtrPrmWhnTrnOffSldrDirUp = other._fnVdPtrPrmWhnTrnOffSldrDirUp;
+	_fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr = other._fnVdPtrPrmWhnTrnOffSldrDirUpArgPtr;
+	_fnVdPtrPrmWhnTrnOnSldrDirUp = other._fnVdPtrPrmWhnTrnOnSldrDirUp;
+	_fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr = other._fnVdPtrPrmWhnTrnOnSldrDirUpArgPtr;
+	_fnWhnTrnOffSldrDirUp = other._fnWhnTrnOffSldrDirUp;
+	_fnWhnTrnOnSldrDirUp = other._fnWhnTrnOnSldrDirUp;
 }
 
 SldrDALtchMPBttn::~SldrDALtchMPBttn()
@@ -2725,12 +3062,12 @@ SldrDALtchMPBttn::~SldrDALtchMPBttn()
 void SldrDALtchMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
-	// Might the option to return the _otpCurVal to the initVal be added? To one the extreme values?
+	portENTER_CRITICAL(&mux);
+	//TODO Might the option to return the _otpCurVal to the initVal be added? To one the extreme values?
 	if(clrIsOn && _isOnScndry)
 		_turnOffScndry();
 	DblActnLtchMPBttn::clrStatus(clrIsOn);
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -3034,14 +3371,14 @@ bool SldrDALtchMPBttn::setOtptCurVal(const uint16_t &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result{true};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_otptCurVal != newVal){
 		if(newVal >= _otptValMin && newVal <= _otptValMax)
 			_otptCurVal = newVal;
 		else
 			result = false;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -3050,14 +3387,14 @@ bool SldrDALtchMPBttn::setOtptSldrSpd(const uint16_t &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result{true};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(newVal != _otptSldrSpd){
 		if(newVal > 0)
 			_otptSldrSpd = newVal;
 		else
 			result = false;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -3066,14 +3403,14 @@ bool SldrDALtchMPBttn::setOtptSldrStpSize(const uint16_t &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result{true};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(newVal != _otptSldrStpSize){
 		if((newVal > 0) && (newVal <= (_otptValMax - _otptValMin) / _otptSldrSpd))	//If newVal == (_otptValMax - _otptValMin) the slider will work as kind of an On/Off switch
 			_otptSldrStpSize = newVal;
 		else
 			result = false;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -3082,7 +3419,7 @@ bool SldrDALtchMPBttn::setOtptValMax(const uint16_t &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result{true};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(newVal != _otptValMax){
 		if(newVal > _otptValMin){
 			_otptValMax = newVal;
@@ -3095,7 +3432,7 @@ bool SldrDALtchMPBttn::setOtptValMax(const uint16_t &newVal){
 			result = false;
 		}
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -3104,7 +3441,7 @@ bool SldrDALtchMPBttn::setOtptValMin(const uint16_t &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result{true};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(newVal != _otptValMin){
 		if(newVal < _otptValMax){
 			_otptValMin = newVal;
@@ -3117,7 +3454,7 @@ bool SldrDALtchMPBttn::setOtptValMin(const uint16_t &newVal){
 			result = false;
 		}
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -3126,7 +3463,7 @@ bool SldrDALtchMPBttn::_setSldrDir(const bool &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result{true};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(newVal != _curSldrDirUp){
 		if(newVal){	//Try to set new direction Up
 			if(_otptCurVal != _otptValMax)
@@ -3144,7 +3481,7 @@ bool SldrDALtchMPBttn::_setSldrDir(const bool &newVal){
 
 		}
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -3170,6 +3507,19 @@ void SldrDALtchMPBttn::setSwpDirOnPrss(const bool &newVal){
 	if(_autoSwpDirOnPrss != newVal)
 		_autoSwpDirOnPrss = newVal;
 
+	return;
+}
+
+void SldrDALtchMPBttn::stDisabled_In()
+{
+	if(_isOnScndry != _isOnDisabled){
+		if(_isOnDisabled)
+			_turnOnScndry();
+		else
+			_turnOffScndry();
+		_outputsChange = true;
+	}
+ 
 	return;
 }
 
@@ -3334,27 +3684,96 @@ void SldrDALtchMPBttn::_turnOnSldrMin(){
 //=========================================================================> Class methods delimiter
 
 VdblMPBttn::VdblMPBttn()
+:DbncdDlydMPBttn()
 {
 }
 
 VdblMPBttn::VdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
-:DbncdDlydMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay)
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		DbncdDlydMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to this class base constructor (as this is an abstract class) to complete the object instantiation, using the new McuInputPin object created in the heap memory, and passing the pointer to it to the base class constructor
+		_isOnDisabled = isOnDisabled;
+
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		DbncdDlydMPBttn();
+	}
+}
+
+VdblMPBttn::VdblMPBttn(PressSignalSource *newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+:DbncdDlydMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay)
 {
 	_isOnDisabled = isOnDisabled;
+}
+
+VdblMPBttn::VdblMPBttn(const VdblMPBttn &other)
+:DbncdDlydMPBttn(other)
+{
+	_fnVdPtrPrmWhnTrnOffVdd = other._fnVdPtrPrmWhnTrnOffVdd;
+	_fnVdPtrPrmWhnTrnOffVddArgPtr = other._fnVdPtrPrmWhnTrnOffVddArgPtr;
+	_fnVdPtrPrmWhnTrnOnVdd = other._fnVdPtrPrmWhnTrnOnVdd;
+	_fnVdPtrPrmWhnTrnOnVddArgPtr = other._fnVdPtrPrmWhnTrnOnVddArgPtr;
+
+	_fnWhnTrnOffVdd = other._fnWhnTrnOffVdd;
+	_fnWhnTrnOnVdd = other._fnWhnTrnOnVdd;
+	_frcdOtptLvlWhnVdd = other._frcdOtptLvlWhnVdd;
+
+	_isVoided = false;
+	_stOnWhnVddOtptLvlFrcd = other._stOnWhnVddOtptLvlFrcd;
+	_validVoidPend = false;
+	_validUnvoidPend = false;
 }
 
 VdblMPBttn::~VdblMPBttn()
 {
 }
 
+bool VdblMPBttn::begin(const unsigned long int &pollDelayMs) {
+	BaseType_t tmrModResult {pdFAIL};
+	bool result {false};
+
+	if(!_begun){
+		if(_signalSource != nullptr){
+			result = _signalSource->begin();	// Refactored for v5.0.0 from the previous: pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
+			if(result){
+				if(_beginDisabled){
+					_isEnabled = false;
+					_validDisablePend = true;
+				}
+				if (pollDelayMs > 0){
+					if (!_mpbPollTmrHndl){        
+						_mpbPollTmrHndl = xTimerCreate(
+							_mpbPollTmrName.c_str(),  // Timer name
+							pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
+							pdTRUE,     // Auto-reload true
+							this,       // TimerID: data passed to the callback function to work
+							mpbPollCallback	  // Callback function
+						);
+						if (_mpbPollTmrHndl != NULL){
+							tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
+							if (tmrModResult == pdPASS){
+								result = true;
+								_begun = true;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
 void VdblMPBttn::clrStatus(bool clrIsOn){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_isVoided)
 		setIsNotVoided();
 	DbncdMPBttn::clrStatus(clrIsOn);
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -3369,9 +3788,9 @@ fncPtrType VdblMPBttn::getFnWhnTrnOnVdd(){
 	return _fnWhnTrnOnVdd;
 }
 
-bool VdblMPBttn::getFrcOtptLvlWhnVdd(){
+bool VdblMPBttn::getFrcdOtptLvlWhnVdd(){
 
-	return _frcOtptLvlWhnVdd;
+	return _frcdOtptLvlWhnVdd;
 }
 
 fncVdPtrPrmPtrType VdblMPBttn::getFVPPWhnTrnOffVdd(){
@@ -3399,16 +3818,16 @@ const bool VdblMPBttn::getIsVoided() const{
 	return _isVoided;
 }
 
-bool VdblMPBttn::getStOnWhnOtpFrcd(){
+bool VdblMPBttn::getStOnWhnVddOtpLvlFrcd(){
 
-	return _stOnWhnOtptFrcd;
+	return _stOnWhnVddOtptLvlFrcd;
 }
 
 void VdblMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	VdblMPBttn* mpbObj = (VdblMPBttn*)pvTimerGetTimerID(mpbTmrCbArg);
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(mpbObj->getIsEnabled()){
 		// Input/Output signals update
 		mpbObj->updIsPressed();
@@ -3418,7 +3837,7 @@ void VdblMPBttn::mpbPollCallback(TimerHandle_t mpbTmrCbArg){
 	}
  	// State machine state update
 	mpbObj->updFdaState();
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	//Outputs update, function and tasks executions based on outputs changed generated by the State Machine
 	if (mpbObj->getOutputsChange()){
@@ -3449,10 +3868,10 @@ uint32_t VdblMPBttn::_otptsSttsPkg(uint32_t prevVal){
 void VdblMPBttn::setFnWhnTrnOffVddPtr(void(*newFnWhnTrnOff)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOffVdd != newFnWhnTrnOff)
 		_fnWhnTrnOffVdd = newFnWhnTrnOff;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 
@@ -3461,21 +3880,21 @@ void VdblMPBttn::setFnWhnTrnOffVddPtr(void(*newFnWhnTrnOff)()){
 void VdblMPBttn::setFnWhnTrnOnVddPtr(void(*newFnWhnTrnOn)()){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnWhnTrnOnVdd != newFnWhnTrnOn)
 		_fnWhnTrnOnVdd = newFnWhnTrnOn;
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
 
-void VdblMPBttn::setFrcdOtptWhnVdd(const bool &newVal){
+void VdblMPBttn::setFrcdOtptLvlWhnVdd(const bool &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
-	if(_frcOtptLvlWhnVdd != newVal)
-		_frcOtptLvlWhnVdd = newVal;
-	taskEXIT_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
+	if(_frcdOtptLvlWhnVdd != newVal)
+		_frcdOtptLvlWhnVdd = newVal;
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -3483,12 +3902,12 @@ void VdblMPBttn::setFrcdOtptWhnVdd(const bool &newVal){
 void VdblMPBttn::setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOffVdd != newFVPPWhnTrnOff){
 		_fnVdPtrPrmWhnTrnOffVdd = newFVPPWhnTrnOff;
 		_fnVdPtrPrmWhnTrnOffVddArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;	
 }
@@ -3496,11 +3915,11 @@ void VdblMPBttn::setFVPPWhnTrnOffVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOff, void* 
 void VdblMPBttn::setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOffVddArgPtr != newFVPPWhnTrnOffArgPtr){
 		_fnVdPtrPrmWhnTrnOffVddArgPtr = newFVPPWhnTrnOffArgPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -3508,12 +3927,12 @@ void VdblMPBttn::setFVPPWhnTrnOffVddArgPtr(void* newFVPPWhnTrnOffArgPtr){
 void VdblMPBttn::setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* argPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOnVdd != newFVPPWhnTrnOn){
 		_fnVdPtrPrmWhnTrnOnVdd = newFVPPWhnTrnOn;
 		_fnVdPtrPrmWhnTrnOnVddArgPtr = argPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -3521,11 +3940,11 @@ void VdblMPBttn::setFVPPWhnTrnOnVdd(fncVdPtrPrmPtrType newFVPPWhnTrnOn, void* ar
 void VdblMPBttn::setFVPPWhnTrnOnVddArgPtr(void* newFVPPWhnTrnOnArgPtr){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if (_fnVdPtrPrmWhnTrnOnVddArgPtr != newFVPPWhnTrnOnArgPtr){
 		_fnVdPtrPrmWhnTrnOnVddArgPtr = newFVPPWhnTrnOnArgPtr;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -3540,13 +3959,13 @@ bool VdblMPBttn::setIsVoided(){
 	return setVoided(true);
 }
 
-void VdblMPBttn::setStOnWhnOtpFrcd(const bool &newVal){
+void VdblMPBttn::setStOnWhnVddOtpFrcd(const bool &newVal){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
-	if(_stOnWhnOtptFrcd != newVal)
-		_stOnWhnOtptFrcd = newVal;
-	taskEXIT_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
+	if(_stOnWhnVddOtptLvlFrcd != newVal)
+		_stOnWhnVddOtptLvlFrcd = newVal;
+	portEXIT_CRITICAL(&mux);
 
 	return;
 }
@@ -3554,14 +3973,14 @@ void VdblMPBttn::setStOnWhnOtpFrcd(const bool &newVal){
 bool VdblMPBttn::setVoided(const bool &newVoidValue){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(_isVoided != newVoidValue){
 		if(newVoidValue)
 			_turnOnVdd();
 		else
 			_turnOffVdd();
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return true;
 }
@@ -3594,10 +4013,10 @@ void VdblMPBttn::_turnOffVdd(){
 		if(_fnVdPtrPrmWhnTrnOffVdd != nullptr)
 			_fnVdPtrPrmWhnTrnOffVdd(_fnVdPtrPrmWhnTrnOffVddArgPtr);
 	//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
+		portENTER_CRITICAL(&mux);
 		_isVoided = false;
 		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		portEXIT_CRITICAL(&mux);
 	}
 
 	return;
@@ -3613,10 +4032,10 @@ void VdblMPBttn::_turnOnVdd(){
 		if(_fnVdPtrPrmWhnTrnOnVdd != nullptr)
 			_fnVdPtrPrmWhnTrnOnVdd(_fnVdPtrPrmWhnTrnOnVddArgPtr);
 		//---------------->> Flags related actions
-		taskENTER_CRITICAL(&mux);
+		portENTER_CRITICAL(&mux);
 		_isVoided = true;
 		setOutputsChange(true);
-		taskEXIT_CRITICAL(&mux);
+		portEXIT_CRITICAL(&mux);
 	}
 
 	return;
@@ -3625,6 +4044,26 @@ void VdblMPBttn::_turnOnVdd(){
 void VdblMPBttn::updFdaState(){
 	if(xSemaphoreTake(_updFdaMutex, portMAX_DELAY) == pdTRUE){
 		switch(_mpbFdaState){
+			case stStart:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stSetup;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stSetup:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stOffNotVPP;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
 		case stOffNotVPP:
 			// In: >>---------------------------------->>
 			if(_sttChng){
@@ -3799,8 +4238,27 @@ void VdblMPBttn::updFdaState(){
 			}	// Execute this code only ONCE, when exiting this state
 			break;
 
-	default:
-		break;
+			case stStndby:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				_mpbFdaState = stStop;
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			case stStop:
+				// In: >>---------------------------------->>
+				if(_sttChng){clrSttChng();}	// Execute this code only ONCE, when entering this state
+				// Do: >>---------------------------------->>
+				setSttChng();
+				// Out: >>---------------------------------->>
+				if(_sttChng){}	// Execute this code only ONCE, when exiting this state
+	//!		break;	// This state makes no conditional next state setting, and it's next state is next in line, let it cascade
+
+			default:
+				break;
 	}
 	xSemaphoreGive(_updFdaMutex);
 	} 
@@ -3811,53 +4269,44 @@ void VdblMPBttn::updFdaState(){
 //=========================================================================> Class methods delimiter
 
 TmVdblMPBttn::TmVdblMPBttn()
+:VdblMPBttn()
 {
 }
 
 TmVdblMPBttn::TmVdblMPBttn(const int8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
-:VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, isOnDisabled), _voidTime{voidTime}
 {
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		TmVdblMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), voidTime, dbncTimeOrigSett, strtDelay, isOnDisabled);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		TmVdblMPBttn();
+	}
+}
+
+TmVdblMPBttn::TmVdblMPBttn(PressSignalSource* newSignalSource, unsigned long int voidTime, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay, const bool &isOnDisabled)
+:VdblMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay, isOnDisabled), _voidTime{voidTime}
+{
+}
+
+TmVdblMPBttn::TmVdblMPBttn(const TmVdblMPBttn &other)
+:VdblMPBttn(other)
+{
+	_voidTime = other._voidTime;
+	_voidTmrStrt = 0;
 }
 
 TmVdblMPBttn::~TmVdblMPBttn()
 {
 }
 
-bool TmVdblMPBttn::begin(const unsigned long int &pollDelayMs){
-   bool result {false};
-   BaseType_t tmrModResult {pdFAIL};
-
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-	
-   if (!_mpbPollTmrHndl){
-		_mpbPollTmrHndl = xTimerCreate(
-			_mpbPollTmrName.c_str(),  // Timer name
-			pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-			pdTRUE,     // Autoreload true
-			this,       // TimerID: data passed to the callback funtion to work
-			mpbPollCallback
-		);
-	}
-   if (_mpbPollTmrHndl != NULL){
-   	tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-		if (tmrModResult == pdPASS)
-			result = true;
-	}
-
-   return result;
-}
-
 void TmVdblMPBttn::clrStatus(){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
    _voidTmrStrt = 0;
    VdblMPBttn::clrStatus();
-   taskEXIT_CRITICAL(&mux);
+   portEXIT_CRITICAL(&mux);
 
    return;
 }
@@ -3871,14 +4320,14 @@ bool TmVdblMPBttn::setVoidTime(const unsigned long int &newVoidTime){
 	portMUX_TYPE mux portMUX_INITIALIZER_UNLOCKED;
 	bool result{true};
 
-	taskENTER_CRITICAL(&mux);
+	portENTER_CRITICAL(&mux);
 	if(newVoidTime != _voidTime){
 		if(newVoidTime >= _MinSrvcTime)
 			_voidTime = newVoidTime;
 		else
 			result = false;
 	}
-	taskEXIT_CRITICAL(&mux);
+	portEXIT_CRITICAL(&mux);
 
 	return result;
 }
@@ -3929,43 +4378,52 @@ SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn()
 }
 
 SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp, const bool &typeNO, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
-:VdblMPBttn(mpbttnPin, pulledUp, typeNO, dbncTimeOrigSett, strtDelay, false)
+{
+	if((mpbttnPin != _InvalidPinNum) && (mpbttnPin <= _maxValidPinNum)){
+		SnglSrvcVdblMPBttn(new McuInputPin(mpbttnPin, pulledUp, typeNO), dbncTimeOrigSett, strtDelay);	// Call to the other constructor to complete the object instantiation
+	}
+	else{
+		// The object creation failed due to invalid pin number
+		SnglSrvcVdblMPBttn();
+	}
+}
+
+SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett, const unsigned long int &strtDelay)
+:VdblMPBttn(newSignalSource, dbncTimeOrigSett, strtDelay, false)
+{
+	_isOnDisabled = false;	// This attribute value is fixed as a subclass behavior inherent characteristic, setIsOnDisabled(), is overridden to avoid any change to it
+	_frcdOtptLvlWhnVdd = true;	// This attribute value is fixed as a subclass behavior inherent characteristic, setFrcdOtptLvlWhnVdd(), is overridden to avoid any change to it
+	_stOnWhnVddOtptLvlFrcd = false;	// This attribute value is fixed as a subclass behavior inherent characteristic, setStOnWhnVddOtpFrcd(), is overridden to avoid any change to it
+}
+
+SnglSrvcVdblMPBttn::SnglSrvcVdblMPBttn(const SnglSrvcVdblMPBttn &other)
+:VdblMPBttn(other)
 {
 	_isOnDisabled = false;
-   _frcOtptLvlWhnVdd = true;	// This attribute is subclass inherent characteristic, no setter will be provided for it
-   _stOnWhnOtptFrcd = false;	// This attribute is subclass inherent characteristic, no setter will be provided for it
+	_frcdOtptLvlWhnVdd = true;
+	_stOnWhnVddOtptLvlFrcd = false;
 }
 
 SnglSrvcVdblMPBttn::~SnglSrvcVdblMPBttn()
 {
 }
 
-bool SnglSrvcVdblMPBttn::begin(const unsigned long int &pollDelayMs){
-   BaseType_t tmrModResult {pdFAIL};
-   bool result {false};
+void SnglSrvcVdblMPBttn::setFrcdOtptLvlWhnVdd(const bool &newVal)
+{
 
-	pinMode(_mpbttnPin, (_pulledUp == true)?INPUT_PULLUP:INPUT_PULLDOWN);
-	if(_beginDisabled){
-		_isEnabled = false;
-		_validDisablePend = true;
-	}
-	
-   if (!_mpbPollTmrHndl){
-		_mpbPollTmrHndl = xTimerCreate(
-			_mpbPollTmrName.c_str(),  // Timer name
-			pdMS_TO_TICKS(pollDelayMs),  // Timer period in ticks
-			pdTRUE,     // Autoreload true
-			this,       // TimerID: data passed to the callback funtion to work
-			mpbPollCallback
-		);
-	}
-   if (_mpbPollTmrHndl != NULL){
-   	tmrModResult = xTimerStart(_mpbPollTmrHndl, portMAX_DELAY);
-		if (tmrModResult == pdPASS)
-			result = true;
-	}
+	return;
+}
 
-   return result;
+void SnglSrvcVdblMPBttn::setIsOnDisabled(const bool &newIsOnDisabled)
+{
+
+	return;
+}
+
+void SnglSrvcVdblMPBttn::setStOnWhnVddOtpFrcd(const bool &newVal)
+{
+
+	return;
 }
 
 void SnglSrvcVdblMPBttn::setTaskWhileOn(const TaskHandle_t &newTaskHandle){
@@ -3992,7 +4450,6 @@ bool SnglSrvcVdblMPBttn::updVoidStatus(){
 	return _validVoidPend;
 }
 
-//=========================================================================> Class methods delimiter
 
 /**
  * @brief Unpackages a 32-bit value into a DbncdMPBttn object status

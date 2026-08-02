@@ -19,5 +19,8 @@ var hierarchy =
         ] ]
       ] ]
     ] ],
-    [ "MpbOtpts_t", "struct_mpb_otpts__t.html", null ]
+    [ "MpbOtpts_t", "struct_mpb_otpts__t.html", null ],
+    [ "PressSignalSource", "class_press_signal_source.html", [
+      [ "McuInputPin", "class_mcu_input_pin.html", null ]
+    ] ]
 ];

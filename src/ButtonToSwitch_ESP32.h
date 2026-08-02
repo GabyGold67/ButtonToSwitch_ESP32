@@ -1,31 +1,31 @@
 /**
   ******************************************************************************
-  * @file	: ButtonToSwitch_ESP32.h
-  * @brief	: Header file for the ButtonToSwitch_ESP32 library classes
+  * @file	ButtonToSwitch_ESP32.h
+  * @brief	Header file for the ButtonToSwitch_ESP32 library classes
   *
   * @details The library implements classes that model several switch mechanisms
-  * replacements out of simple push buttons or similar equivalent digital signal 
-  * inputs.
+  * replacements out of simple momentary push buttons or similar equivalent
+  * digital signal inputs.
   * By using just a button (a.k.a. momentary switches or momentary push buttons,
   * _**MPB**_ for short from here on) the classes implemented in this library will 
   * manage, calculate and update several parameters to **generate the embedded 
   * behavior of standard electromechanical switches**.
   *
-  * Repository: https://github.com/GabyGold67/ButtonToSwitch_ESP32
+  * repository https://github.com/GabyGold67/ButtonToSwitch_ESP32
   * 
   * Framework: Arduino  
   * Platform: ESP32  
   * 
   * @author Gabriel D. Goldman  
   * mail <gdgoldman67@hotmail.com>  
-  * Github <https://github.com/GabyGold67>  
+  * github <https://github.com/GabyGold67>  
   * 
-  * @version v4.6.1
+  * @version v5.0.0
   * 
   * @date First release: 06/11/2023  
-  *       Last update:   30/07/2025 17:30 (GMT+0200) DST  
+  *       Last update:   11/07/2026 22:20 (GMT+0200) DST  
   * 
-  * @copyright Copyright (c) 2025  GPL-3.0 license  
+  * @copyright Copyright (c) 2023  GPL-3.0 license  
   *******************************************************************************
   * @attention	This library was originally developed as part of the refactoring
   * process for an industrial machines security enforcement and productivity control
@@ -45,19 +45,21 @@
   * If I promised you the moon and the stars, would you believe it?  
  *******************************************************************************
  */
-//FFDR For Future Development Reminder!!
-//FTPO For Testing Purposes Only code!!
+// Better Comments extension additional tags:
+	//FFDR For Future Development Reminder!!
+	//FTPO For Testing Purposes Only code!!
 
 #ifndef _BUTTONTOSWITCH_ESP32_H_
 #define _BUTTONTOSWITCH_ESP32_H_
 
 #include <Arduino.h>
 #include <stdint.h>
+#include "./IntrfcsImplmntd/PrssSgnlSrc_ESP32.h"
 
 #define _HwMinDbncTime 20   //Documented minimum wait time for a MPB signal to stabilize
 #define _StdPollDelay 10
 #define _MinSrvcTime 100
-#define _InvalidPinNum GPIO_NUM_NC  //Not Connected pin number (in this hardware platform -1), so a signed numeric type must be used! Value to give as "yet to be defined pin"
+#define _InvalidPinNum GPIO_NUM_NC  //Not Connected pin number, in this hardware platform -1, so a signed numeric type must be used! Value to give as "yet to be defined pin"
 #define _maxValidPinNum GPIO_NUM_MAX-1
 
 /*---------------- xTaskNotify() mechanism related constants, argument structs, information packing and unpacking BEGIN -------*/
@@ -72,10 +74,11 @@ const uint8_t OtptCurValBitPos{16};
 #ifndef MPBOTPTS_T
 	#define MPBOTPTS_T
 	/**
-	 * @brief Type to hold the complete set of output attribute flags from any DbncdMPBttn class and subclasses object.
+	 * @brief Type to hold the complete set of output attribute flags from any DbncdMPBttn class (and subclasses) object.
 	 *
 	 * Only two members (isOn and isEnabled) are relevant to all classes, the rest of the members might be relevant for one or more of the DbcndMPBttn subclasses.
 	 * The type is provided as a standard return value for the decoding of the 32-bit notification value provided by the use of the xTaskNotify() inter-task mechanism. See setTaskToNotify(const TaskHandle_t) for more information.
+	 * In a more general view, this type is useful to hold the complete set of output attribute flags from any DbncdMPBttn class (and subclasses) object, for example to pass the complete set of output attribute flags values to a function that manages the outputs according to the MPB status, or to keep a record of the MPB status changes in a log file or other storage medium.
 	 */
 	struct MpbOtpts_t{
 		bool isOn;
@@ -91,15 +94,21 @@ const uint8_t OtptCurValBitPos{16};
 
 /* Definition workaround to let a function/method return value to be a function pointer
  to a function that receives no arguments and returns no values: void (funcName*)() .
- The resulting **fncPtrType** type then defines a pointer to a function of the described properties */
+ The resulting **fncPtrType** type then defines a pointer to a function of the described properties and signature*/
 typedef void (*fncPtrType)();
 typedef  fncPtrType (*ptrToTrnFnc)();
 
 /* Definition workaround to let a function/method return value to be a function pointer
- to a function that receives a void* argument and returns no values: void (funcName*)(void*) 
+ to a function that receives a void* argument and returns no values: void (funcName*)(void*) .
  The resulting **fncVdPtrPrmPtrType** type then defines a pointer to a function of the described properties and signature*/
 typedef void (*fncVdPtrPrmPtrType)(void*);
 typedef fncVdPtrPrmPtrType (*ptrToTrnFncVdPtr)(void*);
+
+/* Definition workaround to let a function/method return value to be a function pointer
+ to a function that receives a void* argument and returns a void* value: void* (funcName*)(void*) . 
+ The resulting **fncVdPtrPrmPtrType** type then defines a pointer to a function of the described properties and signature*/
+using fncVdPtrPrmVdPtrRtrnType = void* (*)(void*);	// This line creates an alias called fncVdPtrPrmVdPtrRtrnType (the name translates literally as: "Function Type that takes Void Pointer Parameter and Returns Void Pointer").
+using ptrToFncVdPtrRtrnVdPtr = fncVdPtrPrmVdPtrRtrnType (*)(void*); // This line creates a second alias called ptrToFncVdPtrRtrnVdPtr (which translates to: "Pointer to Function that Returns [a function that returns] Void Pointer"). This alias depends directly on the first one.
 
 //===========================>> BEGIN General use function prototypes
 MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
@@ -108,12 +117,12 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 //===========================>> BEGIN General use Global variables
 //===========================>> END General use Global variables
 
-//==========================================================>> Classes declarations BEGIN
+//==========================================================>> BEGIN Classes declarations 
 
 /**
  * @brief Base class, models a Debounced Momentary Push Button (**D-MPB**).
  *
- * This class provides the resources needed to process a momentary digital input signal -as the one provided by a MPB (Momentary Push Button)- returning a clean signal to be used as a switch, implementing the needed services to replace a wide range of physical related switch characteristics: Debouncing, deglitching, disabling.
+ * This class provides the resources needed to process a momentary digital input signal -as the one provided by a MPB (Momentary Push Button)- returning a clean signal to be used as a switch, implementing the needed services to replace a wide range of physical related switch characteristics: Debouncing, deglitching, disabling, etc..
  *
  * More physical switch situations can be emulated, like temporarily disconnecting it (isDisabled=true and isOnDisabled=false), short circuiting it (isDisabled=true and isOnDisabled=true) and others.
  *
@@ -122,36 +131,42 @@ MpbOtpts_t otptsSttsUnpkg(uint32_t pkgOtpts);
 class DbncdMPBttn{
 protected:
 	enum fdaDmpbStts {
+		stStart,
+		stSetup,
+		//--------
 		stOffNotVPP,
 		stOffVPP,
 		stOn,
 		stOnVRP,
-		stDisabled
+		stDisabled,
+		//--------
+		stStndby,
+		stStop
 	};
 	const unsigned long int _stdMinDbncTime {_HwMinDbncTime};
 
-	int8_t _mpbttnPin{};
-	bool _pulledUp{};
-	bool _typeNO{};
-	unsigned long int _dbncTimeOrigSett{};
+	unsigned long int _dbncTimeOrigSett{0};
 
 	bool _beginDisabled{false};
+	bool _begun{false};
+	static uint8_t _btsLastSerialNum;
+	uint8_t _btsSerialNum{0};
 	unsigned long int _dbncRlsTimerStrt{0};
 	unsigned long int _dbncRlsTimeTempSett{0};
 	unsigned long int _dbncTimerStrt{0};
 	unsigned long int _dbncTimeTempSett{0};
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOff{nullptr};	// _fVPPWhnTrnOff
-	void* _fnVdPtrPrmWhnTrnOffArgPtr{nullptr};	// _fVPPWhnTrnOffArgPtr
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOn{nullptr};	// _fVPPWhnTrnOn
-	void* _fnVdPtrPrmWhnTrnOnArgPtr{nullptr};	// _fVPPWhnTrnOnArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOff{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOff
+	void* _fnVdPtrPrmWhnTrnOffArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOn{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOn
+	void* _fnVdPtrPrmWhnTrnOnArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnArgPtr
 	fncPtrType _fnWhnTrnOff{nullptr};
 	fncPtrType _fnWhnTrnOn{nullptr};
-
+	bool _frcdOtptLvlWhnDsbld {true};
 	bool _isEnabled{true};
 	volatile bool _isOn{false};
 	bool _isOnDisabled{false};
 	volatile bool _isPressed{false};
-	fdaDmpbStts _mpbFdaState {stOffNotVPP};
+	fdaDmpbStts _mpbFdaState {stStart};
 	DbncdMPBttn* _mpbInstnc{nullptr}; 
 	TimerHandle_t _mpbPollTmrHndl {NULL};   //FreeRTOS returns NULL if creation fails (not nullptr)
 	String _mpbPollTmrName {""};
@@ -159,6 +174,9 @@ protected:
 	uint32_t _outputsChangeCnt{0};
 	bool _outputsChngTskTrggr{false};
 	bool _prssRlsCcl{false};
+	//-------------------------------------
+	PressSignalSource* _signalSource{nullptr};	// Base class pointer (strategy pattern interface class) to the input signal source (concrete strategy) to calculate the _isPressed attribute flag value.
+	//-------------------------------------
 	unsigned long int _strtDelay {0};
 	bool _sttChng {true};
 	TaskHandle_t _taskToNotifyHndl {NULL};
@@ -174,6 +192,7 @@ protected:
 
    void clrSttChng();
 	const bool getIsPressed() const;
+	const bool getOutputsChngTskTrggr() const;
 	static void mpbPollCallback(TimerHandle_t mpbTmrCbArg);
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	void _setIsEnabled(const bool &newEnabledValue);
@@ -181,15 +200,12 @@ protected:
 	void _turnOff();
 	void _turnOn();
 	virtual void updFdaState();
-	bool updIsPressed();	//FFDR Refactor to a Strategy Pattern design to accomodate different signal sources
+	bool updIsPressed();
 	virtual bool updValidPressesStatus();
-	const bool getOutputsChngTskTrggr() const;
-	// void resetOutputsChngTskTrggr();
 
 public:    
 	/** 
 	 * @brief Default class constructor
-	 *
 	 */
 	DbncdMPBttn();
 	/**
@@ -203,17 +219,31 @@ public:
 	 * @note The **mpbttnpin** parameter valid values is MCU dependant, as each one of the MCUs have a specific number of GPIO pins values available for use. The Arduino development environment have a minimum and maximum values constants set for each MCU it supports. The  valid range for the **mpbttnpin** in an Espressif ESP32 mcu family then is **GPIO_NUM_0 <= mpbttnpin < GPIO_NUM_MAX**  
 	 * 
 	 * @note The Arduino development environment has defined a constant to indicate a **non connected to a GPIO pin** identified as **GPIO_NUM_NC**.  
+	 * 
+	 * @attention This constructor is held for compatibility with pre v5.0.0 library compatibility. Pre v5.0.0 library legacy objects were created hard linked to a MPU GPIO pin that provided the input signal from the MPButton. The v5.0.0 and newer versions are created linked to a PressSignalSource class object, that instantiates a concrete strategy for the signal source, that might be an MCU GPIO pin, but also other signal sources as GPIO expanders or even public methods to generate the press and release events. This constructor provides a bridge by creating the needed PressSignalSource class object, specifically a McuInputPin subclass object, and then instantiating a DbncdMPBttn class object using the resulting object as a parameter.  
 	 */
 	DbncdMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
+	/**
+	 * @brief Class constructor
+	 *
+	 * @param newSignalSource Pointer to a PressSignalSource class object that will be used as the input signal source for the MPB signal. The PressSignalSource class is an interface class that defines the strategy pattern for the input signal source, so any concrete strategy implemented as a PressSignalSource subclass can be used as the input signal source for the DbncdMPBttn class and subclasses objects. A specific constructor is held for compatibility with pre v5.0.0 library legacy objects, but this constructor is the one to be used for new objects as it provides more flexibility and compatibility with different signal sources, including but not limited to the MCU GPIO pins.
+	 * @param dbncTimeOrigSett (Optional) unsigned long integer (uLong), indicates the time (in milliseconds) to wait for a stable input signal before considering the MPB to be pressed (or not pressed). If no value is passed the constructor will assign the minimum value provided in the class, that is 20 milliseconds as it is an empirical value obtained in various published tests.
+	 *
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
+	DbncdMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0);
 	 /**
      * @brief Copy constructor
+	  * 
+	  * This copy constructor creates a new DbncdMPBttn object as a copy of an existing one. The new object will have some of the same attribute values as the original one, but some of them will be reset to their default values to ensure the proper functioning of the new object. The attributes that are copied from the original object are the original signal source, the standard attribute values and the functions and tasks to be executed and unblocked when the object enters the On and Off states. The attributes that are reset to their default values are the attribute flags, the timers and counters, and the task triggers. The new object will be created as any other new object, so it will be assigned a new serial number and it will not be attached to any timer or task until the begin() method is called. This copy constructor is useful to create new objects with the same configuration as an existing one, but with independent state and behavior. It can be used, for example, to create multiple objects with the same signal source and behavior, but with different states and timers, or to create a backup of an existing object before making changes to it. A method will be provided to change the signal source of an existing object, so the copy constructor can be used to create a new object with the same configuration as an existing one, and then change the signal source of the new object to use a different one.
 	  * 
 	  * @param other DbncdMPBttn object to copy
      */
     DbncdMPBttn(const DbncdMPBttn& other);
 	/**
- * @brief Default virtual destructor
- *
+ * @brief Class destructor
+ * 
+ * @attention This destructor does not handle the signal source object accessed through the PressSignalSource interface class object provided. That object must be handled independently, as it might be in the interest of the developer to keep using it for other purposes.  
  */
 	virtual ~DbncdMPBttn();
 	/**
@@ -269,6 +299,22 @@ public:
 	 * @retval false: the object detachment and/or entry removal was rejected by the O.S..
 	 */
 	bool end();    
+   /**
+	 * @brief Returns the value of the **beginDisabled** attribute.
+	 * 
+	 * The beginDisabled flag configures the object disabled status to be held at the moment it begins being updated. If the flag is set to true the object will begin in a **Disabled = true** state, and it will be kept in that state until it is enabled.
+	 * 
+	 * @return The boolean value of the **beginDisabled** attribute.
+	 * 
+	 * @note The beginDisabled is a useful resource to create objects, begin their operation and enable one by one when more convenient for the developer.  
+	 */
+	bool getBeginDisabled();
+	/**
+	 * @brief Get the object's Instantiation Serial Number
+	 * 
+	 * @return uint8_t _btsSerialNum value
+	 */
+	uint8_t getBtsSerialNum() const;
 	/**
 	 * @brief Returns the current debounce period time set for the object.
 	 *
@@ -303,6 +349,15 @@ public:
 	 * @warning The function code execution will become part of the list of procedures the object executes when it entering the **On State**, including the modification of affected attribute flags, suspending the execution of the task running while in **On State** and others. Making the function code too time demanding must be handled with care, using alternative execution schemes, for example the function might resume a independent task that suspends itself at the end of its code, to let a new function calling event resume it once again.
 	 */
 	fncPtrType getFnWhnTrnOn();
+	/**
+	 * @brief Returns the value of the _frcdOtptLvlWhnDsbld attribute.
+	 *
+	 * The _frcdOtptLvlWhnDsbld attribute indicates if the object is configured to force the output level (**_isOn** = true or **_isOn** = false) when the object is in **Disabled state**. The _isOnDisabled attribute indicates the value of the output level to be forced when the object is in **Disabled state**. The _frcdOtptLvlWhnDsbld attribute is set to true by default, so the output level will be forced when the object is in **Disabled state**. If the attribute is set to false, the output level will not be forced and it will remain in its last state before entering **Disabled state**.
+	 * The _frcdOtptLvlWhnDsbld attribute value might be modified by the setFrcdOtptLvlWhnDsbld() method.
+	 *
+	 * @return bool The value of the _frcdOtptLvlWhnDsbld  attribute.
+	 */
+	bool getFrcdOtptLvlWhnDsbld();
 	/**
 	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Off State**.
 	 * 
@@ -421,12 +476,6 @@ public:
 	 */
 	const TaskHandle_t getTaskWhileOn();
 	/**
-	 * @brief Initializes an object instantiated by the default constructor
-	 *
-	 * All the parameters correspond to the non-default constructor of the class, DbncdMPBttn(const int8_t, const bool, const bool, const unsigned long int)
-	 */
-	bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0);
-	/**
 	 * @brief Pauses the software timer updating the computation of the object's internal flags value.
 	 *
 	 * The immediate stop of the timer that keeps the object's state updated implies that the object's state will be kept, whatever that state is it. The same consideration as the end() method applies referring to options to modify the state in which the object will be while in the **Pause state**.
@@ -494,6 +543,14 @@ public:
 	 * @param newFnWhnTrnOn: function pointer to the function intended to be called when the object **enters** the **On State**. Passing **nullptr** as parameter deactivates the function execution mechanism.
 	 */
 	void setFnWhnTrnOnPtr(fncPtrType newFnWhnTrnOn);  	
+	/**
+	 * @brief Sets the value of the _frcdOtptLvlWhnDsbld attribute.
+	 * 
+	 * The _frcdOtptLvlWhnDsbld attribute indicates if the object is configured to force the output level (**_isOn** = true or **_isOn** = false) when the object is in **Disabled state**. The _isOnDisabled attribute indicates the value of the output level to be forced when the object is in **Disabled state**. The _frcdOtptLvlWhnDsbld attribute is set to true by default, so the output level will be forced when the object is in **Disabled state**. If the attribute is set to false, the output level will not be forced and it will remain in its last state before entering **Disabled state**.
+	 * 
+	 * @param newVal Indicates if the output level must be forced when the object is in **Disabled state**. If true, the output level will be forced to the value of the **isOnDisabled** attribute. If false, the output level will not be forced and it will remain in its last state before entering **Disabled state**.
+	 */
+	void setFrcdOtptLvlWhnDsbld(const bool &newVal);
 	/**
 	 * @brief Sets a function to be executed every time the object **enters** the **Off State**.
 	 *
@@ -603,7 +660,17 @@ public:
      * @note If the **delay** attribute is set to 0, the resulting object is equivalent in functionality to a **DbncdMPBttn** class object.
      */
 	DbncdDlydMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-	 /**
+	/**
+	 * @brief Class constructor
+	 *
+ 	 * @param strtDelay Sets the initial value for the **strtDelay** attribute.
+	 * 
+	 * @note For the rest of the parameters see DbncdMPBttn(PressSignalSource*, const unsigned long int)
+	 * 
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
+	DbncdDlydMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
      * @brief Copy constructor
 	  * 
 	  * @param other Reference to an existing DbncdDlydMPBttn object to be copied.
@@ -613,24 +680,15 @@ public:
 	  * @brief Class destructor
 	  */
 	virtual ~DbncdDlydMPBttn();
-    /**
-     *
-     * @brief see DbncdMPBttn::init(const int8_t, const bool, const bool, const unsigned long int)
-     * 
-     * @param strtDelay Sets the initial value for the **strtDelay** attribute.
-     *
-     * @note For the rest of the parameters see DbncdMPBttn::init(GPIO_TypeDef*, const uint16_t, const bool, const bool, const unsigned long int)
-     */
-	bool init(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-    /**
-     * @brief Sets a new value to the "Start Delay" **strtDelay** attribute
-     *
-     * @param newStrtDelay New value for the "Start Delay" attribute in milliseconds.
-     *
-     * @note Setting the delay attribute to 0 makes the instantiated object act exactly as a Debounced MPB (D-MPB)
-     * 
-     * @warning: Using very high **strtDelay** values is valid but might make the system seem less responsive, be aware of how it will affect the user experience.
-     */
+	/**
+	 * @brief Sets a new value to the "Start Delay" **strtDelay** attribute
+	 *
+	 * @param newStrtDelay New value for the "Start Delay" attribute in milliseconds.
+	 *
+	 * @note Setting the delay attribute to 0 makes the instantiated object act exactly as a Debounced MPB (D-MPB)
+	 * 
+	 * @warning: Using very high **strtDelay** values is valid but might make the system seem less responsive, be aware of how it will affect the user experience.
+	 */
 	void setStrtDelay(const unsigned long int &newStrtDelay);
 };
 
@@ -654,20 +712,26 @@ public:
  */
 class LtchMPBttn: public DbncdDlydMPBttn{
 protected:
-    enum fdaLmpbStts {
-        stOffNotVPP,
-        stOffVPP,
-        stOnNVRP,
-        stOnVRP,
-        stLtchNVUP,
-        stLtchdVUP,
-        stOffVUP,
-        stOffNVURP,
-        stOffVURP,
-        stDisabled
+   enum fdaLmpbStts {
+		stStart,
+		stSetup,
+		//--------
+		stOffNotVPP,
+		stOffVPP,
+		stOnNVRP,
+		stOnVRP,
+		stLtchNVUP,
+		stLtchdVUP,
+		stOffVUP,
+		stOffNVURP,
+		stOffVURP,
+		stDisabled,
+		//--------
+		stStndby,
+		stStop
 	};
 	bool _isLatched{false};
-	fdaLmpbStts _mpbFdaState {stOffNotVPP};
+	fdaLmpbStts _mpbFdaState {stStart};
 	bool _trnOffASAP{true};
 	volatile bool _validUnlatchPend{false};
 	volatile bool _validUnlatchRlsPend{false};
@@ -683,7 +747,7 @@ protected:
 	virtual void stOffVPP_Out(){};
 	virtual void stOffVURP_Out(){};
 	virtual void stOnNVRP_Do(){};
-	virtual void updFdaState();
+	virtual void updFdaState() override;
 	virtual void updValidUnlatchStatus() = 0;
 public:
 	/**
@@ -696,12 +760,22 @@ public:
     * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
 	LtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-	 /**
-     * @brief Copy constructor
-	  * 
-	  * @param other Reference to an existing LtchMPBttn object to be copied.
-     */
-	LtchMPBttn(const LtchMPBttn& other);	//FFDR Check new code implemented and uncomment
+	/**
+	 * @brief Class constructor
+	 *
+	 * @note For the parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int)
+	 * 
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
+	LtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
+	 * @brief Copy constructor
+	 * 
+	 * @param other Reference to an existing LtchMPBttn object to be copied.
+	 * 
+	 * This copy constructor creates a new LtchMPBttn object as a copy of an existing one. The new object will have some of the same attribute values as the original one, but some of them will be reset to their default values to ensure the proper functioning of the new object. The attributes that are copied from the original object are the original signal source, the standard attribute values and the functions and tasks to be executed and unblocked when the object enters the On and Off states. The attributes that are reset to their default values are the attribute flags, the timers and counters, and the task triggers. The new object will be created as any other new object, so it will be assigned a new serial number and it will not be attached to any timer or task until the begin() method is called. This copy constructor is useful to create new objects with the same configuration as an existing one, but with independent state and behavior. It can be used, for example, to create multiple objects with the same signal source and behavior, but with different states and timers, or to create a backup of an existing object before making changes to it. A method will be provided to change the signal source of an existing object, so the copy constructor can be used to create a new object with the same configuration as an existing one, and then change the signal source of the new object to use a different one.
+	*/
+	LtchMPBttn(const LtchMPBttn& other);
 	/**
 	 * @brief Class virtual destructor
 	 */
@@ -802,7 +876,7 @@ public:
 class TgglLtchMPBttn: public LtchMPBttn{
 protected:
 	virtual void stOffNVURP_Do();
-	virtual void updValidUnlatchStatus();
+	virtual void updValidUnlatchStatus() override;
 public:
 	/**
 	 * @brief Default constructor
@@ -812,9 +886,17 @@ public:
 	/**
 	 * @brief Class constructor
 	 *
-	 * For the parameters see DbncdMPBttn(const int8_t, const bool, const bool, const unsigned long int)
+	 * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
 	 */
-	TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	TgglLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);	
+	/**
+	 * @brief Class constructor
+	 *
+	 * @note For the parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int)
+	 * 
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
+	TgglLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
 	/**
     * @brief Copy constructor
 	 * 
@@ -846,7 +928,7 @@ protected:
 
 	virtual void stOffNotVPP_Out();
 	virtual void stOffVPP_Out();
-	virtual void updValidUnlatchStatus();
+	virtual void updValidUnlatchStatus() override;
 
 public:
 	/**
@@ -857,11 +939,21 @@ public:
  	/**
  	 * @brief Class constructor
  	 *
- 	 * @param srvcTime The service time (time to keep the **isOn** attribute flag raised).
+ 	 * @param srvcTime The service time (time to keep the **isOn** attribute flag raised), before the object is unlatched, setting the isOn attribute flag value to false, with all the corresponding associated actions executed accordingly.  
  	 *
  	 * @note For the other parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
 	*/
 	TmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &svcTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
+	 * @brief Class constructor
+	 *
+ 	 * @param srvcTime The service time (time to keep the **isOn** attribute flag raised), before the object is unlatched, setting the isOn attribute flag value to false, with all the corresponding associated actions executed accordingly.  
+	 * 
+	 * @note For the rest of the parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int)
+	 * 
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
+	TmLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &svcTime, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
 	/**
     * @brief Copy constructor
 	 * 
@@ -920,14 +1012,14 @@ protected:
 	unsigned long int _wrnngMs{0};
 	unsigned int _wrnngPrctg {0};
 
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffPilot{nullptr};	// _fVPPWhnTrnOffPilot
-	void* _fnVdPtrPrmWhnTrnOffPilotArgPtr{nullptr};	// _fVPPWhnTrnOffPilotArgPtr
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnPilot{nullptr};	// _fVPPWhnTrnOnPilot
-	void* _fnVdPtrPrmWhnTrnOnPilotArgPtr{nullptr};	// _fVPPWhnTrnOnPilotArgPtr
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffWrnng{nullptr};	// _fVPPWhnTrnOffWrnng
-	void* _fnVdPtrPrmWhnTrnOffWrnngArgPtr{nullptr};	// _fVPPWhnTrnOffWrnngArgPtr
-	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnWrnng{nullptr};	// _fVPPWhnTrnOnWrnng
-	void* _fnVdPtrPrmWhnTrnOnWrnngArgPtr{nullptr};	// _fVPPWhnTrnOnWrnngArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffPilot{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffPilot
+	void* _fnVdPtrPrmWhnTrnOffPilotArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffPilotArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffWrnng{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffWrnng
+	void* _fnVdPtrPrmWhnTrnOffWrnngArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOffWrnngArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnPilot{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnPilot
+	void* _fnVdPtrPrmWhnTrnOnPilotArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnPilotArgPtr
+	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOnWrnng{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnWrnng
+	void* _fnVdPtrPrmWhnTrnOnWrnngArgPtr{nullptr};	// Shorten in documentation when convenient to: _fVPPWhnTrnOnWrnngArgPtr
 	void (*_fnWhnTrnOffPilot)() {nullptr};
 	void (*_fnWhnTrnOffWrnng)() {nullptr};
 	void (*_fnWhnTrnOnPilot)() {nullptr};
@@ -967,8 +1059,18 @@ public:
 	 *
 	 * For the rest of the parameters see TmLtchMPBttn(const int8_t, const unsigned long int, const bool, const bool, const unsigned long int, const unsigned long int)
 	 */
-    HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &svcTime, const unsigned int &wrnngPrctg = 0, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+   HntdTmLtchMPBttn(const int8_t &mpbttnPin, const unsigned long int &svcTime, const unsigned int &wrnngPrctg = 0, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
 	/**
+	 * @brief Class constructor
+	 *
+	 * @param wrnngPrctg Time **before expiration** of service time that the warning flag must be set. The time is expressed as a percentage of the total service time so it's a value in the 0 <= wrnngPrctg <= 100 range.
+	 * 
+	 * @note For the rest of the parameters see TmLtchMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int)
+	 * 
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
+	HntdTmLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &svcTime, const unsigned int &wrnngPrctg = 0,const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	 /**
     * @brief Copy constructor
 	 * 
 	 * @param other Reference to an existing HntdTmLtchMPBttn object to be copied.
@@ -1254,7 +1356,7 @@ protected:
     bool _xtrnUnltchPRlsCcl {false};
 
  	virtual void stOffNVURP_Do();
- 	virtual void updValidUnlatchStatus();
+ 	virtual void updValidUnlatchStatus() override;
 public:
 	/**
 	 * @brief Default constructor
@@ -1274,26 +1376,59 @@ public:
  	 *
  	 * @note Other unlatch signal origins might be developed through the unlatch() method provided.
  	 */
-    XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
-        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
-    /**
-     * @brief Class constructor
-     *
-     * This class constructor instantiates an object that relies on the **unlatch()** method invocation to release the latched MPB
-     *
-     * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
-     */
-    XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
-        const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
-
+   XtrnUnltchMPBttn(const int8_t &mpbttnPin,  DbncdDlydMPBttn* unLtchBttn,
+      const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+ 	/**
+	 * @brief Class constructor
+	 *
+	 * This class constructor makes specific reference to a source for the unlatch signal by including a parameter referencing an object that implements the needed getIsOn() method to get the external unlatch signal.
+	 *
+ 	 * @param unLtchBttn Pointer to a DbncdDlydMPBttn object that will provide the unlatch source signal through it's **getIsOn()** method.
+ 	 *
+ 	 * @warning Referencing a DbncdDlydMPBttn subclass object that keeps the isOn flag set for a preset time period might affect the latching/unlatching process, as this class's objects don't check for the isOn condition of the unlatching object prior to setting it's own isOn flag.
+ 	 *
+ 	 * @note For the other parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int)
+ 	 *
+ 	 * @note Other unlatch signal origins might be developed through the unlatch() method provided.
+ 	 */
+   XtrnUnltchMPBttn(PressSignalSource* newSignalSource,  DbncdDlydMPBttn* unLtchBttn,
+      const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+	/**
+    * @brief Class constructor
+    *
+    * This class constructor instantiates an object that relies on the **unlatch()** method invocation to release the latched MPB
+    *
+    * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
+    */
+   XtrnUnltchMPBttn(const int8_t &mpbttnPin,  
+      const bool &pulledUp,  const bool &typeNO,  const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+	/**
+    * @brief Class constructor
+    *
+    * This class constructor instantiates an object that relies on the **unlatch()** method invocation to release the latched MPB
+    *
+    * @note For the parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int)
+    */
+   XtrnUnltchMPBttn(PressSignalSource* newSignalSource,
+      const unsigned long int &dbncTimeOrigSett,  const unsigned long int &strtDelay);
+	/**
+    * @brief Copy constructor
+	 * 
+	 * @param other Reference to an existing XtrnUnltchMPBttn object to be copied.
+   */
+	XtrnUnltchMPBttn(const XtrnUnltchMPBttn &other);
+	/**
+	 * @brief Class virtual destructor
+	*/
+	virtual ~XtrnUnltchMPBttn();
     /**
      * @brief See DbncdMPBttn::begin(const unsigned long int)
      */
-    virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+   virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
     /**
      * @brief See DbncdMPBttn::clrStatus(bool)
      */
-    void clrStatus(bool clrIsOn = true);
+   void clrStatus(bool clrIsOn = true);
 };
 
 //==========================================================>>
@@ -1315,7 +1450,7 @@ public:
  * - 1. -> 3.: long press.
  * - 2. -> 3.: long press.
  * - 2. -> 1.: short press.
- * - 3. -> 2.: secondary behavior unlatch (subclass dependent, maybe release, external unlatch, etc.)
+ * - 3. -> 2.: secondary behavior unlatch (subclass dependent, maybe MPB release, external unlatch, etc.)
  *
  * @note The **short press** will always be calculated as the Debounce + Delay set attributes.
  * @note The **long press** is a configurable attribute of the class, the **Secondary Mode Activation Delay** (scndModActvDly) that holds the time after the Debounce + Delay period that the MPB must remain pressed to activate the mentioned mode. The same time will be required to keep pressed the MPB while in **Main Behavior** to enter the **Secondary behavior**.
@@ -1325,6 +1460,9 @@ public:
 class DblActnLtchMPBttn: public LtchMPBttn{
 protected:
 	enum fdaDALmpbStts{
+		stStart,
+		stSetup,
+		//--------
 		stOffNotVPP,
 		stOffVPP,
 		stOnMPBRlsd,
@@ -1335,10 +1473,13 @@ protected:
 		//--------
 		stOnTurnOff,
 		//--------
-		stDisabled
-	};
+		stDisabled,
+		//--------
+		ststStndby,
+		stStop
+};
    volatile bool _isOnScndry{false};
-	fdaDALmpbStts _mpbFdaState {stOffNotVPP};
+	fdaDALmpbStts _mpbFdaState {stStart};
 	unsigned long _scndModActvDly {2000};
 	unsigned long _scndModTmrStrt {0};
 	bool _validScndModPend{false};
@@ -1359,9 +1500,9 @@ protected:
 	virtual void stOnStrtScndMod_In(){};
 	virtual void _turnOffScndry();
 	virtual void _turnOnScndry();
-	virtual void updFdaState();
-	virtual bool updValidPressesStatus();
-   virtual void updValidUnlatchStatus();
+	virtual void updFdaState() override;
+	virtual bool updValidPressesStatus() override;
+   virtual void updValidUnlatchStatus() override;
 
 public:
 	/**
@@ -1375,7 +1516,21 @@ public:
 	 * @note For parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
 	 */
    DblActnLtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-   /**
+	/**
+	 * @brief Class constructor
+	 *
+	 * @note For the parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int)
+	 * 
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
+	DblActnLtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
+     * @brief Copy constructor
+	  * 
+	  * @param other Reference to an existing DblActnLtchMPBttn object to be copied.
+     */
+	DblActnLtchMPBttn(const DblActnLtchMPBttn& other);	
+	/**
 	 * @brief Virtual destructor
     */
 	~DblActnLtchMPBttn();
@@ -1549,7 +1704,8 @@ public:
 /**
  * @brief Models a Debounced Delayed Double Action Latched MPB combo switch (Debounced Delayed DALDD-MPB - **DD-DALDD-MPB**)
  *
- * This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of a DbncdDlydMPBttn (DD-MPB), that implies that:
+ * This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of a DbncdDlydMPBttn (DD-MPB). 
+ * That implies that:
  * - While on the 1.state (Off-Off), a short press will activate only the regular **main On state** 2. (On-Off).
  * - While on the 1.state (Off-Off), a long press will activate both the regular **main On state** and the **secondary On state** simultaneously 3. (On-On).
  * When releasing the MPB the switch will stay in the **main On state** 2. (On-Off).
@@ -1576,6 +1732,18 @@ public:
     */
    DDlydDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
    /**
+	 * @brief Class constructor
+    *
+	 * @note For parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int)
+    */
+   DDlydDALtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
+     * @brief Copy constructor
+	  * 
+	  * @param other Reference to an existing DDlydDALtchMPBttn object to be copied.
+     */
+	DDlydDALtchMPBttn(const DDlydDALtchMPBttn& other);	
+	/**
 	 * @brief Class virtual destructor
     */
    ~DDlydDALtchMPBttn();
@@ -1643,6 +1811,7 @@ protected:
 	void _ntfyChngSldrDir();
 	virtual uint32_t _otptsSttsPkg(uint32_t prevVal = 0);
 	bool _setSldrDir(const bool &newVal);
+	virtual void stDisabled_In();
 	void stOnEndScndMod_Out();
    virtual void stOnScndMod_Do();
 	virtual void stOnStrtScndMod_In();
@@ -1665,6 +1834,20 @@ public:
     * @note For the remaining parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
 	SldrDALtchMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const uint16_t initVal = 0xFFFF);
+   /**
+	 * @brief Class constructor
+    *
+	 * @param initVal (Optional) Initial value of the **wiper** (taking the analogy of a potentiometer working parts), in this implementation the value corresponds to the **Output Current Value (otpCurVal)** attribute of the class. As the attribute type is uint16_t and the minimum and maximum limits are set to 0x0000 and 0xFFFF respectively, the initial value might be set to any value of the type. If no value is provided 0xFFFF will be the instantiation value.
+	 *
+	 * @note For other parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int)
+    */
+	SldrDALtchMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const uint16_t initVal = 0xFFFF);
+	/**
+     * @brief Copy constructor
+	  * 
+	  * @param other Reference to an existing SldrDALtchMPBttn object to be copied.
+     */
+	SldrDALtchMPBttn(const SldrDALtchMPBttn& other);
    /**
 	 * @brief Virtual class destructor
     */
@@ -2188,11 +2371,14 @@ public:
  */
 class VdblMPBttn: public DbncdDlydMPBttn{
 private:
-   void setFrcdOtptWhnVdd(const bool &newVal);
-   void setStOnWhnOtpFrcd(const bool &newVal);
+   void setFrcdOtptLvlWhnVdd(const bool &newVal);
+   void setStOnWhnVddOtpFrcd(const bool &newVal);
 
 	protected:
 	enum fdaVmpbStts{
+		stStart,
+		stSetup,
+		//--------
  		stOffNotVPP,
  		stOffVPP,
  		stOnNVRP,
@@ -2207,9 +2393,12 @@ private:
 		stOnTurnOff,
 		stOff,
 		//--------
-		stDisabled
+		stDisabled,
+		//--------
+		stStndby,
+		stStop
  	};
- 	fdaVmpbStts _mpbFdaState {stOffNotVPP};
+ 	fdaVmpbStts _mpbFdaState {stStart};
 
 	fncVdPtrPrmPtrType _fnVdPtrPrmWhnTrnOffVdd{nullptr};	// _fVPPWhnTrnOffVdd
 	void* _fnVdPtrPrmWhnTrnOffVddArgPtr{nullptr};	// _fVPPWhnTrnOffVddArgPtr
@@ -2217,9 +2406,9 @@ private:
 	void* _fnVdPtrPrmWhnTrnOnVddArgPtr{nullptr};	// _fVPPWhnTrnOnVddArgPtr
 	void (*_fnWhnTrnOffVdd)() {nullptr};
 	void (*_fnWhnTrnOnVdd)() {nullptr};
-	bool _frcOtptLvlWhnVdd {true};
+	bool _frcdOtptLvlWhnVdd {true};
 	bool _isVoided{false};
-	bool _stOnWhnOtptFrcd{false};
+	bool _stOnWhnVddOtptLvlFrcd{false};
 	bool _validVoidPend{false};
 	bool _validUnvoidPend{false};
 
@@ -2233,7 +2422,7 @@ private:
 	virtual void stOffVPP_Do(){};	// This provides a setting point for the voiding mechanism to be started
 	void _turnOffVdd();
 	void _turnOnVdd();
-	virtual void updFdaState();
+	virtual void updFdaState() override;
 	virtual bool updVoidStatus() = 0;
 	
 public:
@@ -2246,13 +2435,41 @@ public:
      *
      * @param isOnDisabled (Optional) Sets the instantiation value for the isOnDisabled flag attribute.
      *
-     * @note For the other parameters see DbncdDlydMPBttn(GPIO_TypeDef*, const uint16_t, const bool, const bool, const unsigned long int, const unsigned long int)
+	  * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
      */
 	VdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
+	/**
+	 * @brief Class constructor
+	 *
+	 * @param isOnDisabled (Optional) Sets the instantiation value for the isOnDisabled flag attribute.
+	 * 
+	 * @note For the other parameters see DbncdDlydMPBttn(PressSignalSource*, const unsigned long int)
+	 * 
+	 * @attention The PressSignalSource class and its subclasses are expected to be created and configured by the developer using this library, so no default values or configurations are provided for them. The only requirement for a PressSignalSource subclass object to be used as a parameter in this constructor is that it must be properly instantiated and configured to provide the expected behavior for the MPB signal processing by the DbncdMPBttn objects. The library provides a McuInputPin subclass of PressSignalSource that can be used to create a bridge between pre v5.0.0 library legacy objects and new objects created with this constructor, but any other PressSignalSource subclass can be used as long as it provides the expected behavior for the MPB signal processing.
+	 */
+	VdblMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);	
+	/**
+     * @brief Copy constructor
+	  * 
+	  * @param other Reference to an existing VdblMPBttn object to be copied.
+     */
+	VdblMPBttn(const VdblMPBttn &other);
     /**
      * @brief Default virtual destructor
      */
 	virtual ~VdblMPBttn();
+	/**
+	 * @brief Attaches the instantiated object to a timer that monitors the input pins and updates the object status.
+	 *
+	 * The frequency of the periodic monitoring is passed as a parameter in milliseconds, and is a value that must be small (frequent) enough to keep the object updated, but not so frequent that wastes resources from other tasks. A default value is provided based on empirical results obtained in various published tests.
+	 *
+	 * @param pollDelayMs (Optional) unsigned long integer (ulong), the time between polls in milliseconds.
+	 *
+	 * @return Boolean indicating if the object could be attached to a timer.
+	 * @retval true: the object could be attached to a timer -or it was already attached to a timer when the method was invoked-.
+	 * @retval false: the object could not create the needed timer, or the object could not be attached to it.
+	 */
+	virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
     /**
      * @brief See DbncdMPBttn::clrStatus(bool)
      */
@@ -2284,7 +2501,7 @@ public:
     *
      * @note As of this version of the library no VdblMPBttn class or subclasses **make use of the frcOtptLvlWhnVdd attribute**, their inclusion is "New Features Under Development" related to the refactoring of **binary states** to **Non-binary states**.
      */
-    bool getFrcOtptLvlWhnVdd();
+    bool getFrcdOtptLvlWhnVdd();
 	/**
 	 * @brief Returns a pointer to a function that is set to execute every time the object **enters** the **Voided Off State** a.k.a. **Not Voided State**.
 	 * 
@@ -2334,7 +2551,7 @@ public:
      *
      * @note As of this version of the library no VdblMPBttn class or subclasses **make use of the frcOtptLvlWhnVdd attribute**, their inclusion is "New Features Under Development" related to the refactoring of **binary states** to **Non-binary states**.
      */
-	bool getStOnWhnOtpFrcd();
+	bool getStOnWhnVddOtpLvlFrcd();
     /**
  	 * @brief Sets the function that will be called to execute every time the object's **isVoided** attribute flag is **reset**.
  	 *
@@ -2440,13 +2657,24 @@ public:
      */
 	TmVdblMPBttn(const int8_t &mpbttnPin, unsigned long int voidTime, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
     /**
+     * @brief Class constructor
+     *
+     * @param voidTime The time -in milliseconds- the MPB must be pressed to enter the **voided state**.
+     *
+     * @note For the rest of the parameters see VdblMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int, const bool)
+     */
+	TmVdblMPBttn(PressSignalSource* newSignalSource, unsigned long int voidTime, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0, const bool &isOnDisabled = false);
+	/**
+     * @brief Copy constructor
+	  * 
+	  * @param other Reference to an existing TmVdblMPBttn object to be copied.
+     */
+	TmVdblMPBttn(const TmVdblMPBttn &other);
+	/**
      * @brief Class virtual destructor
      */
 	virtual ~TmVdblMPBttn();
-    /**
-     * @brief See DbncdMPBttn::begin(const unsigned long int)
-     */
-	virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
+// virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
     /**
      * @brief See DbncdMPBttn::clrStatus(bool)
      */
@@ -2486,7 +2714,9 @@ public:
  * @note Due to the short time the **isOn** flag will be raised, as described above, the  resuming of the **taskWhileOn** activation mechanism is disabled in this class. For that purpose the setTaskWhileOn(const TaskHandle_t) is made not accessible by setting it's accessibility to **protected**.
  *
  * @note Due to the short time the **isOn** flag will be raised, as described above, the short time between the **fnWhnTrnOn** function and the **fnWhnTrnOff** function callings must also need to be evaluated by the user.
- *
+ * 
+ * @attention The class generates objects that requires for it's behavior to be consistent with the modeled switch to keep the **isOnDisabled** attribute flag set to **false**, the **frcdOtptLvlWhnVdd** attribute flag set to **true** and the **stOnWhnVddOtptFrcd** attribute flag set to **false**. The class constructor sets those attributes, and to ensure the consistency of the modeled switch behavior, the setIsOnDisabled(), setFrcdOtptLvlWhnVdd() and setStOnWhnVddOtptFrcd() methods are made **_not accessible_**
+ * 
  * @class SnglSrvcVdblMPBttn
  */
 class SnglSrvcVdblMPBttn: public VdblMPBttn{
@@ -2494,6 +2724,10 @@ protected:
 	virtual void setTaskWhileOn(const TaskHandle_t &newTaskHandle);
    virtual void stOffVddNVUP_Do();	// This provides the calculation for the _validUnvoidPend
    virtual bool updVoidStatus();
+
+	void setFrcdOtptLvlWhnVdd(const bool &newVal);
+	void setIsOnDisabled(const bool &newIsOnDisabled);
+   void setStOnWhnVddOtpFrcd(const bool &newVal);
 public:
    /**
     * @brief Default constructor
@@ -2506,16 +2740,24 @@ public:
     * @note For the parameters see DbncdDlydMPBttn(const int8_t, const bool, const bool, const unsigned long int, const unsigned long int)
     */
 	SnglSrvcVdblMPBttn(const int8_t &mpbttnPin, const bool &pulledUp = true, const bool &typeNO = true, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
-   /**
+    /**
+     * @brief Class constructor
+     *
+     * @note For the parameters see VdblMPBttn(PressSignalSource*, const unsigned long int, const unsigned long int, const bool)
+     */
+	SnglSrvcVdblMPBttn(PressSignalSource* newSignalSource, const unsigned long int &dbncTimeOrigSett = 0, const unsigned long int &strtDelay = 0);
+	/**
+	 * @brief Copy constructor
+	 * 
+	  * @param other Reference to an existing SnglSrvcVdblMPBttn object to be copied.
+	 */
+	SnglSrvcVdblMPBttn(const SnglSrvcVdblMPBttn &other);
+	/**
     * @brief Class virtual destructor
     */
    virtual ~SnglSrvcVdblMPBttn();
-   /**
-    * @brief See DbncdMPBttn::begin(const unsigned long int)
-    */
-   virtual bool begin(const unsigned long int &pollDelayMs = _StdPollDelay);
 };
 
-//==========================================================>>
+//==========================================================>> END Classes declarations 
 
 #endif	/*_BUTTONTOSWITCH_ESP32_H_*/
