@@ -28,6 +28,8 @@
                 "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/xtensa/esp32/include",
                 "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/xtensa/include",
                 "C:/Users/Gaby/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/qio_qspi/include/**",
+                "D:/My_Projects_R&D_Repos/MyLibs_ESP32/ButtonToSwitch_ESP32/src",
+                "D:/My_Projects_R&D_Repos/MyLibs_ESP32/**",
                 ""
             ],
             "defines": [
