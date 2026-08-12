@@ -1,3 +1,5 @@
+Debounce, deglitch and much, much more...
+
 # Buttons to Switches Arduino Library for ESP32 (*ButtonToSwitch_ESP32*)
 
 ## The driving concept is pretty simple:
@@ -8,16 +10,25 @@
 
 ## [For ButtonToSwitch_ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
-For an easy to understand explanation of this library intended purpose, applications and general use keep reading below!
+#### For an easy to understand explanation of this library intended purpose, applications and general use keep reading below!
 
 ## An Arduino ESP32-RTOS library that builds switch mechanisms replacements out of simple push buttons.
 
-A raw digital signal applyed to a MCU GPIO pin is surely the most basic interaction of the MCU to it's sorrounding environment. Besides of a simple cable attached to that pin, a pushbutton (a.k.a. momentary switches or momentary push buttons, ***MPB*** for short from here on) is the most basic and simplest signal management device. As simple as it is, the signal provided -as similar digital signals provided by more complex devices- are not always clean, stable and have very limited meaning as a switch signal. Any MPB signal needs to be debounced, deglitched and provide a clear release point to be reliable and useful. As strange as it might sound, no mechanism is provided by the MCU's for that purpose, so if multiple MPBs are required for a project, each and everyone's signal must be treated, individually, once and again.
+A voltage level applied to a MCU GPIO pin is surely the most basic interaction route between the MCU and it's it's sorrounding environment. Aside from a simple cable attached to that pin, a pushbutton (a.k.a. momentary switches or momentary push buttons, ***MPB*** for short from here on) is the most basic and simplest device to modify that signal. As simple as it is, the signal provided -as similar digital signals provided by some more complex devices- are not always clean, stable and have very limited meaning as a switch signal. Any MPB signal needs to be debounced, deglitched and provide a clear release point to be reliable and useful. As strange as it might sound, no mechanism is provided by the MCU's for that purpose, so if multiple MPBs are required for a project, each and every signal must be treated, individually, once and again.
 
-So the original purpose was easy to describe and understand: instead of reading a pin value and do once and again a customized process, create a wrapper for any input pin, that instead of a logical hig/low value will provide an Off/On value. To compute the resulting output several MPB's attributes would be considered to give a generic applyable solution:
+The original purpose for this development was easy to describe and understand: instead of reading a pin value and do once and again a customized process, create a wrapper for any input pin, that instead of a logical high/low value will provide an Off/On value, after processing the input signal to give a stable, trusty return value. To compute the resulting output several MPB's attributes would be considered to give a generic applyable solution:
 
 - Will the MPB used be a Normally Open (NO) or Normally Closed (NC) kind of MPB?
-- Will the second pin (the one not connected to the GPIO pin) connected to GND (a pulled up connection) or to +V (a pulled down connection)
+- Will the second pin (the one not connected to the GPIO pin) connected to GND (a pulled up connection) or to +V (a pulled down connection)?
+- How long the pin value must be waited to consider it a stable signal for a turn on event? And for a turn off event?
+
+The wrapper concept provides a virtual **Blackbox** solution:
+
+- A signal input into the blackbox
+- The signal along with timers, attributes and secondary signals is processed
+- An output signal is generated for the consumer
+
+The most basic wrapper/blackbox will
 
 By using just a push button the classes implemented in this library will manage, calculate and update different parameters to **generate the behavior of standard electromechanical switches**. Those parameters include presses, releases, timings, counters or secondary input readings as needed.
 
