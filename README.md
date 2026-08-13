@@ -105,56 +105,15 @@ Those listed mechanisms are **independent**, so one or more might be simultaneou
 
 ---
 
----
-
 # DbncdMPBttn class
 
 The **Debounced Momentary Button** keeps the ON state since the moment the signal is stable (debouncing process) and until the moment the MPB is released.
 
-## Included Methods for DbncdMPBttn class
-
-| Method                  | Parameters                                                                                             |
-| ----------------------- | ------------------------------------------------------------------------------------------------------ |
-| ***DbncdMPBttn***       | None                                                                                                   |
-| ***DbncdMPBttn***       | int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**))) |
-| **begin()**             | (unsigned long int **pollDelayMs**)                                                                    |
-| **clrStatus()**         | (bool **clrIsOn**)                                                                                     |
-| **disable()**           | None                                                                                                   |
-| **enable()**            | None                                                                                                   |
-| **end()**               | None                                                                                                   |
-| **getCurDbncTime()**    | None                                                                                                   |
-| **getFnWhnTrnOff()**    | None                                                                                                   |
-| **getFnWhnTrnOn()**     | None                                                                                                   |
-| **getIsEnabled()**      | None                                                                                                   |
-| **getIsOn()**           | None                                                                                                   |
-| **getIsOnDisabled()**   | None                                                                                                   |
-| **getOtptsSttsPkgd()**  | None                                                                                                   |
-| **getOutputsChange()**  | None                                                                                                   |
-| **getStrtDelay()**      | None                                                                                                   |
-| **getTaskToNotify()**   | None                                                                                                   |
-| **getTaskWhileOn()**    | None                                                                                                   |
-| **init()**              | int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**))) |
-| **pause()**             | None                                                                                                   |
-| **resetDbncTime()**     | None                                                                                                   |
-| **resetFda()**          | None                                                                                                   |
-| **resume()**            | None                                                                                                   |
-| **setDbncTime()**       | unsigned long int **newDbncTime**                                                                      |
-| **setFnWhnTrnOffPtr()** | void* **fnWhnTrnOff**                                                                                  |
-| **setFnWhnTrnOnPtr()**  | void* **fnWhnTrnOn**                                                                                   |
-| **setIsOnDisabled()**   | bool **newIsOnDisabled**                                                                               |
-| **setOutputsChange()**  | bool **newOutputChange**                                                                               |
-| **setTaskToNotify()**   | TaskHandle_t **newTaskHandle**                                                                         |
-| **setTaskWhileOn()**    | TaskHandle_t **newTaskHandle**                                                                         |
-
 ---
 
-## Methods definition and use description
+# [For DbncdMPBttn class included methods documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_m_p_bttn-members.html)
 
----
-
-# [For DbncdMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_m_p_bttn-members.html)
-
-## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+### [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---
 
@@ -162,24 +121,9 @@ The **Debounced Momentary Button** keeps the ON state since the moment the signa
 
 The **Debounced Delayed Momentary Button**, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released. The reasons to add the delay are design related and are usually used to avoid registering unintentional presses, or to give some equipment (load) that needs time between repeated activations the benefit of the pause. If the push button is released before the delay configured, no press is registered at all. The delay time in this class as in the other classes that implement it, might be zero (0), defined by the developer and/or modified in runtime.
 
-# Added or modified Methods for DbncdDlydMPBttn class
+# [For DbncdDlydMPBttn class included methods documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_dlyd_m_p_bttn-members.html)
 
-| Method                | Parameters                                                                                                                                |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| ***DbncdDlydMPBttn*** | None                                                                                                                                      |
-| ***DbncdDlydMPBttn*** | int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))) |
-| **init**              | int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))) |
-| **setStrtDelay()**    | (unsigned long int **newStrtDelay**)                                                                                                      |
-
----
-
-## Methods definition and use description
-
----
-
-# [For DbncdDlydMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_dlyd_m_p_bttn-members.html)
-
-## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+### [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---
 
@@ -198,46 +142,21 @@ Attention: The range of signals accepted by the instantiated objects to execute 
 
 The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool) ), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool) ), or to **set** both flags to generate an unlatch (see LtchMPBttn::unlatch() ).
 
-## Added or Modified Methods for LtchMPBttn class
-
-| Method                  | Parameters      |
-| ----------------------- | --------------- |
-| **getIslatched()**      | None            |
-| **getTrnOffASAP()**     | None            |
-| **getUnlatchPend()**    | None            |
-| **getUnlatchRlsPend()** | None            |
-| **setTrnOffASAP()**     | bool **newVal** |
-| **setUnlatchPend()**    | bool **newVal** |
-| **setUnlatchRlsPend()** | bool **newVal** |
-| **unlatch()**           | None            |
-
 ---
 
 ## Methods definition and use description
 
 ---
 
-# [For LtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_ltch_m_p_bttn-members.html)
+# [For LtchdMPBttn Subclasses included methods documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_ltch_m_p_bttn-members.html)
 
-## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+### [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---
 
 # TgglLtchMPBttn class
 
 The **Toggle switch**  keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. So this simulates a simple On-Off switch like the ones used to turn on/off a room light, or any electronic device. There's a lot of advantages in software simulated switches: any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource, the switch might be temporarily disabled, either keeping the On State or the Off State, and some more.
-
-## Added or Modified Methods for LtchMPBttn class
-
-| Method               | Parameters                                                                                                                                |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| ***TgglLtchMPBttn*** | int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))) |
-
----
-
-## Methods definition and use description
-
----
 
 # [For TgglLtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tggl_ltch_m_p_bttn-members.html)
 
@@ -251,22 +170,13 @@ The **Time latched** or **Timer Switch** keeps the ON state **since the moment t
 
 ## Added or Modified Methods for TmLtchMPBttn class
 
-| Method             | Parameters                                                                                                                                                               |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| ***TmLtchMPBttn*** | int8_t **mpbttnPin**, unsigned long int **actTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))) |
-| **getSrvcTime()**  | None                                                                                                                                                                     |
-| **setSrvcTime()**  | unsigned long int **newSvcTime**                                                                                                                                         |
-| **setTmerRstbl()** | bool **newIsRstbl**                                                                                                                                                      |
-
----
-
 ## Methods definition and use description
 
 ---
 
-# [For TmLtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html)
+# [For TmLtchdMPBttn Subclasses included methods documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html)
 
-## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+### [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---
 
@@ -274,27 +184,6 @@ The **Time latched** or **Timer Switch** keeps the ON state **since the moment t
 
 The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state since the moment the signal is debounced, and keeps the state during a set time, the switch time is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before it gets to the end if the push button is pressed, the option to give a warning when the time is close to the end through a second flag (remaining time is defined as a percentage of the total ON time and it's configurable), and the possibility to set a third signal ON while the switch is off, just like the pilot light (hint) in a staircase timer switch. The warning signal is independent of the off hint.
 
-## Added or Modified Methods for HntdTmLtchMPBttn class
-
-| Method                    | Parameters                                                                                                                                                                                              |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ***HntdTmLtchMPBttn***    | int8_t **mpbttnPin**, unsigned long int **actTime**(, unsigned int **wrnngPrctg**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))) |
-| **getFnWhnTrnOffPilot()** | None                                                                                                                                                                                                    |
-| **getFnWhnTrnOffWrnng()** | None                                                                                                                                                                                                    |
-| **getFnWhnTrnOnPilot()**  | None                                                                                                                                                                                                    |
-| **getFnWhnTrnOnWrnng()**  | None                                                                                                                                                                                                    |
-| **getPilotOn()**          | None                                                                                                                                                                                                    |
-| **getWrnngOn()**          | None                                                                                                                                                                                                    |
-| **setFnWhnTrnOffPilot()** | void* newFnWhnTrnOff                                                                                                                                                                                    |
-| **setFnWhnTrnOffWrnng()** | void* newFnWhnTrnOff                                                                                                                                                                                    |
-| **setFnWhnTrnOnPilot()**  | void* newFnWhnTrnOn                                                                                                                                                                                     |
-| **setFnWhnTrnOnWrnng()**  | void* newFnWhnTrnOn                                                                                                                                                                                     |
-| **setKeepPilot()**        | bool **keepPilot**                                                                                                                                                                                      |
-| **setWrnngPrctg()**       | unsigned int newWrnngPrctg                                                                                                                                                                              |
-
----
-
-## Methods definition and use description
 
 ---
 
@@ -307,18 +196,6 @@ The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state 
 # XtrnUnLtchMPBttn class
 
 The **External released toggle** (a.k.a. Emergency latched), keeps the On state since the moment the signal is debounced, and until an external signal is received. This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. Smoke, flood, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physically or logically generated it can be implemented to be received from a switch or a remote signal of any usual kind.
-
-## Added or Modified Methods for XtrnUnltchMPBttn class
-
-| Method                 | Parameters                                                                                                                                                                |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ***XtrnUnLtchMPBttn*** | int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**))))                                 |
-| ***XtrnUnLtchMPBttn*** | int8_t **mpbttnPin**, DbncDlydMPBttn* **unltchBttn**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))) |
-
----
-
-## Methods definition and use description
-
 ---
 
 # [For XtrnUnltchMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_xtrn_unltch_m_p_bttn-members.html)
@@ -355,25 +232,6 @@ The presses patterns are:
 
 > [!NOTE] The **long press** is a configurable attribute of the class, the **Secondary Mode Activation Delay** (scndModActvDly) that holds the time after the Debounce + Delay period that the MPB must remain pressed to activate the mentioned mode. The same time will be required to keep pressed the MPB while in **Main Behavior** to enter the **Secondary behavior**.
 
-## Added or Modified Methods for DblActnLtchMPBttn class
-
-| Method                        | Parameters                     |
-| ----------------------------- | ------------------------------ |
-| **getFnWhnTrnOffScndry()**    | None                           |
-| **getFnWhnTrnOnScndry()**     | None                           |
-| **getIsOnScndry()**           | None                           |
-| **getScndModActvDly()**       | None                           |
-| **getTaskWhileOnScndry()**    | None                           |
-| **setFnWhnTrnOffScndryPtr()** | void* **fnWhnTrnOff**          |
-| **setFnWhnTrnOnScndryPtr()**  | void* **fnWhnTrnOn**           |
-| **setScndModActvDly()**       | unsigned long **newVal**       |
-| **setTaskWhileOnScndry()**    | TaskHandle_t **newTaskHandle** |
-
----
-
-## Methods definition and use description
-
----
 
 # [For DblActnLtchMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbl_actn_ltch_m_p_bttn-members.html)
 
@@ -393,16 +251,6 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 - When releasing the MPB the switch will stay in the **main On state** 2. (On-Off).  
 - While in the 2. state (On-Off), a short press will set the switch to the 1. state (Off-Off).  
 - While in the 2. state (On-Off), a long press will set the switch to the 3. state (On-On), until the releasing of the MPB, returning the switch to the **main On state** 2. (On-Off).
-
-## Added or Modified Methods for DDlydDALtchMPBttn class
-
-| Method                  | Parameters                                                                                                                                |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **DDlydDALtchMPBttn()** | int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))) |
-
----
-
-## Methods definition and use description
 
 ---
 
@@ -433,32 +281,6 @@ The minimum and maximum values, the rate in steps/millisecond, the size of each 
 - Automatically revert direction when reaching the minimum and maximum values setting.
 - Revert direction by methods invocation (see setSldrDirDn(), setSldrDirUp(), swapSldrDir()).
 
-## Added or Modified Methods for SldrDALtchMPBttn class
-
-| Method                   | Parameters                                                                                                                                                    |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **SldrDALtchMPBttn()**   | int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**(, uint16_t initVal))))) |
-| **getOtptCurVal()**      | None                                                                                                                                                          |
-| **getOtptCurValIsMax()** | None                                                                                                                                                          |
-| **getOtptCurValIsMin()** | None                                                                                                                                                          |
-| **getOtptSldrSpd()**     | None                                                                                                                                                          |
-| **getOtptSldrStpSize()** | None                                                                                                                                                          |
-| **getOtptValMax()**      | None                                                                                                                                                          |
-| **getOtptValMin()**      | None                                                                                                                                                          |
-| **getSldrDirUp()**       | None                                                                                                                                                          |
-| **setOtptCurVal()**      | uint16_t **newVal**                                                                                                                                           |
-| **setOtptSldrSpd()**     | uint16_t **newVal**                                                                                                                                           |
-| **setOtptSldrStpSize()** | uint16_t **newVal**                                                                                                                                           |
-| **setOtptValMax()**      | uint16_t **newVal**                                                                                                                                           |
-| **setOtptValMin()**      | uint16_t **newVal**                                                                                                                                           |
-| **setSldrDirDn()**       | None                                                                                                                                                          |
-| **setSldrDirUp()**       | None                                                                                                                                                          |
-| **setSwpDirOnEnd()**     | bool **newVal**                                                                                                                                               |
-| **setSwpDirOnPrss()**    | bool **newVal**                                                                                                                                               |
-| **swapSldrDir()**        | None                                                                                                                                                          |
-
----
-
 ## Methods definition and use description
 
 ---
@@ -488,21 +310,6 @@ The mechanisms to "un-void" the MPB and return it to an operational state includ
 - the reading of the **isOn** attribute flag status.
 
 The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclasses.
-
-## Added or Modified Methods for VdblMPBttn class
-
-| Method                     | Parameters               |
-| -------------------------- | ------------------------ |
-| **getFnWhnTrnOffVdd()**    | None                     |
-| **getFnWhnTrnOnVdd()**     | None                     |
-| **getFrcOtptLvlWhnVdd()**  | None                     |
-| **getIsVoided()**          | None                     |
-| **getStOnWhnOtpFrcd()**    | None                     |
-| **setFnWhnTrnOffVddPtr()** | void* **newFnWhnTrnOff** |
-| **setFnWhnTrnOnVddPtr()**  | void* **newFnWhnTrnOn**  |
-| **setIsNotVoided()**       | None                     |
-| **setIsVoided()**          | None                     |
-
 ---
 
 ## Methods definition and use description
@@ -521,15 +328,6 @@ The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclass
 
 The **Time Voidable Momentary Button**, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released, or until a preset time in the ON state is reached. Then the switch will return to the Off position until the push button is released and pushed back. This kind of switches are used to activate limited resources related management or physical safety devices, and the possibility of a physical blocking of the switch to extend the ON signal artificially beyond designer's plans is highly undesired. Water valves, door unlocking mechanisms, hands-off security mechanisms, high power heating devices are some of the usual uses for these type of switches. It's implemented in the **TmVdblMPBttn** class.
 
-# Added Methods for TmVdblMPBttn class
-
-| Method             | Parameters                                                                                                                                                                                         |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ***TmVdblMPBttn*** | int8_t **mpbttnPin**, unsigned long int **voidTime**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**(, bool **isOnDisabled**))))) |
-| **getVoidTime()**  | None                                                                                                                                                                                               |
-| **setVoidTime()**  | None                                                                                                                                                                                               |
-
----
 
 ## Methods definition and use description
 
