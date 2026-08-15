@@ -1,54 +1,92 @@
-Debounce, deglitch and much, much more...
+Debounce, deglitch, disable and much, much more...
 
 # Buttons to Switches Arduino Library for ESP32 (*ButtonToSwitch_ESP32*)
 
-## The driving concept is pretty simple:
+##### The driving concept is pretty simple:
 
-# - *Stop checking an **Input Pin** voltage.*
+## - *Stop checking an **Input Pin's** voltage.*
 
-# - *Start asking if a **Switch** is On or Off.*
+## - *Start asking if a **Switch** is On.*
 
-## [For ButtonToSwitch_ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+---
 
-#### For an easy to understand explanation of this library intended purpose, applications and general use keep reading below!
+# [For ButtonToSwitch_ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+
+---
 
 ## An Arduino ESP32-RTOS library that builds switch mechanisms replacements out of simple push buttons.
 
-A voltage level applied to a MCU GPIO pin is surely the most basic interaction route between the MCU and it's it's sorrounding environment. Aside from a simple cable attached to that pin, a pushbutton (a.k.a. momentary switches or momentary push buttons, ***MPB*** for short from here on) is the most basic and simplest device to modify that signal. As simple as it is, the signal provided -as similar digital signals provided by some more complex devices- are not always clean, stable and have very limited meaning as a switch signal. Any MPB signal needs to be debounced, deglitched and provide a clear release point to be reliable and useful. As strange as it might sound, no mechanism is provided by the MCU's for that purpose, so if multiple MPBs are required for a project, each and every signal must be treated, individually, once and again.
+#### For an easy to understand explanation of this library intended purpose, applications and general use keep reading below!
 
-The original purpose for this development was easy to describe and understand: instead of reading a pin value and do once and again a customized process, create a wrapper for any input pin, that instead of a logical high/low value will provide an Off/On value, after processing the input signal to give a stable, trusty return value. To compute the resulting output several MPB's attributes would be considered to give a generic applyable solution:
+Getting a debounced input signal for as many buttons as needed is as easy as
 
-- Will the MPB used be a Normally Open (NO) or Normally Closed (NC) kind of MPB?
-- Will the second pin (the one not connected to the GPIO pin) connected to GND (a pulled up connection) or to +V (a pulled down connection)?
-- How long the pin value must be waited to consider it a stable signal for a turn on event? And for a turn off event?
+```cpp
+#include <ButtonToSwitch_ESP32.h>
+[...]
+DbncdMPBttn button00 (GPIO_NUM_xx); //xx is the MCU input pin number connected to button00
+DbncdMPBttn button01 (GPIO_NUM_yy); //yy is the MCU input pin number connected to button01
+[...]
 
-The wrapper concept provides a virtual **Blackbox** solution:
+void setup() {
+  [...]
+  button00.begin();
+  button01.begin();
+  [...]
+}
 
-- A signal input into the blackbox
-- The signal along with timers, attributes and secondary signals is processed
-- An output signal is generated for the consumer
+void loop() {
+  if (button00.getIsOn())  // Check the button state, after debouncing
+    [...]  // Code to execute if the button00 is On
+  else
+    [...]  // Code to execute if the button00 is Off
+  [...]
+  if (button01.getIsOn())  // Check the button state, after debouncing
+  [...]
+}
+```
 
-The most basic wrapper/blackbox will
+A voltage level applied to a MCU Input pin is surely the most basic interaction route between the MCU and it's surrounding environment. Aside from a simple cable attached to that pin, a pushbutton (a.k.a. momentary switches or momentary push buttons, ***MPB*** for short from here on) is the most basic and simplest device to modify that signal. As simple as it is, the signal provided by the MPB are not always clean, stable and have very limited meaning as a switch signal. Regular MPB signal needs to be debounced, deglitched and monitored to provide a clear release point to be reliable and useful. As strange as it might sound, there is no mechanism provided by the MCU's for that purpose, so if multiple MPBs are required for a project, each and every signal must be treated individually, once and again, by similar if not identical code.
 
-By using just a push button the classes implemented in this library will manage, calculate and update different parameters to **generate the behavior of standard electromechanical switches**. Those parameters include presses, releases, timings, counters or secondary input readings as needed.
+The original purpose for this development is easy to describe and understand: instead of reading a pin value and do once and again a customized process, create a wrapper around the required input pins that will provide a stable, trustworthy return value. To compute the resulting output several MPB's attributes would be considered to make it a generic applicable solution:
+
+- Will the MPB used be a Normally Open (**NO**) or Normally Closed (**NC**) kind of MPB?
+- Will the second pin of the MPB (the one not connected to the MCU pin) be connected to GND (a pulled down connection) or to +V (a pulled up connection) to keep a stable input value?
+- How long the pin value must be waited to consider it a stable signal for a button pressed event?
+- How long the pin value must be waited to consider it a stable signal for a button released event?
+
+The wrapper concept provides a virtual **Blackbox** solution that will be implemented as an object:
+
+- The input pin signal is fed into the blackbox by an automated verification of the pin input value.
+- The signal value along with timers, attributes and secondary signals is processed in the blackbox.
+- An output value is generated for the consumer.
+
+The most basic blackbox will generate a stable **debounced** and deglitched version of the input signal that indicates if the MPB is signaling an On or an Off condition, corresponding to the MPB being pressed or not respectively.
+
+### Extending the blackbox concept: Classes in the library
+
+By using just a push button attached to an input pin the classes implemented in this library will manage, calculate and update different parameters to **generate the behavior of standard electromechanical switches**. Those parameters include presses, releases, timings, counters or secondary input readings as needed.
 
 The instantiated switch state is updated independently by a standard FreeRTOS software timer (or ESP-IDF FreeRTOS in this case), that keeps the state of the objects created constantly refreshed including the ON/OFF condition, without constant polling needed. The timer setup is managed by in-class methods, including the possibility to pause, resume or end the timer of each object independently of the others.  
 Each class offers a wide range of methods to set, read and modify every significant aspect of each switch mechanism simulated, and the signal received from the push button is debounced for a correct behavior of the event processing.
 
 ## The library implements the following switches mechanisms:
 
-- **Debounced Momentary Push Button** (a.k.a. Momentary switch, a.k.a. **Pushbutton**)  
-- **Debounced Delayed Momentary Push Button** (a.k.a. **Delayed Pushbutton**)  
-- **Toggle Switch Momentary Push Button** (a.k.a. Alternate Pushbutton, a.k.a. **Latched Switch**)  
-- **Timer Toggled Momentary Push Button** (a.k.a. **Timer Switch**)  
-- **Hinted Timer Toggled** (a.k.a. **Staircase Timer Switch**)
-- **External Unlatch Toggle** (a.k.a. **Emergency Latched Switch**)
-- **Time Voidable Momentary Push Button**  (a.k.a. **Anti-Tampering Switch**)
-- **Single Service Voidable Momentary Push Button**  (a.k.a. **Trigger Switch**) 
-- **Short Press/Long Press Double action On/Off + Slider combo switch**  (a.k.a. **Off/On/Dimmer**, a.k.a. Off/On/Volume Radio Switch)
-- **Short Press/Long Press Double action On/Off + Secondary output MPB combo switch**
+- **Debounced Momentary Push Button** (a.k.a. Momentary switch)  -> DbncdMPBttn Class (DMPB)
+- **Debounced Delayed Momentary Push Button** (a.k.a. **Delayed Pushbutton**) -> DbncdDlydMPBttn Class (DDMPB)
+- **Toggle Switch Momentary Push Button** (a.k.a. Alternate Pushbutton, a.k.a. **Latched Switch**) -> TogglLtchMPBttn Class (TLDDMPB)
+- **Timer Toggled Momentary Push Button** (a.k.a. **Timer Switch**) -> TmLtchMPBttn Class
+- **Hinted Timer Toggled** (a.k.a. **Staircase Timer Switch**) -> HntdTmLtchMPBttn Class
+- **External Unlatch Toggle** (a.k.a. **Emergency Latched Switch**) XtrnUnltchMPBttn Class
+- **Time Voidable Momentary Push Button**  (a.k.a. **Anti-Tampering Switch**) -> TmVdblMPBttn Class
+- **Single Service Voidable Momentary Push Button**  (a.k.a. **Trigger Switch**) -> SnglSrvcVdblMPBttn Class
+- **Short Press/Long Press Double action On/Off + Slider combo switch**  (a.k.a. **Off/On/Dimmer**, a.k.a. Off/On/Volume Radio Switch) -> SldrDALtchMPBttn Class
+- **Short Press/Long Press Double action On/Off + Secondary output MPB combo switch** -> DDlydDALtchMPBttn Class
 
-The benefits of the use of those simulated switches mechanisms are not just economic, as push buttons come in a wide range of prices and qualities as the simulated hardware switches come.
+---
+
+The use of MPBs and simulated switches mechanisms are several in cost, flexibility, practicality and expandability:
+
+Cost benefit: are not just economic, as push buttons come in a wide range of prices and qualities as the simulated hardware switches come.
 
 ***In any device powering on/off project***, for example, detecting after the implementation, through the daily use, that an installed switch was not the best choice when a physical switch is involved, requires for the correction to a best suited kind of switch a bunch of activities to get the change of the switch unit done:
 
@@ -109,8 +147,6 @@ Those listed mechanisms are **independent**, so one or more might be simultaneou
 
 The **Debounced Momentary Button** keeps the ON state since the moment the signal is stable (debouncing process) and until the moment the MPB is released.
 
----
-
 # [For DbncdMPBttn class included methods documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbncd_m_p_bttn-members.html)
 
 ### [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
@@ -142,13 +178,7 @@ Attention: The range of signals accepted by the instantiated objects to execute 
 
 The class provides methods to generate those validated signals independently of the designated signal source to modify the instantiated object behavior if needed by the design requirements, Validated Unlatch signal (see LtchMPBttn::setUnlatchPend(const bool) ), Validated Unlatch Release signal (see LtchMPBttn::setUnlatchRlsPend(const bool) ), or to **set** both flags to generate an unlatch (see LtchMPBttn::unlatch() ).
 
----
-
-## Methods definition and use description
-
----
-
-# [For LtchdMPBttn Subclasses included methods documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_ltch_m_p_bttn-members.html)
+# [For LtchMPBttn Subclasses included methods documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_ltch_m_p_bttn-members.html)
 
 ### [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
@@ -158,7 +188,7 @@ The class provides methods to generate those validated signals independently of 
 
 The **Toggle switch**  keeps the ON state since the moment the signal is stable (debouncing + Delay process), and keeps the ON state after the push button is released and until it is pressed once again. So this simulates a simple On-Off switch like the ones used to turn on/off a room light, or any electronic device. There's a lot of advantages in software simulated switches: any amount of switches might be set up in a parallel configuration, so that an unlimited number of entrances or easy accessible points can each have a switch to turn on/off the same resource, the switch might be temporarily disabled, either keeping the On State or the Off State, and some more.
 
-# [For TgglLtchdMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tggl_ltch_m_p_bttn-members.html)
+# [For TgglLtchMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tggl_ltch_m_p_bttn-members.html)
 
 ## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
@@ -174,7 +204,7 @@ The **Time latched** or **Timer Switch** keeps the ON state **since the moment t
 
 ---
 
-# [For TmLtchdMPBttn Subclasses included methods documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html)
+# [For TmLtchMPBttn Subclasses included methods documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_tm_ltch_m_p_bttn-members.html)
 
 ### [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
@@ -183,7 +213,6 @@ The **Time latched** or **Timer Switch** keeps the ON state **since the moment t
 # HntdTmLtchMPBttn class
 
 The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state since the moment the signal is debounced, and keeps the state during a set time, the switch time is set at instantiation, and can be modified through the provided methods. The switch implementation gives the option to allow to reset the timer before it gets to the end if the push button is pressed, the option to give a warning when the time is close to the end through a second flag (remaining time is defined as a percentage of the total ON time and it's configurable), and the possibility to set a third signal ON while the switch is off, just like the pilot light (hint) in a staircase timer switch. The warning signal is independent of the off hint.
-
 
 ---
 
@@ -196,6 +225,7 @@ The **Hinted Timer Latched**, or **Staircase Timer Switch**, keeps the ON state 
 # XtrnUnLtchMPBttn class
 
 The **External released toggle** (a.k.a. Emergency latched), keeps the On state since the moment the signal is debounced, and until an external signal is received. This kind of switch is used when an "abnormal situation" demands the push of the switch On, but a higher authority is needed to reset it to Off from a different signal source. Smoke, flood, intrusion alarms and "last man locks" are some examples of the use of this switch. As the external release signal can be physically or logically generated it can be implemented to be received from a switch or a remote signal of any usual kind.
+
 ---
 
 # [For XtrnUnltchMPBttn class Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_xtrn_unltch_m_p_bttn-members.html)
@@ -232,10 +262,9 @@ The presses patterns are:
 
 > [!NOTE] The **long press** is a configurable attribute of the class, the **Secondary Mode Activation Delay** (scndModActvDly) that holds the time after the Debounce + Delay period that the MPB must remain pressed to activate the mentioned mode. The same time will be required to keep pressed the MPB while in **Main Behavior** to enter the **Secondary behavior**.
 
-
 # [For DblActnLtchMPBttn Subclasses Common Members Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/class_dbl_actn_ltch_m_p_bttn-members.html)
 
-## [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
+### [For ButtonToSwitch for ESP32 Library Complete Documentation Click Here!](https://gabygold67.github.io/ButtonToSwitch_ESP32/)
 
 ---
 
@@ -264,7 +293,7 @@ This is a subclass of the **DALDD-MPB** whose **secondary behavior** is that of 
 
 ---
 
-SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. off/on/dimmer, a.k.a. off/on/volume radio switch)(**S-DALDD-MPB**)
+SldrDALtchMPBttn models a Slider Double Action LDD-MPB combo switch, a.k.a. off/on/dimmer, a.k.a. off/on/volume radio switch (**S-DALDD-MPB**)
 
 This is a subclass of the **DALDD-MPB** whose **secondary behavior** is analog to that of a **Digital potentiometer (DigiPot)** or a **Discreet values increment/decrement register**. That means that when in the second mode, while the MPB remains pressed, an attribute set as a register changes its value -the **otptCurVal** register-.  
  When the timer callback function used to keep the MPB status updated is called -while in the secondary mode state- the time since the last call is calculated and the time lapse in milliseconds is converted into **Steps**, using as configurable factor the **outputSliderSpeed** in a pre-scaler fashion. At instantiation the **outputSliderSpeed** is configured to 1 (step/millisecond, i.e. 1 step for each millisecond).  
@@ -309,8 +338,7 @@ The mechanisms to "un-void" the MPB and return it to an operational state includ
 - receiving an external signal.  
 - the reading of the **isOn** attribute flag status.
 
-The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclasses.
----
+## The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclasses.
 
 ## Methods definition and use description
 
@@ -327,7 +355,6 @@ The voiding conditions and the un-voiding mechanisms define the VDD-MPB subclass
 ---
 
 The **Time Voidable Momentary Button**, keeps the ON state since the moment the signal is stable (debouncing process), plus a delay added, and until the moment the push button is released, or until a preset time in the ON state is reached. Then the switch will return to the Off position until the push button is released and pushed back. This kind of switches are used to activate limited resources related management or physical safety devices, and the possibility of a physical blocking of the switch to extend the ON signal artificially beyond designer's plans is highly undesired. Water valves, door unlocking mechanisms, hands-off security mechanisms, high power heating devices are some of the usual uses for these type of switches. It's implemented in the **TmVdblMPBttn** class.
-
 
 ## Methods definition and use description
 
@@ -356,10 +383,6 @@ The **Single Service Voidable Momentary Push Button** keeps the **On state** sin
 > [!NOTE] Due to the short time the **isOn** flag will be raised, as described above, the short time between the **fnWhnTrnOn** function and the **fnWhnTrnOff** function callings must also need to be carefully evaluated by the user.
 
 # Added Methods for TmVdblMPBttn class
-
-| Method             | Parameters                                                                                                                                |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| ***TmVdblMPBttn*** | int8_t **mpbttnPin**(, bool **pulledUp**(, bool **typeNO**(, unsigned long int **dbncTimeOrigSett**(, unsigned long int **strtDelay**)))) |
 
 ## Methods definition and use description
 

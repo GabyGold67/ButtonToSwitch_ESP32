@@ -1,3 +1,32 @@
 {
-   "editor.tabSize": 3
+   "editor.tabSize": 3,
+   "cSpell.words": [
+      "Blackbox",
+      "DALDD",
+      "DblActnLtchMPBttn",
+      "DbncdDlydMPBttn",
+      "DbncdMPBttn",
+      "DDlydDALtchMPBttn",
+      "DDMPB",
+      "deglitch",
+      "deglitched",
+      "DigiPot",
+      "DMPB",
+      "HntdTmLtchMPBttn",
+      "LtchMPBttn",
+      "otptCurVal",
+      "RFID",
+      "scndModActvDly",
+      "setSldrDirDn",
+      "setSldrDirUp",
+      "SldrDALtchMPBttn",
+      "SnglSrvcVdblMPBttn",
+      "SSVDD",
+      "swapSldrDir",
+      "TgglLtchMPBttn",
+      "TLDDMPB",
+      "TogglLtchMPBttn",
+      "VdblMPBttn",
+      "XtrnUnLtchMPBttn"
+   ]
 }
